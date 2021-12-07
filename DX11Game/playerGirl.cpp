@@ -87,7 +87,7 @@ void Player_Girl::Update() {
 		m_rotDest.y = rotCamera.y - 90.0f;
 	}
 
-
+	//aaa
 
 
 	// –Ú“I‚ÌŠp“x‚Ü‚Å‚Ì·•ª
