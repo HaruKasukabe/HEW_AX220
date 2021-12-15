@@ -7,7 +7,7 @@
 #include "input.h"
 #include "map.h"
 #include "bsphere.h"
-
+#include "explosion.h"
 
 //*****列挙型*****
 enum DIR { RIGHT, LEFT };
@@ -82,6 +82,10 @@ void Player_Boy::Update() {
 			// 右移動
 			m_move.x -= SinDeg(rotCamera.y - 90.0f) * PLAYER_BOY_VALUE_MOVE;
 			m_move.z -= CosDeg(rotCamera.y - 90.0f) * PLAYER_BOY_VALUE_MOVE;
+			//エフェクト
+			StartExplosion(XMFLOAT3(m_pos.x, m_pos.y, m_pos.z), XMFLOAT2(30.0f, 30.0f));
+
+			
 
 			m_rotDest.y = rotCamera.y - 90.0f;
 	}
@@ -150,6 +154,7 @@ void Player_Boy::Update() {
 		num = CollisionNowMap(XMFLOAT2(m_pos.x + 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nObject;
 		GetBox()->Destroy(num);
 	}
+
 
 	XMMATRIX mtxWorld, mtxRot, mtxTranslate;
 

@@ -11,6 +11,7 @@
 //#include "box.h"
 #include "map.h"
 #include "gimmick.h"
+#include "explosion.h"
 
 //*****定数定義*****
 #define OLD_SCROLL_SPEED	(0.3f)
@@ -73,6 +74,13 @@ HRESULT InitSceneGame() {
 	//マップ初期化
 	InitMap();
 
+	//エフェクト初期化
+	hr = InitExplosion();
+	if (FAILED(hr)) {
+		return hr;
+	}
+
+
 	CSound::Init();
 	CSound::Play(BGM_000);
 	return hr;
@@ -88,6 +96,9 @@ void UninitSceneGame() {
 	delete g_pNow;
 	//ギミック終了
 	delete g_pGimmick;
+
+	//エフェクト終了処理
+	UninitExplosion();
 
 	//マップ終了
 	UninitMap();
@@ -127,7 +138,8 @@ void UpdateSceneGame() {
 		StartFadeOut(SCENE_TITLE);
 	}
 
-
+	//エフェクト更新
+	UpdateExplosion();
 
 	CSound::Update();
 }
@@ -150,6 +162,8 @@ void DrawSceneGame() {
 		g_pOld->Draw();
 		g_pGimmick->OldDraw();
 
+		//エフェクト描画
+		DrawExplosion();
 
 		//g_pBox->Draw();
 

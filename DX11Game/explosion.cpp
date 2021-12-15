@@ -12,7 +12,7 @@
 //*********************************************************
 //マクロ定義
 //*********************************************************
-#define TEXTURE_FILENAME	L"data/texture/explosion000.png"	//テクスチャファイル名
+#define TEXTURE_FILENAME	L"data/texture/test3.png"	//テクスチャファイル名
 #define M_DIFFUSE			XMFLOAT4(1.0f,1.0f,1.0f,1.0f)
 #define M_SPECULAR			XMFLOAT4(0.0f,0.0f,0.0f,1.0f)
 #define M_POWER				(1.0f)
@@ -21,8 +21,8 @@
 
 #define MAX_EXPLOSION		100
 
-#define EXPLOSION_FRAME_X	8			//横フレーム数
-#define EXPLOSION_FRAME_Y	1			//縦フレーム数
+#define EXPLOSION_FRAME_X	(4)			//横フレーム数
+#define EXPLOSION_FRAME_Y	(8)			//縦フレーム数
 #define EXPLOSION_ANIM_COUNT	4			//一コマ当たりの表示回数
 
 //***********************************************************

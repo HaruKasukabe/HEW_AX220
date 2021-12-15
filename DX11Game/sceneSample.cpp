@@ -84,10 +84,10 @@ HRESULT InitSceneSample() {
 	}
 
 	//爆発処理初期化
-	/*hr = InitExplosion();
+	hr = InitExplosion();
 	if (FAILED(hr)) {
 		return hr;
-	}*/
+	}
 
 	//炎エフェクト初期化
 	hr = InitFire();
@@ -121,7 +121,7 @@ void UninitSceneSample() {
 	UninitFire();
 
 	//爆発処理終了処理
-	//UninitExplosion();
+	UninitExplosion();
 
 	//ビルボード弾終了処理
 	UninitBullet();
@@ -185,7 +185,7 @@ void UpdateSceneSample() {
 	UpdateBSphere();
 
 	//爆発処理更新
-	//UpdateExplosion();
+	UpdateExplosion();
 
 	//炎エフェクト更新
 	UpdateFire();
@@ -239,7 +239,7 @@ void DrawSceneSample() {
 	DrawBSphere();
 
 	//爆発処理描画
-	//DrawExplosion();
+	DrawExplosion();
 
 	//炎エフェクト描画
 	DrawFire();
