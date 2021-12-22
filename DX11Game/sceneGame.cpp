@@ -1,6 +1,6 @@
 //===================================================
-//		ã‚²ãƒ¼ãƒ ã‚·ãƒ¼ãƒ³[sceneGame.cpp]
-//å°æ¥ è£•å­
+//		ƒQ[ƒ€ƒV[ƒ“[sceneGame.cpp]
+//¬“í—Tq
 //=====================================================
 #include "sceneGame.h"
 #include "fade.h"
@@ -17,47 +17,47 @@
 #include "Goal.h"
 
 
-//*****å®šæ•°å®šç¾©*****
+//*****’è”’è‹`*****
 #define OLD_SCROLL_SPEED	(1.0f)
 #define NOW_SCROLL_SPEED	(1.0f)
 
 
-//*****ã‚°ãƒ­ãƒ¼ãƒãƒ«å¤‰æ•°*****
-static Old* g_pOld;			//éå»
-static Now* g_pNow;			//ç¾åœ¨
-//static Box* g_pBox;		//ç®±
-static Gimmick* g_pGimmick;	//ã‚®ãƒŸãƒƒã‚¯
-static BG* g_pBG;			//èƒŒæ™¯
-static Goal* g_pGoal;		//ã‚´ãƒ¼ãƒ«
+//*****ƒOƒ[ƒoƒ‹•Ï”*****
+static Old* g_pOld;			//‰ß‹
+static Now* g_pNow;			//Œ»İ
+//static Box* g_pBox;		//” 
+static Gimmick* g_pGimmick;	//ƒMƒ~ƒbƒN
+static BG* g_pBG;			//”wŒi
+static Goal* g_pGoal;		//ƒS[ƒ‹
 
-const float FRAME_BUFFER_W = SCREEN_WIDTH;   //ãƒ•ãƒ¬ãƒ¼ãƒ ãƒãƒƒãƒ•ã‚¡ã®å¹…ã€‚
-const float FRAME_BUFFER_H = SCREEN_HEIGHT;   //ãƒ•ãƒ¬ãƒ¼ãƒ ãƒãƒƒãƒ•ã‚¡ã®é«˜ã•ã€‚
-ID3D11DeviceContext* d3dDeviceContext;   //D3D11ãƒ‡ãƒã‚¤ã‚¹ã‚³ãƒ³ãƒ†ã‚­ã‚¹ãƒˆã€åˆæœŸåŒ–æ¸ˆã¿ã¨ã™ã‚‹
-D3D11_VIEWPORT viewPorts[2];   //åˆ†å‰²ãƒ“ãƒ¥ãƒ¼ãƒãƒ¼ãƒˆã€ã“ã‚Œã‚’ãƒ¢ãƒ‡ãƒ«ã®æç”»å‰ã«è¨­å®šã™ã‚‹
-D3D11_VIEWPORT viewPortsReset;   //åˆ†å‰²ãƒ“ãƒ¥ãƒ¼ãƒãƒ¼ãƒˆã€ã“ã‚Œã‚’ãƒ¢ãƒ‡ãƒ«ã®æç”»å‰ã«è¨­å®šã™ã‚‹
+const float FRAME_BUFFER_W = SCREEN_WIDTH;   //ƒtƒŒ[ƒ€ƒoƒbƒtƒ@‚Ì•B
+const float FRAME_BUFFER_H = SCREEN_HEIGHT;   //ƒtƒŒ[ƒ€ƒoƒbƒtƒ@‚Ì‚‚³B
+ID3D11DeviceContext* d3dDeviceContext;   //D3D11ƒfƒoƒCƒXƒRƒ“ƒeƒLƒXƒgA‰Šú‰»Ï‚İ‚Æ‚·‚é
+D3D11_VIEWPORT viewPorts[2];   //•ªŠ„ƒrƒ…[ƒ|[ƒgA‚±‚ê‚ğƒ‚ƒfƒ‹‚Ì•`‰æ‘O‚Éİ’è‚·‚é
+D3D11_VIEWPORT viewPortsReset;   //•ªŠ„ƒrƒ…[ƒ|[ƒgA‚±‚ê‚ğƒ‚ƒfƒ‹‚Ì•`‰æ‘O‚Éİ’è‚·‚é
 
-float g_fBoyOldPosX;	// ç”·ã®å­ã®éå»åº§æ¨™
-float g_fGirlOldPosX;	// å¥³ã®å­ã®éå»åº§æ¨™
+float g_fBoyOldPosX;	// ’j‚Ìq‚Ì‰ß‹À•W
+float g_fGirlOldPosX;	// —‚Ìq‚Ì‰ß‹À•W
 
 bool PauseFlg = false;
 
 //=============================
-//		åˆæœŸåŒ–
+//		‰Šú‰»
 //=============================
 HRESULT InitSceneGame() {
 	HRESULT hr = MB_OK;
-	//éå»åˆæœŸåŒ–
+	//‰ß‹‰Šú‰»
 	g_pOld = new Old;
-	//ç¾åœ¨åˆæœŸåŒ–
+	//Œ»İ‰Šú‰»
 	g_pNow = new Now;
-	//ã‚®ãƒŸãƒƒã‚¯åˆæœŸåŒ–
+	//ƒMƒ~ƒbƒN‰Šú‰»
 	g_pGimmick = new Gimmick;
-	// èƒŒæ™¯åˆæœŸåŒ–
+	// ”wŒi‰Šú‰»
 	g_pBG = new BG;
-	//ã‚´ãƒ¼ãƒ«åˆæœŸåŒ–
+	//ƒS[ƒ‹‰Šú‰»
 	g_pGoal = new Goal;
 
-	//ç®±åˆæœŸåŒ–
+	//” ‰Šú‰»
 	//g_pBox = new Box;
 	//g_pBox->Create(XMFLOAT3(0.0f, -50.0f, 0.0f));
 	//g_pBox->Create(XMFLOAT3(0.0f, -30.0f, 0.0f));
@@ -65,29 +65,29 @@ HRESULT InitSceneGame() {
 	//g_pBox->Create(XMFLOAT3(0.0f, 10.0f, 0.0f));
 	//g_pBox->Create(XMFLOAT3(0.0f, 30.0f, 0.0f));
 
-	//ã“ã‚ŒãŒä¸Šç”»é¢
-	viewPorts[0].Width = FRAME_BUFFER_W;   //ç”»é¢ã®æ¨ªã‚µã‚¤ã‚º
-	viewPorts[0].Height = FRAME_BUFFER_H / 2;   //ç”»é¢ã®ç¸¦ã‚µã‚¤ã‚º
-	viewPorts[0].TopLeftX = 0;   //ç”»é¢å·¦ä¸Šã®xåº§æ¨™
-	viewPorts[0].TopLeftY = 0;   //ç”»é¢å·¦ä¸Šã®yåº§æ¨™
-	viewPorts[0].MinDepth = 0.0f;   //æ·±åº¦å€¤ã®æœ€å°å€¤
-	viewPorts[0].MaxDepth = 1.0f;   //æ·±åº¦å€¤ã®æœ€å¤§å€¤
+	//‚±‚ê‚ªã‰æ–Ê
+	viewPorts[0].Width = FRAME_BUFFER_W;   //‰æ–Ê‚Ì‰¡ƒTƒCƒY
+	viewPorts[0].Height = FRAME_BUFFER_H / 2;   //‰æ–Ê‚ÌcƒTƒCƒY
+	viewPorts[0].TopLeftX = 0;   //‰æ–Ê¶ã‚ÌxÀ•W
+	viewPorts[0].TopLeftY = 0;   //‰æ–Ê¶ã‚ÌyÀ•W
+	viewPorts[0].MinDepth = 0.0f;   //[“x’l‚ÌÅ¬’l
+	viewPorts[0].MaxDepth = 1.0f;   //[“x’l‚ÌÅ‘å’l
 
-	//ã“ã‚ŒãŒä¸‹ç”»é¢
-	viewPorts[1].Width = FRAME_BUFFER_W;   //ç”»é¢ã®æ¨ªã‚µã‚¤ã‚º
-	viewPorts[1].Height = FRAME_BUFFER_H / 2;   //ç”»é¢ã®ç¸¦ã‚µã‚¤ã‚º
-	viewPorts[1].TopLeftX = 0;   //ç”»é¢å·¦ä¸Šã®xåº§æ¨™
-	viewPorts[1].TopLeftY = FRAME_BUFFER_H / 2;   //ç”»é¢å·¦ä¸Šã®yåº§æ¨™
-	viewPorts[1].MinDepth = 0.0f;   //æ·±åº¦å€¤ã®æœ€å°å€¤
-	viewPorts[1].MaxDepth = 1.0f;   //æ·±åº¦å€¤ã®æœ€å¤§å€¤
+	//‚±‚ê‚ª‰º‰æ–Ê
+	viewPorts[1].Width = FRAME_BUFFER_W;   //‰æ–Ê‚Ì‰¡ƒTƒCƒY
+	viewPorts[1].Height = FRAME_BUFFER_H / 2;   //‰æ–Ê‚ÌcƒTƒCƒY
+	viewPorts[1].TopLeftX = 0;   //‰æ–Ê¶ã‚ÌxÀ•W
+	viewPorts[1].TopLeftY = FRAME_BUFFER_H / 2;   //‰æ–Ê¶ã‚ÌyÀ•W
+	viewPorts[1].MinDepth = 0.0f;   //[“x’l‚ÌÅ¬’l
+	viewPorts[1].MaxDepth = 1.0f;   //[“x’l‚ÌÅ‘å’l
 
-	viewPortsReset.Width = FRAME_BUFFER_W;   //ç”»é¢ã®æ¨ªã‚µã‚¤ã‚º
-	viewPortsReset.Height = FRAME_BUFFER_H;   //ç”»é¢ã®ç¸¦ã‚µã‚¤ã‚º
+	viewPortsReset.Width = FRAME_BUFFER_W;   //‰æ–Ê‚Ì‰¡ƒTƒCƒY
+	viewPortsReset.Height = FRAME_BUFFER_H;   //‰æ–Ê‚ÌcƒTƒCƒY
 
-	//ãƒãƒƒãƒ—åˆæœŸåŒ–
+	//ƒ}ƒbƒv‰Šú‰»
 	InitMap();
 	InitPause();
-	//ã‚µã‚¦ãƒ³ãƒ‰åˆæœŸåŒ–
+	//ƒTƒEƒ“ƒh‰Šú‰»
 	CSound::Init();
 	CSound::Play(BGM_001);
 
@@ -95,21 +95,21 @@ HRESULT InitSceneGame() {
 }
 
 //=============================
-//		çµ‚äº†
+//		I—¹
 //=============================
 void UninitSceneGame() {
-	//éå»çµ‚äº†
+	//‰ß‹I—¹
 	delete g_pOld;
-	//ç¾åœ¨çµ‚äº†
+	//Œ»İI—¹
 	delete g_pNow;
-	//ã‚®ãƒŸãƒƒã‚¯çµ‚äº†
+	//ƒMƒ~ƒbƒNI—¹
 	delete g_pGimmick;
-	//èƒŒæ™¯çµ‚äº†å‡¦ç†
+	//”wŒiI—¹ˆ—
 	delete g_pBG;
-	//ã‚´ãƒ¼ãƒ«çµ‚äº†å‡¦ç†
+	//ƒS[ƒ‹I—¹ˆ—
 	delete g_pGoal;
 
-	//ãƒãƒƒãƒ—çµ‚äº†
+	//ƒ}ƒbƒvI—¹
 	UninitMap();
 
 
@@ -117,17 +117,17 @@ void UninitSceneGame() {
 
 	CSound::Stop(BGM_000);
 
-	//ã‚´ãƒ¼ãƒ«çµ‚äº†
+	//ƒS[ƒ‹I—¹
 	//UninitGoal();
 
-	//ã‚µã‚¦ãƒ³ãƒ‰çµ‚äº†
+	//ƒTƒEƒ“ƒhI—¹
 	CSound::Stop(BGM_001);
 	CSound::Fin();
 	
 }
 
 //=============================
-//		æ›´æ–°
+//		XV
 //=============================
 void UpdateSceneGame() {
 
@@ -136,29 +136,29 @@ void UpdateSceneGame() {
 
 	if (!PauseFlg)
 
-	//ç®±æ›´æ–°
+	//” XV
 	//g_pBox->Update();
-	//ãƒãƒƒãƒ—æ›´æ–°
+	//ƒ}ƒbƒvXV
 	UpdateMap();
 
-	//ã‚´ãƒ¼ãƒ«æ›´æ–°
+	//ƒS[ƒ‹XV
 	g_pGoal->Update(g_pNow->GetPlayerGirl()->GetGirlPos().x);
 
-	//éå»æ›´æ–°
+	//‰ß‹XV
 	g_pOld->Update();
 
-	//ç¾åœ¨æ›´æ–°
+	//Œ»İXV
 	g_pNow->Update();
 
-	//ç®±æ›´æ–°
+	//” XV
 	//g_pBox->Update();
-	//ãƒãƒƒãƒ—æ›´æ–°
+	//ƒ}ƒbƒvXV
 	UpdateMap();
 
-	// ç”»é¢ã‚’ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«
+	// ‰æ–Ê‚ğƒXƒNƒ[ƒ‹
 	if (g_fGirlOldPosX != g_pNow->GetPlayerGirl()->GetGirlPos().x)
 	{
-		//ä»Šã®èƒŒæ™¯æ›´æ–°
+		//¡‚Ì”wŒiXV
 		g_pBG->Update(0);
 
 		viewPorts[0].TopLeftX -= g_pNow->GetPlayerGirl()->GetGirlMove().x * OLD_SCROLL_SPEED;
@@ -166,14 +166,14 @@ void UpdateSceneGame() {
 	}
 	if (g_fBoyOldPosX != g_pOld->GetBoyPos().x)
 	{
-		//éå»ã®èƒŒæ™¯æ›´æ–°
+		//‰ß‹‚Ì”wŒiXV
 		g_pBG->Update(1);
 
 		viewPorts[1].TopLeftX -= g_pOld->GetPlayerBoy()->GetBoyMove().x * NOW_SCROLL_SPEED;
 		g_fBoyOldPosX = g_pOld->GetBoyPos().x;
 	}
 
-	//ã‚®ãƒŸãƒƒã‚¯æ›´æ–°
+	//ƒMƒ~ƒbƒNXV
 	g_pGimmick->Update(g_pOld->GetBoyPos());
 
 	if (GetKeyPress(VK_F1)) {
@@ -184,44 +184,44 @@ void UpdateSceneGame() {
 }
 
 //=============================
-//		æç”»
+//		•`‰æ
 //=============================
 void DrawSceneGame() {
 	d3dDeviceContext = GetDeviceContext();
 		
-	//èƒŒæ™¯æç”»
+	//”wŒi•`‰æ
 	g_pBG->Draw();
 
-	//ãƒ“ãƒ¥ãƒ¼ãƒãƒ¼ãƒˆã‚’è¨­å®šã€€ä¸Šç”»é¢
+	//ƒrƒ…[ƒ|[ƒg‚ğİ’è@ã‰æ–Ê
 	d3dDeviceContext->RSSetViewports(1, &viewPorts[0]);
-	//ä»Šæç”»
+	//¡•`‰æ
 	g_pNow->Draw();
 	g_pGimmick->NowDraw();
 
-	//ãƒ“ãƒ¥ãƒ¼ãƒãƒ¼ãƒˆã‚’è¨­å®šã€€ä¸‹ç”»é¢
+	//ƒrƒ…[ƒ|[ƒg‚ğİ’è@‰º‰æ–Ê
 	d3dDeviceContext->RSSetViewports(1, &viewPorts[1]);
-	//éå»æç”»
+	//‰ß‹•`‰æ
 	g_pOld->Draw();
 	g_pGimmick->OldDraw();
 
-	//ãƒ“ãƒ¥ãƒ¼ãƒãƒ¼ãƒˆã®è¨­å®šã‚’å…ƒã«æˆ»ã™
+	//ƒrƒ…[ƒ|[ƒg‚Ìİ’è‚ğŒ³‚É–ß‚·
 	d3dDeviceContext->RSSetViewports(1, &viewPortsReset);
 
 	DrawPause();
-	//ã‚´ãƒ¼ãƒ«æç”»
+	//ƒS[ƒ‹•`‰æ
 	g_pGoal->Draw();
 
 }
 
 //=============================
-//		éå»å–å¾—
+//		‰ß‹æ“¾
 //=============================
 Old* GetOld() {
 	return g_pOld;
 }
 
 //=============================
-//		ç¾åœ¨å–å¾—
+//		Œ»İæ“¾
 //=============================
 Now* GetNow() {
 	return g_pNow;
