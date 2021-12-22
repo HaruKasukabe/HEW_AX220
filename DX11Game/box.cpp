@@ -221,7 +221,7 @@ XMFLOAT3 Box::GetPos(int num) {
 //=============================
 void Box::SetBoxPos(int num, XMFLOAT3 pos,int time) {
 	XMFLOAT3 boyPos = GetOld()->GetBoyPos();
-	if (!m_box[num].m_nCat == CARRY)	// ¡‚¾‚¯NORMAL‚É‚µ‚Ä‚ ‚è‚Ü‚·(–{—ˆ‚È‚çMOVE)
+	if (!m_box[num].m_nCat == CARRY)
 		return;
 
 	// ‰ß‹—p

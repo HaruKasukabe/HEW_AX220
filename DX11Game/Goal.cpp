@@ -10,7 +10,7 @@
 #include "now.h"
 
 // マクロ定義
-#define GOAL_TEXTURE_PATH	L"data/texture/気弾6.jpg"
+#define GOAL_TEXTURE_PATH	L"data/texture/ステージクリア.png"
 #define GOAL_POS_X		0.0f
 #define GOAL_POS_Y		0.0f
 #define GOAL_SIZE_X		SCREEN_WIDTH / 2
