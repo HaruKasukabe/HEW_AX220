@@ -167,6 +167,7 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="collision.cpp" />
     <ClCompile Include="cube.cpp" />
+    <ClCompile Include="dashEF.cpp" />
     <ClCompile Include="debugproc.cpp" />
     <ClCompile Include="enemy.cpp" />
     <ClCompile Include="explosion.cpp" />
@@ -213,6 +214,7 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="collision.h" />
     <ClInclude Include="cube.h" />
+    <ClInclude Include="dashEF.h" />
     <ClInclude Include="debugproc.h" />
     <ClInclude Include="Define.h" />
     <ClInclude Include="enemy.h" />

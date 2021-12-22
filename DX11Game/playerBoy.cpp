@@ -8,6 +8,7 @@
 #include "map.h"
 #include "bsphere.h"
 #include "explosion.h"
+#include "dashEF.h"
 
 //*****列挙型*****
 enum DIR { RIGHT, LEFT };
@@ -74,6 +75,14 @@ void Player_Boy::Update() {
 			// 左移動
 			m_move.x -= SinDeg(rotCamera.y + 90.0f) * PLAYER_BOY_VALUE_MOVE;
 			m_move.z -= CosDeg(rotCamera.y + 90.0f) * PLAYER_BOY_VALUE_MOVE;
+
+			if (GetKeyTrigger(VK_LEFT))
+			{
+				//エフェクト
+				StartDashEF(XMFLOAT3(m_pos.x+4, m_pos.y-5  , m_pos.z), XMFLOAT2(-20.0f, -20.0f));
+
+			}
+
 
 			m_rotDest.y = rotCamera.y + 90.0f;
 

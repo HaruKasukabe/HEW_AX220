@@ -12,7 +12,7 @@
 //*********************************************************
 //マクロ定義
 //*********************************************************
-#define TEXTURE_FILENAME	L"data/texture/dash.png"	//テクスチャファイル名
+#define TEXTURE_FILENAME	L"data/texture/dash_R.png"	//テクスチャファイル名
 #define M_DIFFUSE			XMFLOAT4(1.0f,1.0f,1.0f,1.0f)
 #define M_SPECULAR			XMFLOAT4(0.0f,0.0f,0.0f,1.0f)
 #define M_POWER				(1.0f)
