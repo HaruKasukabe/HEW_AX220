@@ -9,7 +9,7 @@
 #include "input.h"
 
 //*****定数定義*****
-#define PLAYER_BOY_MODEL_PATH			"data/model/dog.x"
+#define PLAYER_BOY_MODEL_PATH			"data/model/girl.fbx"
 
 #define	PLAYER_BOY_VALUE_MOVE	(0.50f)		// 移動速度
 #define	PLAYER_BOY_RATE_MOVE	(0.20f)		// 移動慣性係数
@@ -43,6 +43,7 @@ Player_Girl::Player_Girl()
 	m_rot = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	m_rotDest = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	g_BoyPos = XMFLOAT3(0.0f, 0.0f, 0.0f);
+	m_scl = XMFLOAT3(0.2f, 0.2f, 0.2f);
 
 
 	// モデルデータの読み込み
@@ -148,10 +149,14 @@ void Player_Girl::Update() {
 		m_rotDest = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	}
 
-	XMMATRIX mtxWorld, mtxRot, mtxTranslate;
+	XMMATRIX mtxWorld, mtxScl, mtxRot, mtxTranslate;
 
 	// ワールドマトリックスの初期化
 	mtxWorld = XMMatrixIdentity();
+
+	//スケールを反映
+	mtxScl = XMMatrixScaling(m_scl.x, m_scl.y, m_scl.z);
+	mtxWorld = XMMatrixMultiply(mtxWorld, mtxScl);
 
 	// 回転を反映
 	mtxRot = XMMatrixRotationRollPitchYaw(XMConvertToRadians(m_rot.x),
