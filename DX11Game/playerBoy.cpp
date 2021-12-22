@@ -307,10 +307,15 @@ bool Player_Boy::CheckField()
 				break;
 			}
 			boxPos = pBox->GetPos(pOldMap->m_nObject);
-			if (m_pos.x <= boxPos.x - 6.0f) continue;
-			if (boxPos.x + 6.0f <= m_pos.x) continue;
+			if (m_pos.x <= boxPos.x - 2.0f) continue;
+			if (boxPos.x + 2.0f <= m_pos.x) continue;
 
 			if (m_pos.y >= boxPos.y + 6.0f && g_oldBoyPos.y <= boxPos.y + 6.0f)
+			{
+				m_pos.y = boxPos.y + 18.0f;
+				return true;
+			}
+			else if (m_pos.y <= boxPos.y + 6.0f)
 			{
 				m_pos.y = boxPos.y + 18.0f;
 				return true;
