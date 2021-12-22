@@ -43,7 +43,7 @@ Player_Girl::Player_Girl()
 	m_rot = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	m_rotDest = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	g_BoyPos = XMFLOAT3(0.0f, 0.0f, 0.0f);
-	m_scl = XMFLOAT3(0.2f, 0.2f, 0.2f);
+	m_scl = XMFLOAT3(0.4f, 0.4f, 0.4f);
 
 
 	// モデルデータの読み込み

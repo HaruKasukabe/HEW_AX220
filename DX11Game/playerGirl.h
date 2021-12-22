@@ -19,7 +19,7 @@ private:
 	XMFLOAT3		m_rot;		// 現在の向き
 	XMFLOAT3		m_rotDest;	// 目的の向き
 	XMFLOAT3		m_move;		// 移動量
-	XMFLOAT3		m_scl;		//スケール
+	XMFLOAT3		m_scl;		//オブジェクトのスケール
 
 	XMFLOAT4X4		m_mtxWorld;		// ワールドマトリックス
 
