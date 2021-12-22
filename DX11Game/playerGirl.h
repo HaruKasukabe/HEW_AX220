@@ -1,7 +1,7 @@
 //=============================================================================
 //
-// �v���C���[���̎q [playerGirl.h]
-// ����T�q
+// プレイヤー女の子 [playerGirl.h]
+// 小楠裕子
 //=============================================================================
 #pragma once
 #include "main.h"
@@ -20,14 +20,16 @@ public:
 
 	bool CheckField();
 private:
-	CAssimpModel	m_model;	//���f��
-	XMFLOAT3		m_pos;		// ���݂̈ʒu
-	XMFLOAT3		m_rot;		// ���݂̌���
-	XMFLOAT3		m_rotDest;	// �ړI�̌���
-	XMFLOAT3		m_move;		// �ړ���
-	bool			m_bLand;	// ���n�E�ڒn�t���O
+	CAssimpModel	m_model;	//モデル
+	XMFLOAT3		m_pos;		// 現在の位置
+	XMFLOAT3		m_rot;		// 現在の向き
+	XMFLOAT3		m_rotDest;	// 目的の向き
+	XMFLOAT3		m_move;		// 移動量
+	XMFLOAT3		m_scl;		//オブジェクトのスケール
+	bool			m_bLand;	// 着地・接地フラグ
 
-	XMFLOAT4X4		m_mtxWorld;		// ���[���h�}�g���b�N�X
 
-	int				m_nCube;		//�����̔ԍ�
+	XMFLOAT4X4		m_mtxWorld;		// ワールドマトリックス
+
+	int				m_nCube;		//立方体番号
 };

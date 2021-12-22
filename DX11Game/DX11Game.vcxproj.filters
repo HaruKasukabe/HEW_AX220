@@ -165,6 +165,9 @@
     <ClCompile Include="stageselect.cpp">
       <Filter>ソース ファイル\シーン</Filter>
     </ClCompile>
+    <ClCompile Include="pause.cpp">
+      <Filter>ソース ファイル\シーン</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="input.h">
@@ -312,6 +315,9 @@
       <Filter>ヘッダー ファイル\シーン</Filter>
     </ClInclude>
     <ClInclude Include="stageselect.h">
+      <Filter>ヘッダー ファイル\シーン</Filter>
+    </ClInclude>
+    <ClInclude Include="pause.h">
       <Filter>ヘッダー ファイル\シーン</Filter>
     </ClInclude>
   </ItemGroup>

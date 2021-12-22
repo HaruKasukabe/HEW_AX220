@@ -186,6 +186,7 @@
     <ClCompile Include="object_2D.cpp" />
     <ClCompile Include="object_3D.cpp" />
     <ClCompile Include="old.cpp" />
+    <ClCompile Include="pause.cpp" />
     <ClCompile Include="plant.cpp" />
     <ClCompile Include="playerBoy.cpp" />
     <ClCompile Include="playerGirl.cpp" />
@@ -233,6 +234,7 @@
     <ClInclude Include="object_2D.h" />
     <ClInclude Include="object_3D.h" />
     <ClInclude Include="old.h" />
+    <ClInclude Include="pause.h" />
     <ClInclude Include="plant.h" />
     <ClInclude Include="playerBoy.h" />
     <ClInclude Include="playerGirl.h" />
