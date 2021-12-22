@@ -1,7 +1,7 @@
 //=============================================================================
 //
-// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ç”·ã®å­ [playerBoy.cpp]
-// å°æ¥ è£•å­
+// ƒvƒŒƒCƒ„[’j‚Ìq [playerBoy.cpp]
+// ¬“í—Tq
 //=============================================================================
 #include "playerBoy.h"
 #include "input.h"
@@ -9,17 +9,17 @@
 #include "bsphere.h"
 
 
-//*****åˆ—æŒ™å‹*****
+//*****—ñ‹“Œ^*****
 enum DIR { RIGHT, LEFT };
 
-//*****å®šæ•°å®šç¾©*****
+//*****’è”’è‹`*****
 #define PLAYER_BOY_MODEL_PATH			"data/model/girl_walking.fbx"
 
 
-#define	PLAYER_BOY_VALUE_MOVE	(0.15f)		// ç§»å‹•é€Ÿåº¦
-#define	PLAYER_BOY_RATE_MOVE		(0.20f)		// ç§»å‹•æ…£æ€§ä¿‚æ•°
-#define	PLAYER_BOY_VALUE_ROTATE	(9.0f)		// å›è»¢é€Ÿåº¦
-#define	PLAYER_BOY_RATE_ROTATE	(0.20f)		// å›è»¢æ…£æ€§ä¿‚æ•°
+#define	PLAYER_BOY_VALUE_MOVE	(0.15f)		// ˆÚ“®‘¬“x
+#define	PLAYER_BOY_RATE_MOVE		(0.20f)		// ˆÚ“®Šµ«ŒW”
+#define	PLAYER_BOY_VALUE_ROTATE	(9.0f)		// ‰ñ“]‘¬“x
+#define	PLAYER_BOY_RATE_ROTATE	(0.20f)		// ‰ñ“]Šµ«ŒW”
 
 #define PLAYER_BOY_COLLISION_SIZE_X		4.0f
 #define PLAYER_BOY_COLLISION_SIZE_Y		4.0f
@@ -29,17 +29,17 @@ enum DIR { RIGHT, LEFT };
 
 #define JUMP_POWER		(12.0f)
 #define JUMP_WHILE		(15)
-#define GRAVITY_BOY		(1.0f)	// é‡åŠ›
+#define GRAVITY_BOY		(1.0f)	// d—Í
 #define RESIST_X		(0.7f)
 
-//*****ã‚°ãƒ­ãƒ¼ãƒãƒ«å¤‰æ•°*****
+//*****ƒOƒ[ƒoƒ‹•Ï”*****
 XMFLOAT3 g_oldBoyPos;
 static int g_nowHand;
-static int timeJudge; // 0:éå»,1:æœªæ¥
+static int timeJudge; // 0:‰ß‹,1:–¢—ˆ
 static int g_nJumpCnt;
 
 //==============================================================
-//ï½ºï¾ï½½ï¾„ï¾—ï½¸ï¾€
+//ºİ½Ä×¸À
 //==============================================================
 Player_Boy::Player_Boy()
 
@@ -48,47 +48,47 @@ Player_Boy::Player_Boy()
 	ID3D11Device* pDevice = GetDevice();
 	ID3D11DeviceContext* pDeviceContext = GetDeviceContext();
 
-	// ä½ç½®ãƒ»å›è»¢ãƒ»ã‚¹ã‚±ãƒ¼ãƒ«ã®åˆæœŸè¨­å®š
+	// ˆÊ’uE‰ñ“]EƒXƒP[ƒ‹‚Ì‰Šúİ’è
 	m_pos = XMFLOAT3(-100.0f, -45.0f, 0.0f);
 	m_move = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	m_rot = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	m_rotDest = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	m_bJump = false;
 	m_bLand = false;
-	m_nHund = 9999;
+	m_nHand = 9999;
 	g_nowHand = 9999;
 	timeJudge = 0;
 	g_nJumpCnt = 0;
 
-	// ãƒ¢ãƒ‡ãƒ«ãƒ‡ãƒ¼ã‚¿ã®èª­ã¿è¾¼ã¿
+	// ƒ‚ƒfƒ‹ƒf[ƒ^‚Ì“Ç‚İ‚İ
 	if (!m_model.Load(pDevice, pDeviceContext, PLAYER_BOY_MODEL_PATH)) {
-		MessageBoxA(GetMainWnd(), "ãƒ¢ãƒ‡ãƒ«ãƒ‡ãƒ¼ã‚¿èª­ã¿è¾¼ã¿ã‚¨ãƒ©ãƒ¼", "InitModel", MB_OK);
+		MessageBoxA(GetMainWnd(), "ƒ‚ƒfƒ‹ƒf[ƒ^“Ç‚İ‚İƒGƒ‰[", "InitModel", MB_OK);
 	}
-	//å¢ƒç•Œçƒç”Ÿæˆ
+	//‹«ŠE‹…¶¬
 	m_nSphere = CreateBSphere(XMFLOAT3(0.0f, 0.0f, 0.0f), PLAYER_BOY_COLLISION_SIZE_RAD, m_mtxWorld);
 }
 //==============================================================
-//ï¾ƒï¾ï½½ï¾„ï¾—ï½¸ï¾€
+//ÃŞ½Ä×¸À
 //==============================================================
 Player_Boy::~Player_Boy() {
-	// ãƒ¢ãƒ‡ãƒ«ã®è§£æ”¾
+	// ƒ‚ƒfƒ‹‚Ì‰ğ•ú
 	m_model.Release();
-	//å¢ƒç•Œçƒè§£æ”¾
+	//‹«ŠE‹…‰ğ•ú
 	ReleaseBSphere(m_nSphere);
 }
 //==============================================================
-//æ›´æ–°
+//XV
 //==============================================================
 void Player_Boy::Update() {
 	g_oldBoyPos = m_pos;
 	g_nJumpCnt--;
 
-	// ã‚«ãƒ¡ãƒ©ã®å‘ãå–å¾—
+	// ƒJƒƒ‰‚ÌŒü‚«æ“¾
 	XMFLOAT3 rotCamera = CCamera::Get()->GetAngle();
 	XMFLOAT3 oldPos = m_pos;
 	if (GetKeyPress(VK_LEFT)) {
 		m_dir = LEFT;
-			// å·¦ç§»å‹•
+			// ¶ˆÚ“®
 			m_move.x -= SinDeg(rotCamera.y + 90.0f) * PLAYER_BOY_VALUE_MOVE;
 			m_move.z -= CosDeg(rotCamera.y + 90.0f) * PLAYER_BOY_VALUE_MOVE;
 
@@ -96,7 +96,7 @@ void Player_Boy::Update() {
 
 	}else if (GetKeyPress(VK_RIGHT)) {
 		m_dir = RIGHT;
-			// å³ç§»å‹•
+			// ‰EˆÚ“®
 			m_move.x -= SinDeg(rotCamera.y - 90.0f) * PLAYER_BOY_VALUE_MOVE;
 			m_move.z -= CosDeg(rotCamera.y - 90.0f) * PLAYER_BOY_VALUE_MOVE;
 
@@ -104,7 +104,7 @@ void Player_Boy::Update() {
 	}
 	if (GetKeyTrigger(VK_UP))
 	{
-		// ã‚¸ãƒ£ãƒ³ãƒ—
+		// ƒWƒƒƒ“ƒv
 		if (g_nJumpCnt < 0)
 		{
 			m_move.y += JUMP_POWER;
@@ -113,7 +113,7 @@ void Player_Boy::Update() {
 		}
 	}
 
-	// é‡åŠ›
+	// d—Í
 	m_move.y -= GRAVITY_BOY;
 	if (m_bJump)
 	{
@@ -122,7 +122,7 @@ void Player_Boy::Update() {
 
 	
 
-	// ç›®çš„ã®è§’åº¦ã¾ã§ã®å·®åˆ†
+	// –Ú“I‚ÌŠp“x‚Ü‚Å‚Ì·•ª
 	float fDiffRotY = m_rotDest.y - m_rot.y;
 	if (fDiffRotY >= 180.0f) {
 		fDiffRotY -= 360.0f;
@@ -131,7 +131,7 @@ void Player_Boy::Update() {
 		fDiffRotY += 360.0f;
 	}
 
-	// ç›®çš„ã®è§’åº¦ã¾ã§æ…£æ€§ã‚’ã‹ã‘ã‚‹
+	// –Ú“I‚ÌŠp“x‚Ü‚ÅŠµ«‚ğ‚©‚¯‚é
 	m_rot.y += fDiffRotY * PLAYER_BOY_RATE_ROTATE;
 	if (m_rot.y >= 180.0f) {
 		m_rot.y -= 360.0f;
@@ -140,12 +140,12 @@ void Player_Boy::Update() {
 		m_rot.y += 360.0f;
 	}
 
-	// ä½ç½®ç§»å‹•
+	// ˆÊ’uˆÚ“®
 	m_pos.x += m_move.x;
 	m_pos.y += m_move.y;
 	m_pos.z += m_move.z;
 
-	// ç§»å‹•é‡ã«æ…£æ€§ã‚’ã‹ã‘ã‚‹
+	// ˆÚ“®—Ê‚ÉŠµ«‚ğ‚©‚¯‚é
 	m_move.x += (0.0f - m_move.x) * PLAYER_BOY_RATE_MOVE;
 	m_move.y += (0.0f - m_move.y) * PLAYER_BOY_RATE_MOVE;
 	m_move.z += (0.0f - m_move.z) * PLAYER_BOY_RATE_MOVE;
@@ -172,7 +172,7 @@ void Player_Boy::Update() {
 		m_pos.y = 80.0f;
 	}
 
-	// å½“ãŸã‚Šåˆ¤å®š
+	// “–‚½‚è”»’è
 	OBJECT_INFO collision = CollisionOldMap(XMFLOAT2(m_pos.x, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y));
 	if (collision.m_nCategory > 0)
 	{
@@ -181,9 +181,9 @@ void Player_Boy::Update() {
 		else if (m_bLand == true)
 			m_pos.x = g_oldBoyPos.x;
 	}
-	//----åœ°å½¢ã¨ã®å½“ãŸã‚Šåˆ¤å®š----
+	//----’nŒ`‚Æ‚Ì“–‚½‚è”»’è----
 	if (CheckField())
-	{	//ä¹—ã£ãŸå ´åˆã®å‡¦ç†
+	{	//æ‚Á‚½ê‡‚Ìˆ—
 		m_move.y = 0.0f;
 		m_bJump = false;
 		m_bLand = true;
@@ -197,10 +197,10 @@ void Player_Boy::Update() {
 		}
 	}
 
-	//æ”»æ’ƒã®å½“ãŸã‚Šåˆ¤å®š
+	//UŒ‚‚Ì“–‚½‚è”»’è
 	if (GetKeyPress(VK_SPACE)||GetKeyPress(JOYSTICKID1))
 	{
-		/*ä»®*/OBJECT_INFO object = CollisionOldMap(XMFLOAT2(m_pos.x + 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y));
+		/*‰¼*/OBJECT_INFO object = CollisionOldMap(XMFLOAT2(m_pos.x + 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y));
 		if(object.m_nCategory == BREAK)
 			GetBox()->Destroy(object.m_nObject);
 		object = CollisionNowMap(XMFLOAT2(m_pos.x + 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y));
@@ -210,86 +210,86 @@ void Player_Boy::Update() {
 
 
 
-	// ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’æŒã¤
+	// ƒIƒuƒWƒFƒNƒg‚ğ‚Â
 	if (GetKeyPress(VK_A))
 	{
 		if (CollisionOldMap(XMFLOAT2(m_pos.x + 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nCategory == CARRY) {
-			m_nHund = CollisionOldMap(XMFLOAT2(m_pos.x + 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nObject;
+			m_nHand = CollisionOldMap(XMFLOAT2(m_pos.x + 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nObject;
 			g_nowHand = CollisionNowMap(XMFLOAT2(m_pos.x + 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nObject;
 		}
 		if (CollisionOldMap(XMFLOAT2(m_pos.x - 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nCategory == CARRY) {
-			m_nHund = CollisionOldMap(XMFLOAT2(m_pos.x - 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nObject;
+			m_nHand = CollisionOldMap(XMFLOAT2(m_pos.x - 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nObject;
 			g_nowHand = CollisionNowMap(XMFLOAT2(m_pos.x - 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nObject;
 		}
 	}
-	// ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’æ”¾ã™
+	// ƒIƒuƒWƒFƒNƒg‚ğ•ú‚·
 	if (GetKeyPress(VK_S))
 	{
-		m_nHund = 9999;
-		g_nowHand = 9999;
+		m_nHand = 9999;
 		GetBox()->SetOldBoxPos(g_nowHand);
+		g_nowHand = 9999;
 	}
 
-	// æŒã¡ç‰©ã‚’ä¸€ç·’ã«ç§»å‹•
-	GetBox()->SetBoxPos(m_nHund, m_move, 0);   // éå»ã®åº§æ¨™ã‚’åæ˜ 
-	GetBox()->SetBoxPos(g_nowHand, m_move, 1); // æœªæ¥ã®åº§æ¨™ã‚’ä¸€æ™‚ä¿å­˜
+	// ‚¿•¨‚ğˆê‚ÉˆÚ“®
+	GetBox()->SetBoxPos(m_nHand, m_move, 0);   // ‰ß‹‚ÌÀ•W‚ğ”½‰f
+	GetBox()->SetBoxPos(g_nowHand, m_move, 1); // –¢—ˆ‚ÌÀ•W‚ğˆê•Û‘¶
 
 
 	XMMATRIX mtxWorld, mtxRot, mtxTranslate;
 
-	// ãƒ¯ãƒ¼ãƒ«ãƒ‰ãƒãƒˆãƒªãƒƒã‚¯ã‚¹ã®åˆæœŸåŒ–
+	// ƒ[ƒ‹ƒhƒ}ƒgƒŠƒbƒNƒX‚Ì‰Šú‰»
 	mtxWorld = XMMatrixIdentity();
 
-	// å›è»¢ã‚’åæ˜ 
+	// ‰ñ“]‚ğ”½‰f
 	mtxRot = XMMatrixRotationRollPitchYaw(XMConvertToRadians(m_rot.x),
 		XMConvertToRadians(m_rot.y), XMConvertToRadians(m_rot.z));
 	mtxWorld = XMMatrixMultiply(mtxWorld, mtxRot);
 
-	// ç§»å‹•ã‚’åæ˜ 
+	// ˆÚ“®‚ğ”½‰f
 	mtxTranslate = XMMatrixTranslation(m_pos.x, m_pos.y, m_pos.z);
 	mtxWorld = XMMatrixMultiply(mtxWorld, mtxTranslate);
 
-	// ãƒ¯ãƒ¼ãƒ«ãƒ‰ãƒãƒˆãƒªãƒƒã‚¯ã‚¹è¨­å®š
+	// ƒ[ƒ‹ƒhƒ}ƒgƒŠƒbƒNƒXİ’è
 	XMStoreFloat4x4(&m_mtxWorld, mtxWorld);
 
-	//å¢ƒç•Œçƒç§»å‹•
+	//‹«ŠE‹…ˆÚ“®
 	MoveBSphere(m_nSphere, m_mtxWorld);
 
 
 }
 //==============================================================
-//æç”»
+//•`‰æ
 //==============================================================
 void Player_Boy::Draw() {
 	ID3D11DeviceContext* pDC = GetDeviceContext();
 
-	// ä¸é€æ˜éƒ¨åˆ†ã‚’æç”»
+	// •s“§–¾•”•ª‚ğ•`‰æ
 	m_model.Draw(pDC, m_mtxWorld, eOpacityOnly);
 
-	// åŠé€æ˜éƒ¨åˆ†ã‚’æç”»
-	SetBlendState(BS_ALPHABLEND);	// ã‚¢ãƒ«ãƒ•ã‚¡ãƒ–ãƒ¬ãƒ³ãƒ‰æœ‰åŠ¹
-	SetZWrite(false);				// Zãƒãƒƒãƒ•ã‚¡æ›´æ–°ã—ãªã„
+	// ”¼“§–¾•”•ª‚ğ•`‰æ
+	SetBlendState(BS_ALPHABLEND);	// ƒAƒ‹ƒtƒ@ƒuƒŒƒ“ƒh—LŒø
+	SetZWrite(false);				// Zƒoƒbƒtƒ@XV‚µ‚È‚¢
 	m_model.Draw(pDC, m_mtxWorld, eTransparentOnly);
-	SetZWrite(true);				// Zãƒãƒƒãƒ•ã‚¡æ›´æ–°ã™ã‚‹
-	SetBlendState(BS_NONE);			// ã‚¢ãƒ«ãƒ•ã‚¡ãƒ–ãƒ¬ãƒ³ãƒ‰ç„¡åŠ¹
+	SetZWrite(true);				// Zƒoƒbƒtƒ@XV‚·‚é
+	SetBlendState(BS_NONE);			// ƒAƒ‹ƒtƒ@ƒuƒŒƒ“ƒh–³Œø
 }
 
 //==============================================================
-//ç”·ã®å­åº§æ¨™å–å¾—
+//’j‚ÌqÀ•Wæ“¾
 //==============================================================
 XMFLOAT3 Player_Boy::GetBoyPos() {
 	return m_pos;
 }
 
 //==============================================================
-//ç”·ã®å­ç§»å‹•é‡å–å¾—
+//’j‚ÌqˆÚ“®—Êæ“¾
 //==============================================================
 XMFLOAT3 Player_Boy::GetBoyMove() {
 	return m_move;
 }
 
 //==============================================================
-//ç”·ã®å­ã®å½“ãŸã‚Šåˆ¤å®š
+//’j‚Ìq‚Ì“–‚½‚è”»’è
 //==============================================================
 bool Player_Boy::CheckField()
 {
