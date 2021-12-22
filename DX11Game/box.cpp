@@ -195,6 +195,8 @@ void Box::Release(int num) {
 bool Box::Destroy(int num) {
 	if (num < 0 || num >= MAX_BOX)
 		return false;
+	if (!m_box[num].m_nCat == CARRY)
+		return false;
 	m_box[num].m_state = false;
 	return true;
 }
@@ -219,7 +221,7 @@ XMFLOAT3 Box::GetPos(int num) {
 //=============================
 void Box::SetBoxPos(int num, XMFLOAT3 pos,int time) {
 	XMFLOAT3 boyPos = GetOld()->GetBoyPos();
-	if (!m_box[num].m_nCat == NORMAL)	// 今だけNORMALにしてあります(本来ならMOVE)
+	if (!m_box[num].m_nCat == CARRY)	// 今だけNORMALにしてあります(本来ならMOVE)
 		return;
 
 	// 過去用
@@ -257,7 +259,7 @@ void Box::SetBoxPos(int num, XMFLOAT3 pos,int time) {
 //	箱　座標反映
 //=============================
 void Box::SetOldBoxPos(int num) {
-	if (!m_box[num].m_nCat == NORMAL)	// 今だけNORMALにしてあります(本来ならMOVE)
+	if (!m_box[num].m_nCat == CARRY)	// 今だけNORMALにしてあります(本来ならMOVE)
 		return;
 
 	m_box[num].m_pos.x = m_box[num].m_oldPos.x;

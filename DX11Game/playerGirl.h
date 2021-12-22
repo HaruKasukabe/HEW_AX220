@@ -15,6 +15,7 @@ public:
 	void Draw();
 
 	XMFLOAT3 GetGirlPos();
+	XMFLOAT3 GetGirlMove();
 	void SetGirlPos(XMFLOAT3);
 
 	bool CheckField();
@@ -24,7 +25,6 @@ private:
 	XMFLOAT3		m_rot;		// 現在の向き
 	XMFLOAT3		m_rotDest;	// 目的の向き
 	XMFLOAT3		m_move;		// 移動量
-	bool			m_bJump;	// ジャンプ中フラグ
 	bool			m_bLand;	// 着地・接地フラグ
 
 	XMFLOAT4X4		m_mtxWorld;		// ワールドマトリックス

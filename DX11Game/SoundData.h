@@ -2,7 +2,7 @@
 
 enum eBGM {
 	BGM_000 = 0,	// BGM0
-
+	BGM_001,		// BGM1
 	MAX_BGM
 };
 
