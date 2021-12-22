@@ -48,20 +48,22 @@
 #define VK_Y	'Y'
 #define VK_Z	'Z'
 
-#define JOYSTICKID3		2
-#define JOYSTICKID4		3
-#define JOYSTICKID5		4
-#define JOYSTICKID6		5
-#define JOYSTICKID7		6
-#define JOYSTICKID8		7
-#define JOYSTICKID9		8
-#define JOYSTICKID10	9
-#define JOYSTICKID11	10
-#define JOYSTICKID12	11
-#define JOYSTICKID13	12
-#define JOYSTICKID14	13
-#define JOYSTICKID15	14
-#define JOYSTICKID16	15
+#define JOYSTICKID1		0  // Aボタン
+#define JOYSTICKID2		1  // Bボタン
+#define JOYSTICKID3		2  // Xボタン
+#define JOYSTICKID4		3  // Yボタン
+#define JOYSTICKID5		4  // LBボタン
+#define JOYSTICKID6		5  // RBボタン
+#define JOYSTICKID7		6  // VIEWボタン
+#define JOYSTICKID8		7  // MENUボタン
+#define JOYSTICKID9		8  // 左スティック押し込み
+#define JOYSTICKID10	9  // 右スティック押し込み
+#define JOYSTICKID11	10 // XBoxボタン
+#define JOYSTICKID12	11 // 
+#define JOYSTICKID13	12 // 
+#define JOYSTICKID14	13 // 
+#define JOYSTICKID15	14 // 
+#define JOYSTICKID16	15 // 
 
 #define MOUSEBUTTON_L	0
 #define MOUSEBUTTON_R	1
