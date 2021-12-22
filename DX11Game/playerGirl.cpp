@@ -14,6 +14,7 @@
 #define PLAYER_BOY_MODEL_PATH			"data/model/girl_walking.fbx"
 
 
+
 #define	PLAYER_BOY_VALUE_MOVE	(0.05f)		// 移動速度
 #define	PLAYER_BOY_RATE_MOVE	(0.20f)		// 移動慣性係数
 #define	PLAYER_BOY_VALUE_ROTATE	(9.0f)		// 回転速度
@@ -47,8 +48,10 @@ Player_Girl::Player_Girl()
 	m_rot = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	m_rotDest = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	g_BoyPos = XMFLOAT3(0.0f, 0.0f, 0.0f);
+	m_scl = XMFLOAT3(0.4f, 0.4f, 0.4f);
 	g_oldGirlPos = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	m_bLand = false;
+
 
 
 	// モデルデータの読み込み
@@ -82,10 +85,12 @@ void Player_Girl::Update() {
 	m_move.x -= SinDeg(rotCamera.y - 90.0f) * PLAYER_BOY_VALUE_MOVE;
 	m_move.z -= CosDeg(rotCamera.y - 90.0f) * PLAYER_BOY_VALUE_MOVE;
 
+
 	m_rotDest.y = rotCamera.y - 90.0f;
 
 	// 重力
 	m_move.y -= GRAVITY_GIRL;
+
 
 
 	// 目的の角度までの差分
@@ -171,12 +176,16 @@ void Player_Girl::Update() {
 		m_rotDest = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	}
 
-	XMMATRIX mtxWorld, mtxRot, mtxTranslate;
+	XMMATRIX mtxWorld, mtxScl, mtxRot, mtxTranslate;
 
 	// ワールドマトリックスの初期化
 	mtxWorld = XMMatrixIdentity();
 
+	mtxScl = XMMatrixScaling(m_scl.x, m_scl.y, m_scl.z);
+	mtxWorld = XMMatrixMultiply(mtxWorld, mtxScl);
+
 	// 回転を反映
+
 	mtxRot = XMMatrixRotationRollPitchYaw(XMConvertToRadians(m_rot.x),
 		XMConvertToRadians(m_rot.y), XMConvertToRadians(m_rot.z));
 	mtxWorld = XMMatrixMultiply(mtxWorld, mtxRot);
