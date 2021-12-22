@@ -55,7 +55,7 @@ Player_Boy::Player_Boy()
 	m_rotDest = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	m_bJump = false;
 	m_bLand = false;
-	m_nHund = 9999;
+	m_nHand = 9999;
 	g_nowHand = 9999;
 	timeJudge = 0;
 	g_nJumpCnt = 0;
@@ -214,23 +214,24 @@ void Player_Boy::Update() {
 	if (GetKeyPress(VK_A))
 	{
 		if (CollisionOldMap(XMFLOAT2(m_pos.x + 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nCategory == CARRY) {
-			m_nHund = CollisionOldMap(XMFLOAT2(m_pos.x + 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nObject;
+			m_nHand = CollisionOldMap(XMFLOAT2(m_pos.x + 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nObject;
 			g_nowHand = CollisionNowMap(XMFLOAT2(m_pos.x + 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nObject;
 		}
 		if (CollisionOldMap(XMFLOAT2(m_pos.x - 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nCategory == CARRY) {
-			m_nHund = CollisionOldMap(XMFLOAT2(m_pos.x - 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nObject;
+			m_nHand = CollisionOldMap(XMFLOAT2(m_pos.x - 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nObject;
 			g_nowHand = CollisionNowMap(XMFLOAT2(m_pos.x - 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nObject;
 		}
 	}
 	// オブジェクトを放す
 	if (GetKeyPress(VK_S))
 	{
-		m_nHund = 9999;
+		m_nHand = 9999;
 		GetBox()->SetOldBoxPos(g_nowHand);
+		g_nowHand = 9999;
 	}
 
 	// 持ち物を一緒に移動
-	GetBox()->SetBoxPos(m_nHund, m_move, 0);   // 過去の座標を反映
+	GetBox()->SetBoxPos(m_nHand, m_move, 0);   // 過去の座標を反映
 	GetBox()->SetBoxPos(g_nowHand, m_move, 1); // 未来の座標を一時保存
 
 
