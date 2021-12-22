@@ -13,7 +13,7 @@
 enum DIR { RIGHT, LEFT };
 
 //*****’è”’è‹`*****
-#define PLAYER_BOY_MODEL_PATH			"data/model/boy.fbx"
+#define PLAYER_BOY_MODEL_PATH			"data/model/boy_idol.fbx"
 
 #define	PLAYER_BOY_VALUE_MOVE	(0.15f)		// ˆÚ“®‘¬“x
 #define	PLAYER_BOY_RATE_MOVE		(0.20f)		// ˆÚ“®Šµ«ŒW”
