@@ -76,6 +76,9 @@ void SetScene(EScene eScene) {
 		case SCENE_TITLE:			//タイトル画面
 			UninitSceneTitle();
 			break;
+		case SCENE_STAGE:
+			UninitStageSelect();
+			break;
 		case SCENE_GAME:			//ゲーム画面
 			UninitSceneGame();
 			break;
@@ -93,6 +96,9 @@ void SetScene(EScene eScene) {
 	switch (g_eScene) {
 		case SCENE_TITLE:			//タイトル画面
 			InitSceneTitle();
+			break;
+		case SCENE_STAGE:
+			InitStageSelect();
 			break;
 		case SCENE_GAME:			//ゲーム画面
 			InitSceneGame();

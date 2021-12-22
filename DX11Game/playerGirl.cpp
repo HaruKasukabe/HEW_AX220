@@ -1,7 +1,7 @@
 //=============================================================================
 //
-// ƒvƒŒƒCƒ„[—‚Ìq [playerGirl.cpp]
-// ¬“í—Tq
+// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼å¥³ã®å­ [playerGirl.cpp]
+// å°æ¥ è£•å­
 //=============================================================================
 #include "playerGirl.h"
 #include "playerBoy.h"
@@ -10,13 +10,14 @@
 #include "collision.h"
 #include "map.h"
 
-//*****’è”’è‹`*****
-#define PLAYER_BOY_MODEL_PATH			"data/model/dog.x"
+//*****å®šæ•°å®šç¾©*****
+#define PLAYER_BOY_MODEL_PATH			"data/model/girl_walking.fbx"
 
-#define	PLAYER_BOY_VALUE_MOVE	(0.05f)		// ˆÚ“®‘¬“x
-#define	PLAYER_BOY_RATE_MOVE	(0.20f)		// ˆÚ“®Šµ«ŒW”
-#define	PLAYER_BOY_VALUE_ROTATE	(9.0f)		// ‰ñ“]‘¬“x
-#define	PLAYER_BOY_RATE_ROTATE	(0.20f)		// ‰ñ“]Šµ«ŒW”
+
+#define	PLAYER_BOY_VALUE_MOVE	(0.05f)		// ç§»å‹•é€Ÿåº¦
+#define	PLAYER_BOY_RATE_MOVE	(0.20f)		// ç§»å‹•æ…£æ€§ä¿‚æ•°
+#define	PLAYER_BOY_VALUE_ROTATE	(9.0f)		// å›è»¢é€Ÿåº¦
+#define	PLAYER_BOY_RATE_ROTATE	(0.20f)		// å›è»¢æ…£æ€§ä¿‚æ•°
 
 #define PLAYER_BOY_COLLISION_SIZE_X		4.0f
 #define PLAYER_BOY_COLLISION_SIZE_Y		4.0f
@@ -24,15 +25,15 @@
 
 #define PLAYER_BOY_COLLISION_SIZE_RAD	4.0f
 
-#define GRAVITY_GIRL	(2.0f)	// d—Í
+#define GRAVITY_GIRL	(2.0f)	// é‡åŠ›
 
-//*****ƒOƒ[ƒoƒ‹•Ï”*****
+//*****ã‚°ãƒ­ãƒ¼ãƒãƒ«å¤‰æ•°*****
 
-XMFLOAT3 g_BoyPos; // ’j‚Ìq‚ÌÀ•W
-XMFLOAT3 g_oldGirlPos; // ‘O‚ÌÀ•W
+XMFLOAT3 g_BoyPos; // ç”·ã®å­ã®åº§æ¨™
+XMFLOAT3 g_oldGirlPos; // å‰ã®åº§æ¨™
 
 //==============================================================
-//ºİ½Ä×¸À
+//ï½ºï¾ï½½ï¾„ï¾—ï½¸ï¾€
 //==============================================================
 Player_Girl::Player_Girl()
 {
@@ -40,7 +41,7 @@ Player_Girl::Player_Girl()
 	ID3D11Device* pDevice = GetDevice();
 	ID3D11DeviceContext* pDeviceContext = GetDeviceContext();
 
-	// ˆÊ’uE‰ñ“]EƒXƒP[ƒ‹‚Ì‰Šúİ’è
+	// ä½ç½®ãƒ»å›è»¢ãƒ»ã‚¹ã‚±ãƒ¼ãƒ«ã®åˆæœŸè¨­å®š
 	m_pos = XMFLOAT3(-100.0f, -45.0f, 0.0f);
 	m_move = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	m_rot = XMFLOAT3(0.0f, 0.0f, 0.0f);
@@ -50,44 +51,44 @@ Player_Girl::Player_Girl()
 	m_bLand = false;
 
 
-	// ƒ‚ƒfƒ‹ƒf[ƒ^‚Ì“Ç‚İ‚İ
+	// ãƒ¢ãƒ‡ãƒ«ãƒ‡ãƒ¼ã‚¿ã®èª­ã¿è¾¼ã¿
 	if (!m_model.Load(pDevice, pDeviceContext, PLAYER_BOY_MODEL_PATH)) {
-		MessageBoxA(GetMainWnd(), "ƒ‚ƒfƒ‹ƒf[ƒ^“Ç‚İ‚İƒGƒ‰[", "InitModel", MB_OK);
+		MessageBoxA(GetMainWnd(), "ãƒ¢ãƒ‡ãƒ«ãƒ‡ãƒ¼ã‚¿èª­ã¿è¾¼ã¿ã‚¨ãƒ©ãƒ¼", "InitModel", MB_OK);
 	}
 
 	//m_nCube = GetCube()->Create(XMFLOAT3(0.0f,0.0f,0.0f),XMFLOAT3(5.0f,5.0f,5.0f),m_mtxWorld);
 }
 //==============================================================
-//ÃŞ½Ä×¸À
+//ï¾ƒï¾ï½½ï¾„ï¾—ï½¸ï¾€
 //==============================================================
 Player_Girl::~Player_Girl() {
-	// ƒ‚ƒfƒ‹‚Ì‰ğ•ú
+	// ãƒ¢ãƒ‡ãƒ«ã®è§£æ”¾
 	m_model.Release();
-	//—§•û‘Ì‰ğ•ú
+	//ç«‹æ–¹ä½“è§£æ”¾
 	//GetCube()->Release(m_nCube);
 }
 //==============================================================
-//XV
+//æ›´æ–°
 //==============================================================
 void Player_Girl::Update() {
 	g_oldGirlPos = m_pos;
 
-	// ƒJƒƒ‰‚ÌŒü‚«æ“¾
+	// ã‚«ãƒ¡ãƒ©ã®å‘ãå–å¾—
 	XMFLOAT3 rotCamera = CCamera::Get()->GetAngle();
-	// ’j‚Ìq‚ÌÀ•W‚ğæ“¾
+	// ç”·ã®å­ã®åº§æ¨™ã‚’å–å¾—
 	g_BoyPos = GetOld()->GetPlayerBoy()->GetBoyPos();
 
-	// ‰EˆÚ“®
+	// å³ç§»å‹•
 	m_move.x -= SinDeg(rotCamera.y - 90.0f) * PLAYER_BOY_VALUE_MOVE;
 	m_move.z -= CosDeg(rotCamera.y - 90.0f) * PLAYER_BOY_VALUE_MOVE;
 
 	m_rotDest.y = rotCamera.y - 90.0f;
 
-	// d—Í
+	// é‡åŠ›
 	m_move.y -= GRAVITY_GIRL;
 
 
-	// –Ú“I‚ÌŠp“x‚Ü‚Å‚Ì·•ª
+	// ç›®çš„ã®è§’åº¦ã¾ã§ã®å·®åˆ†
 	float fDiffRotY = m_rotDest.y - m_rot.y;
 	if (fDiffRotY >= 180.0f) {
 		fDiffRotY -= 360.0f;
@@ -96,7 +97,7 @@ void Player_Girl::Update() {
 		fDiffRotY += 360.0f;
 	}
 
-	// –Ú“I‚ÌŠp“x‚Ü‚ÅŠµ«‚ğ‚©‚¯‚é
+	// ç›®çš„ã®è§’åº¦ã¾ã§æ…£æ€§ã‚’ã‹ã‘ã‚‹
 	m_rot.y += fDiffRotY * PLAYER_BOY_RATE_ROTATE;
 	if (m_rot.y >= 180.0f) {
 		m_rot.y -= 360.0f;
@@ -105,7 +106,7 @@ void Player_Girl::Update() {
 		m_rot.y += 360.0f;
 	}
 
-	// ˆÊ’uˆÚ“®
+	// ä½ç½®ç§»å‹•
 	m_pos.x += m_move.x;
 
 	m_pos.y += m_move.y;
@@ -113,7 +114,7 @@ void Player_Girl::Update() {
 
 
 
-	// ˆÚ“®—Ê‚ÉŠµ«‚ğ‚©‚¯‚é
+	// ç§»å‹•é‡ã«æ…£æ€§ã‚’ã‹ã‘ã‚‹
 	m_move.x += (0.0f - m_move.x) * PLAYER_BOY_RATE_MOVE;
 	m_move.y += (0.0f - m_move.y) * PLAYER_BOY_RATE_MOVE;
 	m_move.z += (0.0f - m_move.z) * PLAYER_BOY_RATE_MOVE;
@@ -139,7 +140,7 @@ void Player_Girl::Update() {
 		m_pos.y = 80.0f;
 	}
 
-	// “–‚½‚è”»’è
+	// å½“ãŸã‚Šåˆ¤å®š
 	OBJECT_INFO collision = CollisionNowMap(XMFLOAT2(m_pos.x, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y));
 	if (collision.m_nCategory > 0)
 	{
@@ -148,9 +149,9 @@ void Player_Girl::Update() {
 		else if (m_bLand == true)
 			m_pos.x = g_oldGirlPos.x;
 	}
-	//----’nŒ`‚Æ‚Ì“–‚½‚è”»’è----
+	//----åœ°å½¢ã¨ã®å½“ãŸã‚Šåˆ¤å®š----
 	if (CheckField())
-	{	//æ‚Á‚½ê‡‚Ìˆ—
+	{	//ä¹—ã£ãŸå ´åˆã®å‡¦ç†
 		m_move.y = 0.0f;
 		m_bLand = true;
 	}
@@ -163,7 +164,7 @@ void Player_Girl::Update() {
 	}
 
 	if (GetKeyPress(VK_RETURN)) {
-		// ƒŠƒZƒbƒg
+		// ãƒªã‚»ãƒƒãƒˆ
 		m_pos = XMFLOAT3(-100.0f, -45.0f, 0.0f);
 		m_move = XMFLOAT3(0.0f, 0.0f, 0.0f);
 		m_rot = XMFLOAT3(0.0f, 0.0f, 0.0f);
@@ -172,46 +173,46 @@ void Player_Girl::Update() {
 
 	XMMATRIX mtxWorld, mtxRot, mtxTranslate;
 
-	// ƒ[ƒ‹ƒhƒ}ƒgƒŠƒbƒNƒX‚Ì‰Šú‰»
+	// ãƒ¯ãƒ¼ãƒ«ãƒ‰ãƒãƒˆãƒªãƒƒã‚¯ã‚¹ã®åˆæœŸåŒ–
 	mtxWorld = XMMatrixIdentity();
 
-	// ‰ñ“]‚ğ”½‰f
+	// å›è»¢ã‚’åæ˜ 
 	mtxRot = XMMatrixRotationRollPitchYaw(XMConvertToRadians(m_rot.x),
 		XMConvertToRadians(m_rot.y), XMConvertToRadians(m_rot.z));
 	mtxWorld = XMMatrixMultiply(mtxWorld, mtxRot);
 
-	// ˆÚ“®‚ğ”½‰f
+	// ç§»å‹•ã‚’åæ˜ 
 	mtxTranslate = XMMatrixTranslation(m_pos.x, m_pos.y, m_pos.z);
 	mtxWorld = XMMatrixMultiply(mtxWorld, mtxTranslate);
 
-	// ƒ[ƒ‹ƒhƒ}ƒgƒŠƒbƒNƒXİ’è
+	// ãƒ¯ãƒ¼ãƒ«ãƒ‰ãƒãƒˆãƒªãƒƒã‚¯ã‚¹è¨­å®š
 	XMStoreFloat4x4(&m_mtxWorld, mtxWorld);
 
-	//—§•û‘ÌˆÚ“®
+	//ç«‹æ–¹ä½“ç§»å‹•
 	//GetCube()->Move(m_nCube,m_mtxWorld);
-	/*ƒeƒXƒg*/
+	/*ãƒ†ã‚¹ãƒˆ*/
 
-	//“–‚½‚è”»’è
+	//å½“ãŸã‚Šåˆ¤å®š
 }
 //==============================================================
-//•`‰æ
+//æç”»
 //==============================================================
 void Player_Girl::Draw() {
 	ID3D11DeviceContext* pDC = GetDeviceContext();
 
-	// •s“§–¾•”•ª‚ğ•`‰æ
+	// ä¸é€æ˜éƒ¨åˆ†ã‚’æç”»
 	m_model.Draw(pDC, m_mtxWorld, eOpacityOnly);
 
-	// ”¼“§–¾•”•ª‚ğ•`‰æ
-	SetBlendState(BS_ALPHABLEND);	// ƒAƒ‹ƒtƒ@ƒuƒŒƒ“ƒh—LŒø
-	SetZWrite(false);				// Zƒoƒbƒtƒ@XV‚µ‚È‚¢
+	// åŠé€æ˜éƒ¨åˆ†ã‚’æç”»
+	SetBlendState(BS_ALPHABLEND);	// ã‚¢ãƒ«ãƒ•ã‚¡ãƒ–ãƒ¬ãƒ³ãƒ‰æœ‰åŠ¹
+	SetZWrite(false);				// Zãƒãƒƒãƒ•ã‚¡æ›´æ–°ã—ãªã„
 	m_model.Draw(pDC, m_mtxWorld, eTransparentOnly);
-	SetZWrite(true);				// Zƒoƒbƒtƒ@XV‚·‚é
-	SetBlendState(BS_NONE);			// ƒAƒ‹ƒtƒ@ƒuƒŒƒ“ƒh–³Œø
+	SetZWrite(true);				// Zãƒãƒƒãƒ•ã‚¡æ›´æ–°ã™ã‚‹
+	SetBlendState(BS_NONE);			// ã‚¢ãƒ«ãƒ•ã‚¡ãƒ–ãƒ¬ãƒ³ãƒ‰ç„¡åŠ¹
 }
 
 //==============================================================
-//—‚Ìq‚ÌˆÊ’uæ“¾
+//å¥³ã®å­ã®ä½ç½®å–å¾—
 //==============================================================
 XMFLOAT3 Player_Girl::GetGirlPos()
 {
@@ -222,7 +223,7 @@ XMFLOAT3 Player_Girl::GetGirlMove()
 	return m_move;
 }
 //==============================================================
-//—‚Ìq‚ÌˆÊ’uİ’è
+//å¥³ã®å­ã®ä½ç½®è¨­å®š
 //==============================================================
 void Player_Girl::SetGirlPos(XMFLOAT3 pos)
 {
@@ -234,7 +235,7 @@ void Player_Girl::SetGirlPos(XMFLOAT3 pos)
 }
 
 //==============================================================
-//—‚Ìq‚Ì“–‚½‚è”»’è
+//å¥³ã®å­ã®å½“ãŸã‚Šåˆ¤å®š
 //==============================================================
 bool Player_Girl::CheckField()
 {

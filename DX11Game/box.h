@@ -53,4 +53,6 @@ private:
 	CAssimpModel	m_model;	//モデル
 	XMFLOAT4X4		m_mtxWorld;		// ワールドマトリックス
 	TBox			m_box[MAX_BOX];		//箱の情報
+
+	MATERIAL m_material;
 };

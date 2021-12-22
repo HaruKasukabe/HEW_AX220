@@ -13,6 +13,13 @@
 //マクロ定義
 //*********************************************************
 #define BOX_MODEL_PATH	"data/model/box001.x"
+#define BOX_TEXTURE_PATH "data/texture/stone.jpg"
+
+#define M_DIFFUSE			XMFLOAT4(1.0f,1.0f,1.0f,1.0f)
+#define M_SPECULAR			XMFLOAT4(0.0f,0.0f,0.0f,1.0f)
+#define M_POWER				(50.0f)
+#define M_AMBIENT			XMFLOAT4(1.0f,1.0f,1.0f,1.0f)
+#define M_EMISSIVE			XMFLOAT4(0.0f,0.0f,0.0f,1.0f)
 
 #define BOX_COLLISION_SIZE_X	4.0f
 #define BOX_COLLISION_SIZE_Y	4.0f
@@ -22,6 +29,7 @@
 //*********************************************************
 //グローバル変数
 //*********************************************************
+MESH g_boxMesh;
 
 //=============================
 //		ｺﾝｽﾄﾗｸﾀ
@@ -39,10 +47,32 @@ Box::Box(){
 		m_box[i].m_use = false;
 	}
 
+	g_boxMesh.pos = XMFLOAT3(0.0f, 0.0f, 0.0f);
+	g_boxMesh.rot = XMFLOAT3(0.0f, 0.0f, 0.0f);
+
+	// マテリアルの初期設定
+	m_material.Diffuse = M_DIFFUSE;
+	m_material.Ambient = M_AMBIENT;
+	m_material.Specular = M_SPECULAR;
+	m_material.Power = M_POWER;
+	m_material.Emissive = M_EMISSIVE;
+	g_boxMesh.pMaterial = &m_material;
+
 	// モデルデータの読み込み
 	if (!m_model.Load(pDevice, pDeviceContext, BOX_MODEL_PATH)) {
 		MessageBoxA(GetMainWnd(), "モデルデータ読み込みエラー", "InitModel", MB_OK);
 	}
+	// テクスチャの読み込み
+	static TAssimpMaterial material;
+	HRESULT hr = CreateTextureFromFile(pDevice, BOX_TEXTURE_PATH, &material.pTexture);
+	if(FAILED(hr))
+	{
+		MessageBoxA(GetMainWnd(), "テクスチャ読み込みエラー","石のテクスチャ", MB_OK);
+	}
+	m_model.SetMaterial(&material);
+
+
+	XMStoreFloat4x4(&g_boxMesh.mtxTexture, XMMatrixIdentity());
 
 }
 
@@ -52,12 +82,15 @@ Box::Box(){
 Box::~Box() {
 	// モデルの解放
 	m_model.Release();
+	ReleaseMesh(&g_boxMesh);
 }
 //=============================
 //		更新
 //=============================
 void Box::Update() {
 	XMMATRIX mtxWorld,mtxTranslate;
+	// メッシュ更新
+	UpdateMesh(&g_boxMesh);
 
 	for (int i = 0; i < MAX_BOX; ++i) 
 	{
@@ -94,7 +127,7 @@ void Box::Draw() {
 
 		// 不透明部分を描画
 		m_model.Draw(pDC, m_box[i].m_mtxWorld, eOpacityOnly);
-
+		DrawMesh(pDC, &g_boxMesh);
 		// 半透明部分を描画
 		SetBlendState(BS_ALPHABLEND);	// アルファブレンド有効
 		SetZWrite(false);				// Zバッファ更新しない
@@ -124,6 +157,7 @@ void Box::Draw(int num) {
 		SetBlendState(BS_ALPHABLEND);	// アルファブレンド有効
 		SetZWrite(false);				// Zバッファ更新しない
 		m_model.Draw(pDC, m_box[num].m_mtxWorld, eTransparentOnly);
+		DrawMesh(pDC, &g_boxMesh);
 		SetZWrite(true);				// Zバッファ更新する
 		SetBlendState(BS_NONE);			// アルファブレンド無効
 }
