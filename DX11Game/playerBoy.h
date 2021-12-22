@@ -30,5 +30,5 @@ private:
 
 	int				m_nSphere;		//‹«ŠE‹…”Ô†
 
-	int				m_nHund;	// ‚¿•¨
+	int				m_nHand;	// ‚¿•¨
 };
