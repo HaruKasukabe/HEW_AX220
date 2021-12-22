@@ -13,11 +13,15 @@ class BG {
 public:
 	BG();
 	 ~BG();
-	void Update();
+	void Update(int);
 	void Draw();
 private:
 	XMFLOAT2	m_pos;
-	XMFLOAT2	m_pos2;
+	XMFLOAT2	m_posNow;
+	XMFLOAT2	m_posNow2;
+	XMFLOAT2	m_posOld;
+	XMFLOAT2	m_posOld2;
 	XMFLOAT2	m_size;
-	ID3D11ShaderResourceView* m_pTexture;
+	XMFLOAT2	m_sizeGame;
+	ID3D11ShaderResourceView* m_pTexture[2];
 };

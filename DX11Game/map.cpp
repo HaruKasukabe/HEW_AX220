@@ -26,9 +26,7 @@ OBJECT_INFO g_nowMap[MAP_HEIGHT][MAP_WIDTH] =
 	{{0,0},{0,0},{2,0},{3,0},{0,0},{0,0},{0,0},{2,0},{0,0},{0,0},{0,0},{0,0},{3,0},{0,0},{1,0},{0,0},{0,0},{0,0},{0,0},},
 };
 
-// プロトタイプ宣言
-OBJECT_INFO CollisionBox(XMFLOAT2, XMFLOAT2, OBJECT_INFO);
-
+//*****グローバル変数*****
 static Box* g_pBox;
 
 //=============================
