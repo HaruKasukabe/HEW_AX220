@@ -21,6 +21,7 @@ private:
 	XMFLOAT3		m_rotDest;	// 目的の向き
 	XMFLOAT3		m_move;		// 移動量
 	int				m_dir;		//
+	XMFLOAT3		m_scl;		//オブジェクトのスケール
 	XMFLOAT4X4		m_mtxWorld;		// ワールドマトリックス
 
 	int				m_nSphere;		//境界球番号

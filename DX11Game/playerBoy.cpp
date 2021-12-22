@@ -45,6 +45,7 @@ Player_Boy::Player_Boy()
 	m_move = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	m_rot = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	m_rotDest = XMFLOAT3(0.0f, 0.0f, 0.0f);
+	m_scl = XMFLOAT3(0.4f, 0.4f, 0.4f);
 
 	// モデルデータの読み込み
 	if (!m_model.Load(pDevice, pDeviceContext, PLAYER_BOY_MODEL_PATH)) {
@@ -149,10 +150,14 @@ void Player_Boy::Update() {
 		GetBox()->Destroy(num);
 	}
 
-	XMMATRIX mtxWorld, mtxRot, mtxTranslate;
+	XMMATRIX mtxWorld, mtxScl, mtxRot, mtxTranslate;
 
 	// ワールドマトリックスの初期化
 	mtxWorld = XMMatrixIdentity();
+
+	//スケールを反映
+	mtxScl = XMMatrixScaling(m_scl.x, m_scl.y, m_scl.z);
+	mtxWorld = XMMatrixMultiply(mtxWorld, mtxScl);
 
 	// 回転を反映
 	mtxRot = XMMatrixRotationRollPitchYaw(XMConvertToRadians(m_rot.x),
