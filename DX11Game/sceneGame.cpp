@@ -18,8 +18,8 @@
 
 
 //*****定数定義*****
-#define OLD_SCROLL_SPEED	(4.0f)
-#define NOW_SCROLL_SPEED	(4.0f)
+#define OLD_SCROLL_SPEED	(1.0f)
+#define NOW_SCROLL_SPEED	(1.0f)
 
 
 //*****グローバル変数*****
@@ -144,45 +144,40 @@ void UpdateSceneGame() {
 	//ゴール更新
 	g_pGoal->Update(g_pNow->GetPlayerGirl()->GetGirlPos().x);
 
-	//画面をスクロール
+	//過去更新
+	g_pOld->Update();
+
+	//現在更新
+	g_pNow->Update();
+
+	//箱更新
+	//g_pBox->Update();
+	//マップ更新
+	UpdateMap();
+
+	// 画面をスクロール
 	if (g_fGirlOldPosX != g_pNow->GetPlayerGirl()->GetGirlPos().x)
 	{
-		//背景更新
-		g_pBG->Update();
+		//今の背景更新
+		g_pBG->Update(0);
 
 		viewPorts[0].TopLeftX -= g_pNow->GetPlayerGirl()->GetGirlMove().x * OLD_SCROLL_SPEED;
 		g_fGirlOldPosX = g_pNow->GetPlayerGirl()->GetGirlPos().x;
 	}
 	if (g_fBoyOldPosX != g_pOld->GetBoyPos().x)
-
 	{
-		//過去更新
-		g_pOld->Update();
+		//過去の背景更新
+		g_pBG->Update(1);
 
-		//現在更新
-		g_pNow->Update();
+		viewPorts[1].TopLeftX -= g_pOld->GetPlayerBoy()->GetBoyMove().x * NOW_SCROLL_SPEED;
+		g_fBoyOldPosX = g_pOld->GetBoyPos().x;
+	}
 
-		//箱更新
-		//g_pBox->Update();
-		//マップ更新
-		UpdateMap();
+	//ギミック更新
+	g_pGimmick->Update(g_pOld->GetBoyPos());
 
-		// 画面をスクロール
-		viewPorts[0].TopLeftX -= OLD_SCROLL_SPEED;
-		if (g_fBoyOldPosX != g_pOld->GetBoyPos().x)
-		{
-			viewPorts[1].TopLeftX -= g_pOld->GetPlayerBoy()->GetBoyMove().x * NOW_SCROLL_SPEED;
-			g_fBoyOldPosX = g_pOld->GetBoyPos().x;
-		}
-
-		//ギミック更新
-		g_pGimmick->Update(g_pOld->GetBoyPos());
-
-		if (GetKeyPress(VK_F1)) {
-			StartFadeOut(SCENE_TITLE);
-		}
-
-
+	if (GetKeyPress(VK_F1)) {
+		StartFadeOut(SCENE_TITLE);
 	}
 
 	CSound::Update();
@@ -209,14 +204,6 @@ void DrawSceneGame() {
 	g_pOld->Draw();
 	g_pGimmick->OldDraw();
 
-
-
-		//g_pBox->Draw();
-		
-
-	//g_pBox->Draw();
-
-
 	//ビューポートの設定を元に戻す
 	d3dDeviceContext->RSSetViewports(1, &viewPortsReset);
 
@@ -239,7 +226,3 @@ Old* GetOld() {
 Now* GetNow() {
 	return g_pNow;
 }
-
-
-
-

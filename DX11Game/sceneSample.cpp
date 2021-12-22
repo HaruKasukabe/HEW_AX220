@@ -166,7 +166,7 @@ void UpdateSceneSample() {
 	UpdateEnemy();
 
 	// ”wŒiXV
-	g_pBG->Update();
+	g_pBG->Update(5);
 
 	//UIXV
 	g_pUI->Update();

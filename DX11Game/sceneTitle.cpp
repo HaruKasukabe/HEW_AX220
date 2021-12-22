@@ -45,7 +45,7 @@ void UpdateSceneTitle() {
 	
 
 	// ”wŒiXV
-	g_pBG->Update();
+	g_pBG->Update(5);
 
 
 	/*if (GetKeyPress(VK_F1)) {

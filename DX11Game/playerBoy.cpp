@@ -226,6 +226,7 @@ void Player_Boy::Update() {
 	if (GetKeyPress(VK_S))
 	{
 		m_nHund = 9999;
+		g_nowHand = 9999;
 		GetBox()->SetOldBoxPos(g_nowHand);
 	}
 
