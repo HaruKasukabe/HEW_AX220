@@ -18,11 +18,6 @@
 #define SPAUSE_TEXTURE_PATH L"data/texture/triangle.png"
 #define MAX_TEXTURE (2)
 
-#define M_DIFFUSE			XMFLOAT4(1.0f,1.0f,1.0f,1.0f)
-#define M_SPECULAR			XMFLOAT4(0.0f,0.0f,0.0f,1.0f)
-#define M_POWER				(50.0f)
-#define M_AMBIENT			XMFLOAT4(1.0f,1.0f,1.0f,1.0f)
-#define M_EMISSIVE			XMFLOAT4(0.0f,0.0f,0.0f,1.0f)
 
 // ****************************************
 // ç\ë¢ëÃ
@@ -85,7 +80,7 @@ void UninitPause()
 
 bool UpdatePause()
 {
-	if (GetKeyTrigger(VK_M) && !g_pause[0].m_pause)
+	if (GetKeyTrigger(VK_M))
 	{
 			g_pause[0].m_pause = true;
 			g_pause[1].m_pause = true;
@@ -93,16 +88,15 @@ bool UpdatePause()
 
 	if (g_pause[0].m_pause)
 	{
-		if (GetKeyTrigger(VK_UP))
+		if (GetKeyTrigger(VK_UP)&& g_pause[1].m_pos.y < -31.0f)
 		{
-			if(g_pause[1].m_pos.y < -31.0f)
-			g_pause[1].m_pos.y += 120.0f;
+			g_pause[1].m_pos.y += 130.0f;
 		}
 		if (GetKeyTrigger(VK_DOWN))
 		{
-			if (g_pause[1].m_pos.y > -150.0f)
+			if (g_pause[1].m_pos.y > -160.0f)
 			{
-				g_pause[1].m_pos.y -= 120.0f;
+				g_pause[1].m_pos.y -= 130.0f;
 			}
 		}
 		if (GetKeyPress(VK_X) && g_pause[1].m_pos.y == -30.0f)
@@ -132,10 +126,14 @@ void DrawPause()
 		DrawPolygon(pDC);
 
 		pDC = GetDeviceContext();
+		SetBlendState(BS_ALPHABLEND);
+		SetZBuffer(false);
 		SetPolygonSize(100, 100);
 		SetPolygonPos(g_pause[1].m_pos.x, g_pause[1].m_pos.y);
 		SetPolygonAngle(0.0f);
 		SetPolygonTexture(g_pPauseTexture[1]);
 		DrawPolygon(pDC);
+		SetBlendState(BS_NONE);
+		SetZBuffer(true);
 	}
 }

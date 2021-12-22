@@ -11,7 +11,7 @@
 #include "map.h"
 
 //*****’è”’è‹`*****
-#define PLAYER_BOY_MODEL_PATH			"data/model/girl.fbx"
+#define PLAYER_BOY_MODEL_PATH			"data/model/girl_walking.fbx"
 
 #define	PLAYER_BOY_VALUE_MOVE	(0.10f)		// ˆÚ“®‘¬“x
 #define	PLAYER_BOY_RATE_MOVE	(0.20f)		// ˆÚ“®Šµ«ŒW”
