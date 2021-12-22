@@ -9,6 +9,8 @@ enum EScene {
 	SCENE_GAME,			//ゲーム画面
 	SCENE_RESULT,		//リザルト画面
 	SCENE_SAMPLE,
+	SCENE_MAP,
+	SCENE_STAGE,
 	
 	MAX_SCENE			//シーン総数
 };

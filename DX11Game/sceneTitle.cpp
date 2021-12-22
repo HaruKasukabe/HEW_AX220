@@ -55,6 +55,11 @@ void UpdateSceneTitle() {
 		StartFadeOut(SCENE_GAME);
 	}
 
+	if (GetKeyPress(VK_RETURN))
+	{
+		StartFadeOut(SCENE_MAP);
+
+	}
 
 	
 }

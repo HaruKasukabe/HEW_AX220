@@ -15,6 +15,7 @@ public:
 	void Draw();
 
 	Player_Boy* GetPlayerBoy();
+	XMFLOAT3 GetBoyPos();
 private:
 	MeshField* m_pMeshField;		//Ì¨°ÙÄÞ
 	Player_Boy* m_pPlayerBoy;		//’j‚ÌŽq

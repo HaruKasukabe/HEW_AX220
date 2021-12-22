@@ -53,3 +53,10 @@ void Now::Draw(){
 	//マップ描画
 	DrawNowMap();
 }
+
+//=============================
+//		男の子取得
+//=============================
+Player_Girl* Now::GetPlayerGirl() {
+	return m_pPlayerGirl;
+}

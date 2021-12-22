@@ -13,6 +13,8 @@ public:
 	~Now();
 	void Update();
 	void Draw();
+
+	Player_Girl* GetPlayerGirl();
 private:
 	MeshField* m_pMeshField;		//Ì¨°ÙÄŞ
 	Player_Girl* m_pPlayerGirl;		//—‚Ìq

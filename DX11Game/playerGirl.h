@@ -1,7 +1,7 @@
 //=============================================================================
 //
-// ƒvƒŒƒCƒ„[—‚Ìq [playerGirl.h]
-// ¬“í—Tq
+// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼å¥³ã®å­ [playerGirl.h]
+// å°æ¥ è£•å­
 //=============================================================================
 #pragma once
 #include "main.h"
@@ -13,15 +13,23 @@ public:
 	~Player_Girl();
 	void Update();
 	void Draw();
+
+	XMFLOAT3 GetGirlPos();
+	XMFLOAT3 GetGirlMove();
+	void SetGirlPos(XMFLOAT3);
+
+	bool CheckField();
 private:
-	CAssimpModel	m_model;	//ƒ‚ƒfƒ‹
-	XMFLOAT3		m_pos;		// Œ»İ‚ÌˆÊ’u
-	XMFLOAT3		m_rot;		// Œ»İ‚ÌŒü‚«
-	XMFLOAT3		m_rotDest;	// –Ú“I‚ÌŒü‚«
-	XMFLOAT3		m_move;		// ˆÚ“®—Ê
-	XMFLOAT3		m_scl;		//ƒIƒuƒWƒFƒNƒg‚ÌƒXƒP[ƒ‹
+	CAssimpModel	m_model;	//ãƒ¢ãƒ‡ãƒ«
+	XMFLOAT3		m_pos;		// ç¾åœ¨ã®ä½ç½®
+	XMFLOAT3		m_rot;		// ç¾åœ¨ã®å‘ã
+	XMFLOAT3		m_rotDest;	// ç›®çš„ã®å‘ã
+	XMFLOAT3		m_move;		// ç§»å‹•é‡
+	XMFLOAT3		m_scl;		//ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®ã‚¹ã‚±ãƒ¼ãƒ«
+	bool			m_bLand;	// ç€åœ°ãƒ»æ¥åœ°ãƒ•ãƒ©ã‚°
 
-	XMFLOAT4X4		m_mtxWorld;		// ƒ[ƒ‹ƒhƒ}ƒgƒŠƒbƒNƒX
 
-	int				m_nCube;		//—§•û‘Ì”Ô†
+	XMFLOAT4X4		m_mtxWorld;		// ãƒ¯ãƒ¼ãƒ«ãƒ‰ãƒãƒˆãƒªãƒƒã‚¯ã‚¹
+
+	int				m_nCube;		//ç«‹æ–¹ä½“ç•ªå·
 };

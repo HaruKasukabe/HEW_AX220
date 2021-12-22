@@ -71,3 +71,9 @@ void Old::Draw(){
 Player_Boy* Old::GetPlayerBoy() {
 	return m_pPlayerBoy;
 }
+
+// プレイヤーの座標を獲得
+XMFLOAT3 Old::GetBoyPos()
+{
+	return m_pPlayerBoy->GetBoyPos();
+}

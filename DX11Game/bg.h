@@ -17,6 +17,7 @@ public:
 	void Draw();
 private:
 	XMFLOAT2	m_pos;
+	XMFLOAT2	m_pos2;
 	XMFLOAT2	m_size;
 	ID3D11ShaderResourceView* m_pTexture;
 };

@@ -18,6 +18,8 @@
 #include <DirectXMath.h>
 #include "resource.h"
 
+#include "debugproc.h" // デバック用に呼び出すのが面倒なので、リリース前に削除
+
 // 本来はヘッダに書かない方が良い
 using namespace DirectX;
 
