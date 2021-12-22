@@ -138,14 +138,17 @@ void UpdateSceneGame() {
 	//‰æ–Ê‚ðƒXƒNƒ[ƒ‹
 	if (g_fGirlOldPosX != g_pNow->GetPlayerGirl()->GetGirlPos().x)
 	{
-		//”wŒiXV
-		g_pBG->Update();
+		//¡‚Ì”wŒiXV
+		g_pBG->Update(0);
 
 		viewPorts[0].TopLeftX -= g_pNow->GetPlayerGirl()->GetGirlMove().x * OLD_SCROLL_SPEED;
 		g_fGirlOldPosX = g_pNow->GetPlayerGirl()->GetGirlPos().x;
 	}
 	if (g_fBoyOldPosX != g_pOld->GetBoyPos().x)
 	{
+		//‰ß‹Ž‚Ì”wŒiXV
+		g_pBG->Update(1);
+
 		viewPorts[1].TopLeftX -= g_pOld->GetPlayerBoy()->GetBoyMove().x * NOW_SCROLL_SPEED;
 		g_fBoyOldPosX = g_pOld->GetBoyPos().x;
 	}
