@@ -10,4 +10,6 @@ LPCWSTR g_pszFileSE[MAX_SE] = {
 	L"cancel000.wav",						// キャンセル音
 	L"select000.wav",						// 選択音
 	L"nyu3.mp3",							// 弾発射音
+	L"movecursor.mp3",                      // ポーズ選択音
+	L"decision.mp3",                        // ポーズ決定
 };

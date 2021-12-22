@@ -46,7 +46,7 @@ Player_Girl::Player_Girl()
 	m_rot = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	m_rotDest = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	g_BoyPos = XMFLOAT3(0.0f, 0.0f, 0.0f);
-	m_scl = XMFLOAT3(0.4f, 0.4f, 0.4f);
+	m_scl = XMFLOAT3(1.0f, 1.0f, 1.0f);
 	g_oldGirlPos = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	m_bLand = false;
 

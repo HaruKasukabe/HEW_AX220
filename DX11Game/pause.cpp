@@ -10,6 +10,7 @@
 #include "mesh.h"
 #include "input.h"
 #include "scene.h"
+#include "Sound.h"
 
 // ***************************************
 // É}ÉNÉçíËã`
@@ -91,22 +92,26 @@ bool UpdatePause()
 		if (GetKeyTrigger(VK_UP)&& g_pause[1].m_pos.y < -31.0f)
 		{
 			g_pause[1].m_pos.y += 130.0f;
+			CSound::Play(SE_PAUSE_SELECT);
 		}
 		if (GetKeyTrigger(VK_DOWN))
 		{
 			if (g_pause[1].m_pos.y > -160.0f)
 			{
 				g_pause[1].m_pos.y -= 130.0f;
+				CSound::Play(SE_PAUSE_SELECT);
 			}
 		}
 		if (GetKeyPress(VK_X) && g_pause[1].m_pos.y == -30.0f)
 		{
 			g_pause[0].m_pause = false;
 			g_pause[1].m_pause = false;
+			CSound::Play(SE_DECIDE);
 		}
-		else if (GetKeyPress(VK_X) && g_pause[1].m_pos.y == -150.0f)
+		else if (GetKeyPress(VK_X) && g_pause[1].m_pos.y == -160.0f)
 		{
 			SetScene(SCENE_STAGE);	
+			CSound::Play(SE_DECIDE);
 			return true;
 		}
 	}

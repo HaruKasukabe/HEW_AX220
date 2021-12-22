@@ -13,7 +13,7 @@
 enum DIR { RIGHT, LEFT };
 
 //*****定数定義*****
-#define PLAYER_BOY_MODEL_PATH			"data/model/boy_idol.fbx"
+#define PLAYER_BOY_MODEL_PATH			"data/model/girl_walking.fbx"
 
 
 #define	PLAYER_BOY_VALUE_MOVE	(0.15f)		// 移動速度

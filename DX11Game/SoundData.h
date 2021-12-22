@@ -7,10 +7,12 @@ enum eBGM {
 };
 
 enum eSE {
-	SE_DECIDE = 0,	// 決定音
-	SE_CANCEL,		// キャンセル音
-	SE_SELECT,		// 選択音
-	SE_SHOT,		// 弾発射音
+	SE_DECIDE = 0,	 // 決定音
+	SE_CANCEL,		 // キャンセル音
+	SE_SELECT,       // 選択音
+	SE_SHOT,		 // 弾発射音
+	SE_PAUSE_SELECT, // ポーズ選択
+	SE_DECISION,     // ポーズ決定
 
 	MAX_SE
 };
