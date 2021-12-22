@@ -55,10 +55,13 @@ Player_Boy::Player_Boy()
 	m_rotDest = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	m_bJump = false;
 	m_bLand = false;
+	m_bHave = false;
 	m_nHand = 9999;
 	g_nowHand = 9999;
 	timeJudge = 0;
 	g_nJumpCnt = 0;
+
+	m_pad = GetJoyState(0);
 
 	// モデルデータの読み込み
 	if (!m_model.Load(pDevice, pDeviceContext, PLAYER_BOY_MODEL_PATH)) {
@@ -83,10 +86,12 @@ void Player_Boy::Update() {
 	g_oldBoyPos = m_pos;
 	g_nJumpCnt--;
 
+	m_pad = GetJoyState(0);
+
 	// カメラの向き取得
 	XMFLOAT3 rotCamera = CCamera::Get()->GetAngle();
 	XMFLOAT3 oldPos = m_pos;
-	if (GetKeyPress(VK_LEFT)) {
+	if (GetKeyPress(VK_LEFT)|| (31000 >= m_pad->dwPOV && m_pad->dwPOV >= 18001)/*左*/) {
 		m_dir = LEFT;
 			// 左移動
 			m_move.x -= SinDeg(rotCamera.y + 90.0f) * PLAYER_BOY_VALUE_MOVE;
@@ -94,7 +99,7 @@ void Player_Boy::Update() {
 
 			m_rotDest.y = rotCamera.y + 90.0f;
 
-	}else if (GetKeyPress(VK_RIGHT)) {
+	}else if (GetKeyPress(VK_RIGHT) || (13500 >= m_pad->dwPOV && m_pad->dwPOV >= 4001)/*右*/) {
 		m_dir = RIGHT;
 			// 右移動
 			m_move.x -= SinDeg(rotCamera.y - 90.0f) * PLAYER_BOY_VALUE_MOVE;
@@ -102,7 +107,7 @@ void Player_Boy::Update() {
 
 			m_rotDest.y = rotCamera.y - 90.0f;
 	}
-	if (GetKeyTrigger(VK_UP))
+	if (GetKeyTrigger(VK_UP)|| (35999 >= m_pad->dwPOV >= 31001 || m_pad->dwPOV <= 4000))
 	{
 		// ジャンプ
 		if (g_nJumpCnt < 0)
@@ -198,7 +203,7 @@ void Player_Boy::Update() {
 	}
 
 	//攻撃の当たり判定
-	if (GetKeyPress(VK_SPACE)||GetKeyPress(JOYSTICKID1))
+	if (GetKeyPress(VK_SPACE)|| GetJoyTrigger(0,JOYSTICKID1))
 	{
 		/*仮*/OBJECT_INFO object = CollisionOldMap(XMFLOAT2(m_pos.x + 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y));
 		if(object.m_nCategory == BREAK)
@@ -211,23 +216,26 @@ void Player_Boy::Update() {
 
 
 	// オブジェクトを持つ
-	if (GetKeyPress(VK_A))
+	if ((GetKeyPress(VK_A) || GetJoyTrigger(0, JOYSTICKID1)) && !m_bHave)
 	{
 		if (CollisionOldMap(XMFLOAT2(m_pos.x + 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nCategory == CARRY) {
 			m_nHand = CollisionOldMap(XMFLOAT2(m_pos.x + 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nObject;
 			g_nowHand = CollisionNowMap(XMFLOAT2(m_pos.x + 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nObject;
+			m_bHave = true;
 		}
 		if (CollisionOldMap(XMFLOAT2(m_pos.x - 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nCategory == CARRY) {
 			m_nHand = CollisionOldMap(XMFLOAT2(m_pos.x - 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nObject;
 			g_nowHand = CollisionNowMap(XMFLOAT2(m_pos.x - 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nObject;
+			m_bHave = true;
 		}
 	}
 	// オブジェクトを放す
-	if (GetKeyPress(VK_S))
+	if ((GetKeyPress(VK_S) || GetJoyTrigger(0, JOYSTICKID2)) &&m_bHave)
 	{
 		m_nHand = 9999;
 		GetBox()->SetOldBoxPos(g_nowHand);
 		g_nowHand = 9999;
+		m_bHave = false;
 	}
 
 	// 持ち物を一緒に移動

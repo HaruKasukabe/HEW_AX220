@@ -37,6 +37,7 @@ static MESH	g_pauseMesh;					// 構造体
 static PAUSE g_pause[MAX_TEXTURE];
 static ID3D11ShaderResourceView* g_pPauseTexture[MAX_TEXTURE];
 static EScene g_Scene = SCENE_NONE;
+static JOYINFOEX *pad; // ゲームパッド十字ボタンのため
 
 
 HRESULT InitPause()
@@ -51,6 +52,8 @@ HRESULT InitPause()
 		g_pause[i].m_size = XMFLOAT2(0.0f, 0.0f);
 		g_pause[i].m_pause = false; // デフォルトでfalse(止まっていない)
 	}
+
+	pad = GetJoyState(0);
 
 	// テクスチャの読み込み
 	HRESULT hr;
@@ -81,7 +84,10 @@ void UninitPause()
 
 bool UpdatePause()
 {
-	if (GetKeyTrigger(VK_M))
+	pad = GetJoyState(0);
+	PrintDebugProc("state:%d\n", pad->dwPOV);
+
+	if (GetKeyTrigger(VK_M)||GetJoyButton(0,JOYSTICKID8))
 	{
 			g_pause[0].m_pause = true;
 			g_pause[1].m_pause = true;
@@ -89,12 +95,13 @@ bool UpdatePause()
 
 	if (g_pause[0].m_pause)
 	{
-		if (GetKeyTrigger(VK_UP)&& g_pause[1].m_pos.y < -31.0f)
+		if ((GetKeyTrigger(VK_UP)||(35999 >=pad->dwPOV >=27001||pad->dwPOV <= 8999)/*上*/)
+			&& g_pause[1].m_pos.y < -31.0f)
 		{
 			g_pause[1].m_pos.y += 130.0f;
 			CSound::Play(SE_PAUSE_SELECT);
 		}
-		if (GetKeyTrigger(VK_DOWN))
+		if (GetKeyTrigger(VK_DOWN)||(pad->dwPOV >= 9001 && pad->dwPOV <= 26999)/*下*/)
 		{
 			if (g_pause[1].m_pos.y > -160.0f)
 			{
@@ -102,13 +109,13 @@ bool UpdatePause()
 				CSound::Play(SE_PAUSE_SELECT);
 			}
 		}
-		if (GetKeyPress(VK_X) && g_pause[1].m_pos.y == -30.0f)
+		if ((GetKeyPress(VK_X) || GetJoyButton(0, JOYSTICKID1)) && g_pause[1].m_pos.y == -30.0f)
 		{
 			g_pause[0].m_pause = false;
 			g_pause[1].m_pause = false;
 			CSound::Play(SE_DECIDE);
 		}
-		else if (GetKeyPress(VK_X) && g_pause[1].m_pos.y == -160.0f)
+		else if ((GetKeyPress(VK_X)||GetJoyButton(0,JOYSTICKID1)) && g_pause[1].m_pos.y == -160.0f)
 		{
 			SetScene(SCENE_STAGE);	
 			CSound::Play(SE_DECIDE);
