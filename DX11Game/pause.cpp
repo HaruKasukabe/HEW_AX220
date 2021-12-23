@@ -95,13 +95,15 @@ bool UpdatePause()
 
 	if (g_pause[0].m_pause)
 	{
-		if ((GetKeyTrigger(VK_UP)||(35999 >=pad->dwPOV >=27001||pad->dwPOV <= 8999)/*ã*/)
-			&& g_pause[1].m_pos.y < -31.0f)
+		if (GetKeyTrigger(VK_UP) || (g_GamePadNum > 0 && (35999 >= pad->dwPOV >= 27001 || pad->dwPOV <= 8999)/*ã*/))
 		{
-			g_pause[1].m_pos.y += 130.0f;
-			CSound::Play(SE_PAUSE_SELECT);
+			if (g_pause[1].m_pos.y < -31.0f)
+			{
+				g_pause[1].m_pos.y += 130.0f;
+					CSound::Play(SE_PAUSE_SELECT);
+			}
 		}
-		if (GetKeyTrigger(VK_DOWN)||(pad->dwPOV >= 9001 && pad->dwPOV <= 26999)/*‰º*/)
+		if (GetKeyTrigger(VK_DOWN)||((g_GamePadNum > 0 && (pad->dwPOV >= 9001 && pad->dwPOV <= 26999))/*‰º*/))
 		{
 			if (g_pause[1].m_pos.y > -160.0f)
 			{
@@ -109,7 +111,7 @@ bool UpdatePause()
 				CSound::Play(SE_PAUSE_SELECT);
 			}
 		}
-		if ((GetKeyPress(VK_X) || GetJoyButton(0, JOYSTICKID1)) && g_pause[1].m_pos.y == -30.0f)
+		if ((GetKeyPress(VK_X) || (GetJoyButton(0, JOYSTICKID1)) && g_pause[1].m_pos.y == -30.0f))
 		{
 			g_pause[0].m_pause = false;
 			g_pause[1].m_pause = false;
