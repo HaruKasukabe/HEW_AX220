@@ -21,8 +21,8 @@
 #define M_AMBIENT			XMFLOAT4(1.0f,1.0f,1.0f,1.0f)
 #define M_EMISSIVE			XMFLOAT4(0.0f,0.0f,0.0f,1.0f)
 
-#define BOX_COLLISION_SIZE_X	4.0f
-#define BOX_COLLISION_SIZE_Y	4.0f
+#define BOX_COLLISION_SIZE_X	5.0f
+#define BOX_COLLISION_SIZE_Y	16.0f
 
 #define BOY_HUND_LONG			10.0f
 
@@ -49,6 +49,7 @@ Box::Box(){
 
 	g_boxMesh.pos = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	g_boxMesh.rot = XMFLOAT3(0.0f, 0.0f, 0.0f);
+	m_scl = XMFLOAT3(2.0f, 2.0f, 2.0f);
 
 	// マテリアルの初期設定
 	m_material.Diffuse = M_DIFFUSE;
@@ -88,7 +89,7 @@ Box::~Box() {
 //		更新
 //=============================
 void Box::Update() {
-	XMMATRIX mtxWorld,mtxTranslate;
+	XMMATRIX mtxWorld,mtxScl,mtxTranslate;
 	// メッシュ更新
 	UpdateMesh(&g_boxMesh);
 
@@ -100,6 +101,10 @@ void Box::Update() {
 		}
 		// ワールドマトリックスの初期化
 		mtxWorld = XMMatrixIdentity();
+
+		mtxScl = XMMatrixScaling(m_scl.x, m_scl.y, m_scl.z);
+		mtxWorld = XMMatrixMultiply(mtxWorld, mtxScl);
+
 		// 移動を反映
 		mtxTranslate = XMMatrixTranslation(m_box[i].m_pos.x, m_box[i].m_pos.y, m_box[i].m_pos.z);
 		mtxWorld = XMMatrixMultiply(mtxWorld, mtxTranslate);

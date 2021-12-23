@@ -476,6 +476,8 @@ HRESULT Init(HWND hWnd, BOOL bWindow)
 		return hr;
 	}
 
+	g_GamePadNum = GetJoyCount();
+
 	return hr;
 }
 
