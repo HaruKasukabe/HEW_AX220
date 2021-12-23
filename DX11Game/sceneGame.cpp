@@ -139,7 +139,7 @@ void UpdateSceneGame() {
 	//箱更新
 	//g_pBox->Update();
 	//マップ更新
-	UpdateMap();
+	//UpdateMap();
 
 	//ゴール更新
 	g_pGoal->Update(g_pNow->GetPlayerGirl()->GetGirlPos().x);
@@ -152,6 +152,7 @@ void UpdateSceneGame() {
 
 	//箱更新
 	//g_pBox->Update();
+
 	//マップ更新
 	UpdateMap();
 

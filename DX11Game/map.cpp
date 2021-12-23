@@ -13,7 +13,7 @@ OBJECT_INFO g_oldMap[MAP_HEIGHT][MAP_WIDTH] =
 	{{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},},
 	{{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},},
 	{{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},},
-	{{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{3,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},},
+	{{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{3,0,1},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},},
 	{{0,0},{0,0},{0,0},{3,0},{0,0},{0,0},{0,0},{1,0},{1,0},{1,0},{1,0},{1,0},{1,0},{1,0},{2,0},{0,0},{0,0},{0,0},{0,0},},
 };
 
@@ -22,8 +22,8 @@ OBJECT_INFO g_nowMap[MAP_HEIGHT][MAP_WIDTH] =
 	{{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},},
 	{{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},},
 	{{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},},
-	{{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{3,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},},
-	{{0,0},{0,0},{0,0},{3,0},{0,0},{0,0},{0,0},{1,0},{1,0},{1,0},{1,0},{1,0},{1,0},{1,0},{2,0},{0,0},{0,0},{0,0},{0,0},},
+	{{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{3,0,1},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},},
+	{{0,0},{0,0},{0,0},{3,0},{0,0},{0,0},{0,0},{1,0},{1,0},{1,0},{1,0},{1,0},{1,0},{1,0},{0,0},{0,0},{0,0},{0,0},{0,0},},
 };
 
 //*****グローバル変数*****
@@ -83,26 +83,14 @@ void UninitMap() {
 			switch (g_oldMap[i][j].m_nCategory) {
 			case 0:
 				break;
-			case NORMAL:
-				g_pBox->Release(g_oldMap[i][j].m_nObject);
-				break;
-			case BREAK:
-				g_pBox->Release(g_oldMap[i][j].m_nObject);
-				break;
-			case CARRY:
+			default:
 				g_pBox->Release(g_oldMap[i][j].m_nObject);
 				break;
 			}
 			switch (g_nowMap[i][j].m_nCategory) {
 			case 0:
 				break;
-			case NORMAL:
-				g_pBox->Release(g_nowMap[i][j].m_nObject);
-				break;
-			case BREAK:
-				g_pBox->Release(g_nowMap[i][j].m_nObject);
-				break;
-			case CARRY:
+			default:
 				g_pBox->Release(g_nowMap[i][j].m_nObject);
 				break;
 			}
@@ -115,6 +103,73 @@ void UninitMap() {
 //		更新
 //=============================
 void UpdateMap() {
+	XMFLOAT2 BoxPos;
+	XMFLOAT2 UnderBoxPos;
+	// 箱に重力をかける
+	for (int i = 0; i < MAP_HEIGHT - 1; ++i) {
+		for (int j = 0; j < MAP_WIDTH; ++j) {
+			switch (g_oldMap[i][j].m_nGravity)
+			{
+			case 0:
+				break;
+			case 1:
+				BoxPos = XMFLOAT2(g_pBox->GetPos(g_oldMap[i][j].m_nObject).x, g_pBox->GetPos(g_oldMap[i][j].m_nObject).y);
+				for (int l = i; l < i + 2; ++l)
+				{
+					for (int m = 0; m < MAP_WIDTH; ++m)
+					{
+						if (!g_oldMap[l + 1][m].m_nObject > 0) continue;
+
+						UnderBoxPos = XMFLOAT2(g_pBox->GetPos(g_oldMap[l + 1][m].m_nObject).x, g_pBox->GetPos(g_oldMap[l + 1][m].m_nObject).y);
+
+						if (BoxPos.x <= UnderBoxPos.x - 2.0f)
+						{
+							g_pBox->SetGravity(g_oldMap[i][j].m_nObject, 1);
+						}
+						else if (UnderBoxPos.x + 2.0f <= BoxPos.x)
+						{
+							g_pBox->SetGravity(g_oldMap[i][j].m_nObject, 1);
+						}
+						else
+						{
+							g_pBox->SetGravity(g_oldMap[i][j].m_nObject, 0);
+						}
+					}
+				}
+				break;
+			}
+			switch (g_nowMap[i][j].m_nGravity) 
+			{
+			case 0:
+				break;
+			default:
+				BoxPos = XMFLOAT2(g_pBox->GetPos(g_nowMap[i][j].m_nObject).x, g_pBox->GetPos(g_nowMap[i][j].m_nObject).y);
+				for (int l = i; l < i + 2; ++l)
+				{
+					for (int m = 0; m < MAP_WIDTH; ++m)
+					{
+						if (!g_nowMap[l + 1][m].m_nObject > 0) continue;
+
+						UnderBoxPos = XMFLOAT2(g_pBox->GetPos(g_nowMap[l + 1][m].m_nObject).x, g_pBox->GetPos(g_nowMap[l + 1][m].m_nObject).y);
+
+						if (BoxPos.x <= UnderBoxPos.x - 2.0f)
+						{
+							g_pBox->SetGravity(g_nowMap[i][j].m_nObject, 1);
+						}
+						else if (UnderBoxPos.x + 2.0f <= BoxPos.x)
+						{
+							g_pBox->SetGravity(g_nowMap[i][j].m_nObject, 1);
+						}
+						else
+						{
+							g_pBox->SetGravity(g_oldMap[i][j].m_nObject, 0);
+						}
+					}
+				}
+				break;
+			}
+		}
+	}
 	g_pBox->Update();
 }
 
