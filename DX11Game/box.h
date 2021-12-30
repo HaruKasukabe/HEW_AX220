@@ -19,6 +19,8 @@ struct TBox {
 	XMFLOAT4X4	m_mtxWorld;	// ワールドマトリックス
 	int			m_nTime;	// 今か過去か
 	int			m_nCat;		// 箱の種類
+	XMFLOAT3    m_scl;      // 箱のスケール
+	XMFLOAT2    m_collision;// 当たり判定の大きさ
 };
 
 //*****マクロ定義*****

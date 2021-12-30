@@ -6,6 +6,7 @@
 #include "map.h"
 #include "box.h"
 #include "collision.h"
+#include "DWBox.h"
 
 
 OBJECT_INFO g_oldMap[MAP_HEIGHT][MAP_WIDTH] =
@@ -28,12 +29,14 @@ OBJECT_INFO g_nowMap[MAP_HEIGHT][MAP_WIDTH] =
 
 //*****ÉOÉçÅ[ÉoÉãïœêî*****
 static Box* g_pBox;
+static DWBox* g_pDWBox;
 
 //=============================
 //		èâä˙âª
 //=============================
 HRESULT InitMap() {
 	g_pBox = new Box;
+	g_pDWBox = new DWBox;
 	for (int i = 0; i < MAP_HEIGHT; ++i) {
 		for (int j = 0; j < MAP_WIDTH; ++j) {
 			switch (g_oldMap[i][j].m_nCategory) {
@@ -41,7 +44,7 @@ HRESULT InitMap() {
 				g_oldMap[i][j].m_bOnBox = false;
 				break;
 			case NORMAL:
-				g_oldMap[i][j].m_nObject = g_pBox->Create(XMFLOAT3(-90.0f+ j * 10.0f, -10 - i * 10.0f,0.0f), g_oldMap[i][j].m_nCategory);
+				g_oldMap[i][j].m_nObject = g_pDWBox->Create(XMFLOAT3(-90.0f+ j * 10.0f, -10 - i * 10.0f,0.0f), g_oldMap[i][j].m_nCategory);
 				g_oldMap[i][j].m_bOnBox = false;
 				break;
 			case BREAK:
@@ -58,7 +61,7 @@ HRESULT InitMap() {
 				g_nowMap[i][j].m_bOnBox = false;
 				break;
 			case NORMAL:
-				g_nowMap[i][j].m_nObject = g_pBox->Create(XMFLOAT3(-90.0f + j * 10.0f, -10 - i * 10.0f, 0.0f), g_nowMap[i][j].m_nCategory);
+				g_nowMap[i][j].m_nObject = g_pDWBox->Create(XMFLOAT3(-90.0f + j * 10.0f, -10 - i * 10.0f, 0.0f), g_nowMap[i][j].m_nCategory);
 				g_nowMap[i][j].m_bOnBox = false;
 				break;
 			case BREAK:
@@ -85,12 +88,15 @@ void UninitMap() {
 				break;
 			case NORMAL:
 				g_pBox->Release(g_oldMap[i][j].m_nObject);
+				g_pDWBox->Release(g_oldMap[i][j].m_nObject);
 				break;
 			case BREAK:
 				g_pBox->Release(g_oldMap[i][j].m_nObject);
+				g_pDWBox->Release(g_oldMap[i][j].m_nObject);
 				break;
 			case CARRY:
 				g_pBox->Release(g_oldMap[i][j].m_nObject);
+				g_pDWBox->Release(g_oldMap[i][j].m_nObject);
 				break;
 			}
 			switch (g_nowMap[i][j].m_nCategory) {
@@ -98,17 +104,21 @@ void UninitMap() {
 				break;
 			case NORMAL:
 				g_pBox->Release(g_nowMap[i][j].m_nObject);
+				g_pDWBox->Release(g_nowMap[i][j].m_nObject);
 				break;
 			case BREAK:
 				g_pBox->Release(g_nowMap[i][j].m_nObject);
+				g_pDWBox->Release(g_nowMap[i][j].m_nObject);
 				break;
 			case CARRY:
 				g_pBox->Release(g_nowMap[i][j].m_nObject);
+				g_pDWBox->Release(g_nowMap[i][j].m_nObject);
 				break;
 			}
 		}
 	}
 	delete g_pBox;
+	delete g_pDWBox;
 }
 
 //=============================
@@ -116,6 +126,7 @@ void UninitMap() {
 //=============================
 void UpdateMap() {
 	g_pBox->Update();
+	g_pDWBox->Update();
 }
 
 //=============================
@@ -128,7 +139,7 @@ void DrawOldMap() {
 			case 0:
 				break;
 			case NORMAL:
-				g_pBox->Draw(g_oldMap[i][j].m_nObject);
+				g_pDWBox->Draw(g_oldMap[i][j].m_nObject);
 				break;
 			case BREAK:
 				g_pBox->Draw(g_oldMap[i][j].m_nObject);
@@ -151,7 +162,7 @@ void DrawNowMap() {
 			case 0:
 				break;
 			case NORMAL:
-				g_pBox->Draw(g_nowMap[i][j].m_nObject);
+				g_pDWBox->Draw(g_nowMap[i][j].m_nObject);
 				break;
 			case BREAK:
 				g_pBox->Draw(g_nowMap[i][j].m_nObject);
@@ -177,12 +188,12 @@ OBJECT_INFO CollisionOldMap(XMFLOAT2 pos, XMFLOAT2 size) {
 				break;
 			case NORMAL:
 				//boxÇ∆ÇÃìñÇΩÇËîªíË
-				if (!g_pBox->GetState(g_oldMap[i][j].m_nObject))
+				if (!g_pDWBox->GetState(g_oldMap[i][j].m_nObject))
 				{
 					break;
 				}
-				BoxPos = XMFLOAT2(g_pBox->GetPos(g_oldMap[i][j].m_nObject).x, g_pBox->GetPos(g_oldMap[i][j].m_nObject).y);
-				BoxSize = g_pBox->GetSize();
+				BoxPos = XMFLOAT2(g_pDWBox->GetPos(g_oldMap[i][j].m_nObject).x, g_pDWBox->GetPos(g_oldMap[i][j].m_nObject).y);
+				BoxSize = g_pDWBox->GetSize(g_oldMap[i][j].m_nObject);
 				if (CollisionRect(pos, size, BoxPos, BoxSize))
 				{
 					if (pos.y >= BoxPos.y + BoxSize.y + 4.0f)
@@ -249,12 +260,12 @@ OBJECT_INFO	CollisionNowMap(XMFLOAT2 pos, XMFLOAT2 size) {
 				break;
 			case NORMAL:
 				//boxÇ∆ÇÃìñÇΩÇËîªíË
-				if (!g_pBox->GetState(g_nowMap[i][j].m_nObject))
+				if (!g_pDWBox->GetState(g_nowMap[i][j].m_nObject))
 				{
 					break;
 				}
-				BoxPos = XMFLOAT2(g_pBox->GetPos(g_nowMap[i][j].m_nObject).x, g_pBox->GetPos(g_nowMap[i][j].m_nObject).y);
-				BoxSize = g_pBox->GetSize();
+				BoxPos = XMFLOAT2(g_pDWBox->GetPos(g_nowMap[i][j].m_nObject).x, g_pDWBox->GetPos(g_nowMap[i][j].m_nObject).y);
+				BoxSize = g_pDWBox->GetSize(g_oldMap[i][j].m_nObject);
 				if (CollisionRect(pos, size, BoxPos, BoxSize))
 				{
 					if (pos.y >= BoxPos.y + BoxSize.y + 4.0f)
