@@ -13,7 +13,7 @@
 enum DIR { RIGHT, LEFT };
 
 //*****定数定義*****
-#define PLAYER_BOY_MODEL_PATH			"data/model/boy_idol.fbx"
+#define PLAYER_BOY_MODEL_PATH			"data/model/boy_walking.fbx"
 
 
 #define	PLAYER_BOY_VALUE_MOVE	(0.15f)		// 移動速度
@@ -289,6 +289,13 @@ XMFLOAT3 Player_Boy::GetBoyMove() {
 }
 
 //==============================================================
+//男の子の持ち物取得
+//==============================================================
+int Player_Boy::GetBoyHand() {
+	return m_nHand;
+}
+
+//==============================================================
 //男の子の当たり判定
 //==============================================================
 bool Player_Boy::CheckField()
@@ -311,11 +318,6 @@ bool Player_Boy::CheckField()
 			if (boxPos.x + 2.0f <= m_pos.x) continue;
 
 			if (m_pos.y >= boxPos.y + 6.0f && g_oldBoyPos.y <= boxPos.y + 6.0f)
-			{
-				m_pos.y = boxPos.y + 18.0f;
-				return true;
-			}
-			else if (m_pos.y <= boxPos.y + 6.0f)
 			{
 				m_pos.y = boxPos.y + 18.0f;
 				return true;

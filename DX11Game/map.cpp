@@ -104,68 +104,28 @@ void UninitMap() {
 //=============================
 void UpdateMap() {
 	XMFLOAT2 BoxPos;
-	XMFLOAT2 UnderBoxPos;
+	XMFLOAT2 BoxSize = XMFLOAT2(g_pBox->GetSize());
 	// î†Ç…èdóÕÇÇ©ÇØÇÈ
-	for (int i = 0; i < MAP_HEIGHT - 1; ++i) {
+	for (int i = 0; i < MAP_HEIGHT; ++i) {
 		for (int j = 0; j < MAP_WIDTH; ++j) {
 			switch (g_oldMap[i][j].m_nGravity)
 			{
 			case 0:
 				break;
 			case 1:
-				BoxPos = XMFLOAT2(g_pBox->GetPos(g_oldMap[i][j].m_nObject).x, g_pBox->GetPos(g_oldMap[i][j].m_nObject).y);
-				for (int l = i; l < i + 2; ++l)
-				{
-					for (int m = 0; m < MAP_WIDTH; ++m)
-					{
-						if (!g_oldMap[l + 1][m].m_nObject > 0) continue;
-
-						UnderBoxPos = XMFLOAT2(g_pBox->GetPos(g_oldMap[l + 1][m].m_nObject).x, g_pBox->GetPos(g_oldMap[l + 1][m].m_nObject).y);
-
-						if (BoxPos.x <= UnderBoxPos.x - 2.0f)
-						{
-							g_pBox->SetGravity(g_oldMap[i][j].m_nObject, 1);
-						}
-						else if (UnderBoxPos.x + 2.0f <= BoxPos.x)
-						{
-							g_pBox->SetGravity(g_oldMap[i][j].m_nObject, 1);
-						}
-						else
-						{
-							g_pBox->SetGravity(g_oldMap[i][j].m_nObject, 0);
-						}
-					}
-				}
+				BoxPos = XMFLOAT2(g_pBox->GetPos(g_oldMap[i][j].m_nObject).x, g_pBox->GetPos(g_oldMap[i][j].m_nObject).y - 16.0f);
+				if(!(CollisionOldMap(BoxPos, BoxSize).m_nCategory > 0))
+					g_pBox->SetGravity(g_oldMap[i][j].m_nObject, 1);
 				break;
 			}
 			switch (g_nowMap[i][j].m_nGravity) 
 			{
 			case 0:
 				break;
-			default:
-				BoxPos = XMFLOAT2(g_pBox->GetPos(g_nowMap[i][j].m_nObject).x, g_pBox->GetPos(g_nowMap[i][j].m_nObject).y);
-				for (int l = i; l < i + 2; ++l)
-				{
-					for (int m = 0; m < MAP_WIDTH; ++m)
-					{
-						if (!g_nowMap[l + 1][m].m_nObject > 0) continue;
-
-						UnderBoxPos = XMFLOAT2(g_pBox->GetPos(g_nowMap[l + 1][m].m_nObject).x, g_pBox->GetPos(g_nowMap[l + 1][m].m_nObject).y);
-
-						if (BoxPos.x <= UnderBoxPos.x - 2.0f)
-						{
-							g_pBox->SetGravity(g_nowMap[i][j].m_nObject, 1);
-						}
-						else if (UnderBoxPos.x + 2.0f <= BoxPos.x)
-						{
-							g_pBox->SetGravity(g_nowMap[i][j].m_nObject, 1);
-						}
-						else
-						{
-							g_pBox->SetGravity(g_oldMap[i][j].m_nObject, 0);
-						}
-					}
-				}
+			case 1:
+				BoxPos = XMFLOAT2(g_pBox->GetPos(g_nowMap[i][j].m_nObject).x, g_pBox->GetPos(g_nowMap[i][j].m_nObject).y - 16.0f);
+				if (!(CollisionNowMap(BoxPos, BoxSize).m_nCategory > 0))
+					g_pBox->SetGravity(g_nowMap[i][j].m_nObject, 1);
 				break;
 			}
 		}

@@ -289,11 +289,6 @@ bool Player_Girl::CheckField()
 				m_pos.y = boxPos.y + 18.0f;
 				return true;
 			}
-			else if (m_pos.y <= boxPos.y + 6.0f)
-			{
-				m_pos.y = boxPos.y + 18.0f;
-				return true;
-			}
 			else if (m_pos.y <= boxPos.y - 5.0f && g_oldGirlPos.y >= boxPos.y - 5.0f)
 			{
 				m_pos.y = boxPos.y - 5.0f;
