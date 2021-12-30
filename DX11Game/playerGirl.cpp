@@ -256,10 +256,15 @@ bool Player_Girl::CheckField()
 				break;
 			}
 			boxPos = pBox->GetPos(pNowMap->m_nObject);
-			if (m_pos.x <= boxPos.x - 8.0f) continue;
-			if (boxPos.x + 8.0f <= m_pos.x) continue;
+			if (m_pos.x <= boxPos.x - 2.0f) continue;
+			if (boxPos.x + 2.0f <= m_pos.x) continue;
 
 			if (m_pos.y >= boxPos.y + 18.0f && g_oldGirlPos.y <= boxPos.y + 18.0f)
+			{
+				m_pos.y = boxPos.y + 18.0f;
+				return true;
+			}
+			else if (m_pos.y <= boxPos.y + 6.0f)
 			{
 				m_pos.y = boxPos.y + 18.0f;
 				return true;
@@ -276,8 +281,8 @@ bool Player_Girl::CheckField()
 				break;
 			}
 			boxPos = pBox->GetPos(pNowMap->m_nObject);
-			if (m_pos.x <= boxPos.x - 8.0f) continue;
-			if (boxPos.x + 8.0f <= m_pos.x) continue;
+			if (m_pos.x <= boxPos.x - 2.0f) continue;
+			if (boxPos.x + 2.0f <= m_pos.x) continue;
 
 			if (m_pos.y >= boxPos.y + 18.0f && g_oldGirlPos.y <= boxPos.y + 18.0f)
 			{

@@ -9,7 +9,8 @@
 //*****構造体定義*****
 typedef struct {
 	int m_nCategory;	//オブジェクトの種類
-	int m_nObject;		//オブジェクト管理番号
+	int	m_nObject;		//オブジェクト管理番号
+	int m_nGravity;		//箱に重力がかかってるかどうか(1:有, 0:無し)
 	bool m_bOnBox;		//上の判定用
 }OBJECT_INFO;
 

@@ -135,52 +135,53 @@ void UpdateSceneGame() {
 
 
 	if (!PauseFlg)
+
+	//箱更新
+	//g_pBox->Update();
+	//マップ更新
+	//UpdateMap();
+
+	//ゴール更新
+	g_pGoal->Update(g_pNow->GetPlayerGirl()->GetGirlPos().x);
+
+	//過去更新
+	g_pOld->Update();
+
+	//現在更新
+	g_pNow->Update();
+
+	//箱更新
+	//g_pBox->Update();
+
+	//マップ更新
+	UpdateMap();
+
+	// 画面をスクロール
+	if (g_fGirlOldPosX != g_pNow->GetPlayerGirl()->GetGirlPos().x)
 	{
-		//箱更新
-		//g_pBox->Update();
-		//マップ更新
-		UpdateMap();
+		//今の背景更新
+		g_pBG->Update(0);
 
-		//ゴール更新
-		g_pGoal->Update(g_pNow->GetPlayerGirl()->GetGirlPos().x);
-
-		//過去更新
-		g_pOld->Update();
-
-		//現在更新
-		g_pNow->Update();
-
-		//箱更新
-		//g_pBox->Update();
-		//マップ更新
-		UpdateMap();
-
-		// 画面をスクロール
-		if (g_fGirlOldPosX != g_pNow->GetPlayerGirl()->GetGirlPos().x)
-		{
-			//今の背景更新
-			g_pBG->Update(0);
-
-			viewPorts[0].TopLeftX -= g_pNow->GetPlayerGirl()->GetGirlMove().x * OLD_SCROLL_SPEED;
-			g_fGirlOldPosX = g_pNow->GetPlayerGirl()->GetGirlPos().x;
-		}
-		if (g_fBoyOldPosX != g_pOld->GetBoyPos().x)
-		{
-			//過去の背景更新
-			g_pBG->Update(1);
-
-			viewPorts[1].TopLeftX -= g_pOld->GetPlayerBoy()->GetBoyMove().x * NOW_SCROLL_SPEED;
-			g_fBoyOldPosX = g_pOld->GetBoyPos().x;
-		}
-
-		//ギミック更新
-		g_pGimmick->Update(g_pOld->GetBoyPos());
-
-		if (GetKeyPress(VK_F1)) {
-			StartFadeOut(SCENE_TITLE);
-		}
+		viewPorts[0].TopLeftX -= g_pNow->GetPlayerGirl()->GetGirlMove().x * OLD_SCROLL_SPEED;
+		g_fGirlOldPosX = g_pNow->GetPlayerGirl()->GetGirlPos().x;
 	}
-		CSound::Update();
+	if (g_fBoyOldPosX != g_pOld->GetBoyPos().x)
+	{
+		//過去の背景更新
+		g_pBG->Update(1);
+
+		viewPorts[1].TopLeftX -= g_pOld->GetPlayerBoy()->GetBoyMove().x * NOW_SCROLL_SPEED;
+		g_fBoyOldPosX = g_pOld->GetBoyPos().x;
+	}
+
+	//ギミック更新
+	g_pGimmick->Update(g_pOld->GetBoyPos());
+
+	if (GetKeyPress(VK_F1)) {
+		StartFadeOut(SCENE_TITLE);
+	}
+
+	CSound::Update();
 }
 
 //=============================
