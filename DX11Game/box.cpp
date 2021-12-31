@@ -21,8 +21,9 @@
 #define M_AMBIENT			XMFLOAT4(1.0f,1.0f,1.0f,1.0f)
 #define M_EMISSIVE			XMFLOAT4(0.0f,0.0f,0.0f,1.0f)
 
-#define BOX_COLLISION_SIZE_X	5.0f
-#define BOX_COLLISION_SIZE_Y	16.0f
+#define BOX_COLLISION_SIZE_X	4.0f
+#define BOX_COLLISION_SIZE_Y	4.0f
+#define BOX_GRAVITY				0.15f
 
 #define BOY_HUND_LONG			10.0f
 
@@ -329,4 +330,14 @@ int Box::CreateOldNow(XMFLOAT3 pos, int nTime) {
 		return i;
 	}
 	return -1;
+}
+
+//=======================================
+//	d—ÍÝ’è
+//=======================================
+void Box::SetGravity(int nObject, int nPat)
+{
+	if(GetOld()->GetPlayerBoy()->GetBoyHand() != nObject)
+		if(!(m_box[nObject].m_pos.y <= -49.0f))
+			m_box[nObject].m_pos.y -= BOX_GRAVITY;
 }
