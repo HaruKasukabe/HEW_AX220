@@ -113,7 +113,7 @@ void UpdateMap() {
 			case 0:
 				break;
 			case 1:
-				BoxPos = XMFLOAT2(g_pBox->GetPos(g_oldMap[i][j].m_nObject).x, g_pBox->GetPos(g_oldMap[i][j].m_nObject).y - 16.0f);
+				BoxPos = XMFLOAT2(g_pBox->GetPos(g_oldMap[i][j].m_nObject).x, g_pBox->GetPos(g_oldMap[i][j].m_nObject).y - 34.0f);
 				if(!(CollisionOldMap(BoxPos, BoxSize).m_nCategory > 0))
 					g_pBox->SetGravity(g_oldMap[i][j].m_nObject, 1);
 				break;
@@ -123,7 +123,7 @@ void UpdateMap() {
 			case 0:
 				break;
 			case 1:
-				BoxPos = XMFLOAT2(g_pBox->GetPos(g_nowMap[i][j].m_nObject).x, g_pBox->GetPos(g_nowMap[i][j].m_nObject).y - 16.0f);
+				BoxPos = XMFLOAT2(g_pBox->GetPos(g_nowMap[i][j].m_nObject).x, g_pBox->GetPos(g_nowMap[i][j].m_nObject).y - 34.0f);
 				if (!(CollisionNowMap(BoxPos, BoxSize).m_nCategory > 0))
 					g_pBox->SetGravity(g_nowMap[i][j].m_nObject, 1);
 				break;
@@ -200,7 +200,7 @@ OBJECT_INFO CollisionOldMap(XMFLOAT2 pos, XMFLOAT2 size) {
 				BoxSize = g_pBox->GetSize();
 				if (CollisionRect(pos, size, BoxPos, BoxSize))
 				{
-					if (pos.y >= BoxPos.y + BoxSize.y + 4.0f)
+					if (pos.y >= BoxPos.y + BoxSize.y)
 						g_oldMap[i][j].m_bOnBox = true;
 					else
 						g_oldMap[i][j].m_bOnBox = false;
@@ -218,7 +218,7 @@ OBJECT_INFO CollisionOldMap(XMFLOAT2 pos, XMFLOAT2 size) {
 				BoxSize = g_pBox->GetSize();
 				if (CollisionRect(pos, size, BoxPos, BoxSize))
 				{
-					if (pos.y >= BoxPos.y + BoxSize.y + 4.0f)
+					if (pos.y >= BoxPos.y + BoxSize.y)
 						g_oldMap[i][j].m_bOnBox = true;
 					else
 						g_oldMap[i][j].m_bOnBox = false;
@@ -236,7 +236,7 @@ OBJECT_INFO CollisionOldMap(XMFLOAT2 pos, XMFLOAT2 size) {
 				BoxSize = g_pBox->GetSize();
 				if (CollisionRect(pos, size, BoxPos, BoxSize))
 				{
-					if (pos.y >= BoxPos.y + BoxSize.y + 4.0f)
+					if (pos.y >= BoxPos.y + BoxSize.y)
 						g_oldMap[i][j].m_bOnBox = true;
 					else
 						g_oldMap[i][j].m_bOnBox = false;
@@ -272,7 +272,7 @@ OBJECT_INFO	CollisionNowMap(XMFLOAT2 pos, XMFLOAT2 size) {
 				BoxSize = g_pBox->GetSize();
 				if (CollisionRect(pos, size, BoxPos, BoxSize))
 				{
-					if (pos.y >= BoxPos.y + BoxSize.y + 4.0f)
+					if (pos.y >= BoxPos.y + BoxSize.y)
 						g_nowMap[i][j].m_bOnBox = true;
 					else
 						g_nowMap[i][j].m_bOnBox = false;
@@ -290,7 +290,7 @@ OBJECT_INFO	CollisionNowMap(XMFLOAT2 pos, XMFLOAT2 size) {
 				BoxSize = g_pBox->GetSize();
 				if (CollisionRect(pos, size, BoxPos, BoxSize))
 				{
-					if (pos.y >= BoxPos.y + BoxSize.y + 4.0f)
+					if (pos.y >= BoxPos.y + BoxSize.y)
 						g_nowMap[i][j].m_bOnBox = true;
 					else
 						g_nowMap[i][j].m_bOnBox = false;
@@ -308,7 +308,7 @@ OBJECT_INFO	CollisionNowMap(XMFLOAT2 pos, XMFLOAT2 size) {
 				BoxSize = g_pBox->GetSize();
 				if (CollisionRect(pos, size, BoxPos, BoxSize))
 				{
-					if (pos.y >= BoxPos.y + BoxSize.y + 4.0f)
+					if (pos.y >= BoxPos.y + BoxSize.y)
 						g_nowMap[i][j].m_bOnBox = true;
 					else
 						g_nowMap[i][j].m_bOnBox = false;
