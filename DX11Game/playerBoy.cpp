@@ -26,8 +26,8 @@ enum DIR { RIGHT, LEFT };
 
 #define PLAYER_BOY_COLLISION_SIZE_RAD	4.0f
 
-#define JUMP_POWER		(17.0f)
-#define JUMP_WHILE		(15)
+#define JUMP_POWER		(23.0f)
+#define JUMP_WHILE		(25)
 #define GRAVITY_BOY		(1.0f)	// 重力
 #define RESIST_X		(0.7f)
 
@@ -66,6 +66,7 @@ Player_Boy::Player_Boy()
 	if (!m_model.Load(pDevice, pDeviceContext, PLAYER_BOY_MODEL_PATH)) {
 		MessageBoxA(GetMainWnd(), "モデルデータ読み込みエラー", "InitModel", MB_OK);
 	}
+
 	//境界球生成
 	m_nSphere = CreateBSphere(XMFLOAT3(0.0f, 0.0f, 0.0f), PLAYER_BOY_COLLISION_SIZE_RAD, m_mtxWorld);
 }
@@ -238,8 +239,11 @@ void Player_Boy::Update() {
 	}
 
 	// 持ち物を一緒に移動
-	GetBox()->SetBoxPos(m_nHand, m_move, 0);   // 過去の座標を反映
-	GetBox()->SetBoxPos(g_nowHand, m_move, 1); // 未来の座標を一時保存
+	if (m_nHand != 9999)
+	{
+		GetBox()->SetBoxPos(m_nHand, m_move, 0);   // 過去の座標を反映
+		GetBox()->SetBoxPos(g_nowHand, m_move, 1); // 未来の座標を一時保存
+	}
 
 
 	XMMATRIX mtxWorld, mtxRot, mtxTranslate;
@@ -328,12 +332,6 @@ bool Player_Boy::CheckField()
 			{
 				m_pos.y = boxPos.y + 18.0f;
 				return true;
-			}
-			else if (m_pos.y <= boxPos.y - 5.0f && g_oldBoyPos.y >= boxPos.y - 5.0f)
-			{
-				m_pos.y = boxPos.y - 5.0f;
-				m_move.y = 0.0f;
-				return false;
 			}
 			break;
 		}

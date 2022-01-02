@@ -22,7 +22,7 @@
 #define M_EMISSIVE			XMFLOAT4(0.0f,0.0f,0.0f,1.0f)
 
 #define BOX_COLLISION_SIZE_X	4.0f
-#define BOX_COLLISION_SIZE_Y	4.0f
+#define BOX_COLLISION_SIZE_Y	14.0f
 #define BOX_GRAVITY				0.15f
 
 #define BOY_HUND_LONG			10.0f
@@ -227,7 +227,7 @@ XMFLOAT3 Box::GetPos(int num) {
 //=============================
 void Box::SetBoxPos(int num, XMFLOAT3 pos,int time) {
 	XMFLOAT3 boyPos = GetOld()->GetBoyPos();
-	if (!m_box[num].m_nCat == CARRY)
+	if (!(m_box[num].m_nCat == CARRY))
 		return;
 
 	// ‰ß‹Ž—p
