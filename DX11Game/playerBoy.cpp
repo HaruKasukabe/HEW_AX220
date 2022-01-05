@@ -7,6 +7,7 @@
 #include "input.h"
 #include "map.h"
 #include "bsphere.h"
+#include "DWBox.h"
 
 
 //*****列挙型*****
@@ -232,6 +233,14 @@ void Player_Boy::Update() {
 	// オブジェクトを放す
 	if ((GetKeyPress(VK_S) || GetJoyTrigger(0, JOYSTICKID2)) &&m_bHave)
 	{
+		XMFLOAT3 aPos = GetBox()->GetPos(m_nHand);
+		XMFLOAT2 aSize = GetBox()->GetSize();
+	    XMFLOAT3 bPos = GetBox()->GetPos(g_nowHand);
+		bool aFlg = GetDWBox()->Collision(XMFLOAT2(aPos.x, aPos.y), aSize);
+		if (aFlg) {
+			GetBox()->Destroy(g_nowHand);
+			GetHalfBox()->CreateOldNow(bPos,1);
+		}
 		m_nHand = 9999;
 		GetBox()->SetOldBoxPos(g_nowHand);
 		g_nowHand = 9999;
@@ -299,8 +308,7 @@ XMFLOAT3 Player_Boy::GetBoyMove() {
 //==============================================================
 //男の子の当たり判定
 //==============================================================
-bool Player_Boy::CheckField()
-{
+bool Player_Boy::CheckField(){
 	Box* pBox = GetBox();
 	OBJECT_INFO* pOldMap = GetMap(1);
 
@@ -332,4 +340,11 @@ bool Player_Boy::CheckField()
 			break;
 		}
 	}
+}
+
+// =========================================================
+// 男の子がものを持っているかのフラグを渡す
+// =========================================================
+bool Player_Boy::GetHaveFlg() {
+	return m_bHave;
 }

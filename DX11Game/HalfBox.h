@@ -1,5 +1,5 @@
 //===================================================
-//	動かない床[DWBox.h]
+//	ハーフブロック[HalfBox.h]
 //  武井遥都
 //=====================================================
 #pragma once
@@ -7,14 +7,15 @@
 #include "mesh.h"
 #include "AssimpModel.h"
 #include "box.h"
+#include "DWBox.h"
 
 //*****マクロ定義*****
-#define MAX_DWBOX		(100)
+#define MAX_HALFBOX		(100)
 
-class DWBox  : public  Box{
+class HalfBox : public  Box {
 public:
-	DWBox();
-	~DWBox();
+	HalfBox();
+	~HalfBox();
 	void Update();
 	void Draw();
 	void Draw(int num);
@@ -28,7 +29,6 @@ public:
 	XMFLOAT2 GetSize(int num);
 
 	bool GetState(int num);
-	bool Collision(XMFLOAT2 pos, XMFLOAT2 size);
 
 	void DrawOldNow(int nTime);
 	int CreateOldNow(XMFLOAT3 pos, int nTime/*,XMFLOAT3 scl*/);
@@ -36,7 +36,7 @@ public:
 private:
 	CAssimpModel	m_model;	//モデル
 	XMFLOAT4X4		m_mtxWorld;		// ワールドマトリックス
-	TBox			m_box[MAX_DWBOX];		//動かない床の情報
+	TBox			m_box[MAX_HALFBOX];		//動かない床の情報
 
 	MATERIAL m_material;
 };

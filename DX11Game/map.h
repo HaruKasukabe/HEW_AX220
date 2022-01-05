@@ -6,6 +6,8 @@
 #pragma once
 #include "main.h"
 #include "box.h"
+#include "DWBox.h"
+#include "HalfBox.h"
 //*****構造体定義*****
 typedef struct {
 	int m_nCategory;	//オブジェクトの種類
@@ -38,4 +40,6 @@ OBJECT_INFO CollisionOldMap(XMFLOAT2 pos, XMFLOAT2 size);
 OBJECT_INFO	CollisionNowMap(XMFLOAT2 pos, XMFLOAT2 size);
 
 Box* GetBox();
+DWBox* GetDWBox();
+HalfBox* GetHalfBox();
 OBJECT_INFO* GetMap(int);

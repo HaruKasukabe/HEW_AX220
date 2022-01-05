@@ -7,6 +7,8 @@
 #include "box.h"
 #include "collision.h"
 #include "DWBox.h"
+#include "HalfBox.h"
+#include "playerBoy.h"
 
 
 OBJECT_INFO g_oldMap[MAP_HEIGHT][MAP_WIDTH] =
@@ -30,6 +32,8 @@ OBJECT_INFO g_nowMap[MAP_HEIGHT][MAP_WIDTH] =
 //*****グローバル変数*****
 static Box* g_pBox;
 static DWBox* g_pDWBox;
+static HalfBox* g_pHalfBox;
+static Player_Boy* g_pPlayerBoy;
 
 //=============================
 //		初期化
@@ -37,6 +41,8 @@ static DWBox* g_pDWBox;
 HRESULT InitMap() {
 	g_pBox = new Box;
 	g_pDWBox = new DWBox;
+	g_pHalfBox = new HalfBox;
+	g_pPlayerBoy = new Player_Boy;
 	for (int i = 0; i < MAP_HEIGHT; ++i) {
 		for (int j = 0; j < MAP_WIDTH; ++j) {
 			switch (g_oldMap[i][j].m_nCategory) {
@@ -119,6 +125,8 @@ void UninitMap() {
 	}
 	delete g_pBox;
 	delete g_pDWBox;
+	delete g_pHalfBox;
+	delete g_pPlayerBoy;
 }
 
 //=============================
@@ -127,6 +135,27 @@ void UninitMap() {
 void UpdateMap() {
 	g_pBox->Update();
 	g_pDWBox->Update();
+	g_pHalfBox->Update();
+	static bool m_flg;
+	m_flg = g_pPlayerBoy->GetHaveFlg();
+	if (m_flg) {
+		for (int i = 0; i < MAP_HEIGHT; ++i) {
+			for (int j = 0; j < MAP_WIDTH; ++j) {
+				switch (g_nowMap[i][j].m_nObject) {
+				case 0:
+					break;
+				case NORMAL:
+					break;
+				case BREAK:
+					break;
+				case CARRY:
+
+					break;
+				}
+			}
+
+		}
+	}
 }
 
 //=============================
@@ -324,6 +353,21 @@ OBJECT_INFO	CollisionNowMap(XMFLOAT2 pos, XMFLOAT2 size) {
 Box* GetBox() {
 	return g_pBox;
 }
+
+//==========================
+//	動かない箱　取得
+//==========================
+DWBox* GetDWBox() {
+	return g_pDWBox;
+}
+
+//==========================
+//	ハーフブロック　取得
+//==========================
+HalfBox* GetHalfBox() {
+	return g_pHalfBox;
+}
+
 //==========================
 //		マップ　取得
 //==========================

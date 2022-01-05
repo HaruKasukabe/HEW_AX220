@@ -17,6 +17,7 @@ public:
 	XMFLOAT3 GetBoyPos();
 	XMFLOAT3 GetBoyMove();
 	bool CheckField();
+	bool GetHaveFlg();
 private:
 	CAssimpModel	m_model;	//ÉÇÉfÉã
 	XMFLOAT3		m_pos;		// åªç›ÇÃà íu
