@@ -18,8 +18,10 @@ public:
 	XMFLOAT3 GetBoyMove();
 	int GetBoyHand();
 	bool CheckField();
+	void SetAnim(int);
 private:
 	CAssimpModel	m_model;	//モデル
+	CAssimpModel	m_modelSub[7];	//モデル(アニメーション用)
 	XMFLOAT3		m_pos;		// 現在の位置
 	XMFLOAT3		m_rot;		// 現在の向き
 	XMFLOAT3		m_rotDest;	// 目的の向き
@@ -34,6 +36,10 @@ private:
 	int				m_nSphere;		//境界球番号
 
 	int				m_nHand;	// 持ち物
+
+	int				m_nAnim;		// アニメーション
+	int				m_nAnimNow;		// 現在のアニメーション
+	int				m_nAnimTime;	// アニメーションの時間
 
 	JOYINFOEX *m_pad;
 };

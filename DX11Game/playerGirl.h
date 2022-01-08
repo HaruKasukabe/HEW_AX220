@@ -19,8 +19,11 @@ public:
 	void SetGirlPos(XMFLOAT3);
 
 	bool CheckField();
+
+	void SetAnim(int);
 private:
 	CAssimpModel	m_model;	//モデル
+	CAssimpModel	m_modelSub[3];	//モデル(アニメーション用)
 	XMFLOAT3		m_pos;		// 現在の位置
 	XMFLOAT3		m_rot;		// 現在の向き
 	XMFLOAT3		m_rotDest;	// 目的の向き
@@ -32,4 +35,8 @@ private:
 	XMFLOAT4X4		m_mtxWorld;		// ワールドマトリックス
 
 	int				m_nCube;		//立方体番号
+
+	int				m_nAnim;		// アニメーション
+	int				m_nAnimNow;		// 現在のアニメーション
+	int				m_nAnimTime;	// アニメーションの時間
 };

@@ -10,8 +10,15 @@
 #include "collision.h"
 #include "map.h"
 
+//*****列挙型*****
+enum GIRL_ANIM { STOP, WALK, JUMP, MAX_GIRL_ANIM, };
+
 //*****定数定義*****
-#define PLAYER_BOY_MODEL_PATH			"data/model/girl_walking.fbx"
+#define PLAYER_GIRL_STOP_MODEL_PATH			"data/model/girl_stopping.fbx"
+#define PLAYER_GIRL_WALKING_MODEL_PATH		"data/model/girl_walking.fbx"
+#define PLAYER_GIRL_JUMP_MODEL_PATH			"data/model/girl_jumping.fbx"
+
+#define PLAYER_GIRL_JUMP_ANIM_TIME	(60)
 
 #define	PLAYER_BOY_VALUE_MOVE	(0.05f)		// 移動速度
 #define	PLAYER_BOY_RATE_MOVE	(0.20f)		// 移動慣性係数
@@ -25,6 +32,13 @@
 #define PLAYER_BOY_COLLISION_SIZE_RAD	4.0f
 
 #define GRAVITY_GIRL	(2.0f)	// 重力
+
+//*****構造体*****
+static std::string g_GirlAnimFile[] = {
+	PLAYER_GIRL_STOP_MODEL_PATH,
+	PLAYER_GIRL_WALKING_MODEL_PATH,
+	PLAYER_GIRL_JUMP_MODEL_PATH,
+};
 
 //*****グローバル変数*****
 
@@ -52,9 +66,11 @@ Player_Girl::Player_Girl()
 
 
 	// モデルデータの読み込み
-	if (!m_model.Load(pDevice, pDeviceContext, PLAYER_BOY_MODEL_PATH)) {
+	if (!m_model.Load(pDevice, pDeviceContext, PLAYER_GIRL_STOP_MODEL_PATH)) {
 		MessageBoxA(GetMainWnd(), "モデルデータ読み込みエラー", "InitModel", MB_OK);
 	}
+	for (int i = 0; i < MAX_GIRL_ANIM; i++)
+		m_modelSub[i].Load(pDevice, pDeviceContext, g_GirlAnimFile[i]);
 
 	//m_nCube = GetCube()->Create(XMFLOAT3(0.0f,0.0f,0.0f),XMFLOAT3(5.0f,5.0f,5.0f),m_mtxWorld);
 }
@@ -63,7 +79,10 @@ Player_Girl::Player_Girl()
 //==============================================================
 Player_Girl::~Player_Girl() {
 	// モデルの解放
+	SetAnim(STOP);
 	m_model.Release();
+	for (int i = 1; i < MAX_GIRL_ANIM; i++)
+		m_modelSub[i].Release();
 	//立方体解放
 	//GetCube()->Release(m_nCube);
 }
@@ -79,6 +98,7 @@ void Player_Girl::Update() {
 	g_BoyPos = GetOld()->GetPlayerBoy()->GetBoyPos();
 
 	// 右移動
+	m_nAnim = WALK;
 	m_move.x -= SinDeg(rotCamera.y - 90.0f) * PLAYER_BOY_VALUE_MOVE;
 	m_move.z -= CosDeg(rotCamera.y - 90.0f) * PLAYER_BOY_VALUE_MOVE;
 
@@ -147,7 +167,10 @@ void Player_Girl::Update() {
 		if (m_bLand == true && collision.m_bOnBox == true)
 			m_pos.y = g_oldGirlPos.y;
 		else if (m_bLand == true)
+		{
+			m_nAnim = STOP;
 			m_pos.x = g_oldGirlPos.x;
+		}
 	}
 	//----地形との当たり判定----
 	if (CheckField())
@@ -170,6 +193,9 @@ void Player_Girl::Update() {
 		m_rot = XMFLOAT3(0.0f, 0.0f, 0.0f);
 		m_rotDest = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	}
+
+	// アニメーション更新
+	SetAnim(m_nAnim);
 
 	XMMATRIX mtxWorld, mtxScl, mtxRot, mtxTranslate;
 
@@ -266,5 +292,34 @@ bool Player_Girl::CheckField()
 			}
 			break;
 		}
+	}
+}
+
+//==============================================================
+//女の子のアニメーション設定
+//==============================================================
+void Player_Girl::SetAnim(int nAnim)
+{
+	switch (nAnim)
+	{
+	case STOP:
+		if (m_nAnimTime <= 0)
+		{
+			m_model = m_modelSub[nAnim];
+			m_nAnimNow = STOP;
+		}
+		break;
+	case WALK:
+		if (m_nAnimTime <= 0)
+		{
+			m_model = m_modelSub[nAnim];
+			m_nAnimNow = WALK;
+		}
+		break;
+	case JUMP:
+		m_model = m_modelSub[nAnim];
+		m_nAnimTime = PLAYER_GIRL_JUMP_ANIM_TIME;
+		m_nAnimNow = JUMP;
+		break;
 	}
 }
