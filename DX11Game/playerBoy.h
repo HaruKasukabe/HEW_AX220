@@ -18,7 +18,11 @@ public:
 	XMFLOAT3 GetBoyMove();
 	int GetBoyHand();
 	bool CheckField();
+
 	void SetAnim(int);
+
+	bool GetHaveFlg();
+
 private:
 	CAssimpModel	m_model;	//モデル
 	CAssimpModel	m_modelSub[7];	//モデル(アニメーション用)

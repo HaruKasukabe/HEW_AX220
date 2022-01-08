@@ -20,5 +20,5 @@ public:
 	void OldDraw();
 	void NowDraw();
 private:
-	Tree* m_pTree;
+	Plant* m_pPlant;
 };

@@ -69,14 +69,7 @@ HRESULT InitSceneSample() {
 	g_pUI = new UI;
 
 	// 木の初期化
-	InitTree();
-	for (int nCntTree = 0; nCntTree < 10; ++nCntTree) {
-		float fPosX = (rand() % 6200) / 10.0f - 310.0f;
-		float fPosY = 0.0f;
-		float fPosZ = (rand() % 6200) / 10.0f - 310.0f;
-		SetTree(XMFLOAT3(fPosX, fPosY, fPosZ), 30.0f, 40.0f, XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));
-	}
-
+	
 	//ビルボード弾初期化
 	hr = InitBullet();
 	if (FAILED(hr)) {
@@ -127,7 +120,6 @@ void UninitSceneSample() {
 	UninitBullet();
 
 	// 木の終了処理
-	UninitTree();
 
 	// 背景終了処理
 	delete g_pBG;
@@ -176,7 +168,6 @@ void UpdateSceneSample() {
 	g_pMeshField->Update();
 
 	// 木の更新
-	UpdateTree();
 
 	// 丸影更新
 	UpdateShadow();
@@ -233,7 +224,6 @@ void DrawSceneSample() {
 	DrawBullet();
 
 	// 木の描画
-	DrawTree();
 
 	// 境界球描画
 	DrawBSphere();

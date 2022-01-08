@@ -2,18 +2,19 @@
 //		箱[box.cpp]
 //小楠裕子
 //=====================================================
-#include "box.h"
+#include "DWBox.h"
 #include "Texture.h"
 #include "Shader.h"
 #include "bsphere.h"
 #include "sceneGame.h"
 #include "map.h"
+#include "collision.h"
 
 //*********************************************************
 //マクロ定義
 //*********************************************************
-#define BOX_MODEL_PATH	"data/model/iwa.fbx"
-#define BOX_TEXTURE_PATH "data/texture/stone.jpg"
+#define DWBOX_MODEL_PATH	"data/model/Quadrock.fbx"
+#define DWBOX_TEXTURE_PATH "data/texture/Rock.jpg"
 
 #define M_DIFFUSE			XMFLOAT4(1.0f,1.0f,1.0f,1.0f)
 #define M_SPECULAR			XMFLOAT4(0.0f,0.0f,0.0f,1.0f)
@@ -21,21 +22,18 @@
 #define M_AMBIENT			XMFLOAT4(1.0f,1.0f,1.0f,1.0f)
 #define M_EMISSIVE			XMFLOAT4(0.0f,0.0f,0.0f,1.0f)
 
-#define BOX_COLLISION_SIZE_X	4.0f
-#define BOX_COLLISION_SIZE_Y	10.0f
-#define BOX_GRAVITY				0.15f
-
-#define BOY_HUND_LONG			10.0f
+#define DWBOX_COLLISION_SIZE_X	1.0f // sclが1のときの設定
+#define DWBOX_COLLISION_SIZE_Y	1.0f // sclが1のときの設定
 
 //*********************************************************
 //グローバル変数
 //*********************************************************
-MESH g_boxMesh;
+MESH g_dwboxMesh;
 
 //=============================
 //		ｺﾝｽﾄﾗｸﾀ
 //=============================
-Box::Box(){
+DWBox::DWBox() {
 
 	ID3D11Device* pDevice = GetDevice();
 	ID3D11DeviceContext* pDeviceContext = GetDeviceContext();
@@ -46,11 +44,12 @@ Box::Box(){
 		m_box[i].m_oldPos = XMFLOAT3(0.0f, 0.0f, 0.0f);
 		m_box[i].m_state = true;
 		m_box[i].m_use = false;
+		m_box[i].m_scl = XMFLOAT3(1.0f, 1.0f, 1.0f);//デフォルト設定
+		m_box[i].m_collision = XMFLOAT2(DWBOX_COLLISION_SIZE_X, DWBOX_COLLISION_SIZE_Y);
 	}
 
-	g_boxMesh.pos = XMFLOAT3(0.0f, 0.0f, 0.0f);
-	g_boxMesh.rot = XMFLOAT3(0.0f, 0.0f, 0.0f);
-	m_scl = XMFLOAT3(5.0f, 5.0f, 5.0f);
+	g_dwboxMesh.pos = XMFLOAT3(0.0f, 0.0f, 0.0f);
+	g_dwboxMesh.rot = XMFLOAT3(0.0f, 0.0f, 0.0f);
 
 	// マテリアルの初期設定
 	m_material.Diffuse = M_DIFFUSE;
@@ -58,43 +57,43 @@ Box::Box(){
 	m_material.Specular = M_SPECULAR;
 	m_material.Power = M_POWER;
 	m_material.Emissive = M_EMISSIVE;
-	g_boxMesh.pMaterial = &m_material;
+	g_dwboxMesh.pMaterial = &m_material;
 
 	// モデルデータの読み込み
-	if (!m_model.Load(pDevice, pDeviceContext, BOX_MODEL_PATH)) {
+	if (!m_model.Load(pDevice, pDeviceContext, DWBOX_MODEL_PATH)) {
 		MessageBoxA(GetMainWnd(), "モデルデータ読み込みエラー", "InitModel", MB_OK);
 	}
 	// テクスチャの読み込み
 	static TAssimpMaterial material;
-	HRESULT hr = CreateTextureFromFile(pDevice, BOX_TEXTURE_PATH, &material.pTexture);
-	if(FAILED(hr))
+	HRESULT hr = CreateTextureFromFile(pDevice, DWBOX_TEXTURE_PATH, &material.pTexture);
+	if (FAILED(hr))
 	{
-		MessageBoxA(GetMainWnd(), "テクスチャ読み込みエラー","石のテクスチャ", MB_OK);
+		MessageBoxA(GetMainWnd(), "テクスチャ読み込みエラー", "草ァ！のテクスチャ", MB_OK);
 	}
 	m_model.SetMaterial(&material);
 
 
-	XMStoreFloat4x4(&g_boxMesh.mtxTexture, XMMatrixIdentity());
+	XMStoreFloat4x4(&g_dwboxMesh.mtxTexture, XMMatrixIdentity());
 
 }
 
 //=============================
 //		ﾃﾞｽﾄﾗｸﾀ
 //=============================
-Box::~Box() {
+DWBox::~DWBox() {
 	// モデルの解放
 	m_model.Release();
-	ReleaseMesh(&g_boxMesh);
+	ReleaseMesh(&g_dwboxMesh);
 }
 //=============================
 //		更新
 //=============================
-void Box::Update() {
-	XMMATRIX mtxWorld,mtxScl,mtxTranslate;
+void DWBox::Update() {
+	XMMATRIX mtxWorld, mtxScl, mtxTranslate;
 	// メッシュ更新
-	UpdateMesh(&g_boxMesh);
+	UpdateMesh(&g_dwboxMesh);
 
-	for (int i = 0; i < MAX_BOX; ++i) 
+	for (int i = 0; i < MAX_BOX; ++i)
 	{
 		//未使用ならスキップ
 		if (!m_box[i].m_use) {
@@ -103,7 +102,7 @@ void Box::Update() {
 		// ワールドマトリックスの初期化
 		mtxWorld = XMMatrixIdentity();
 
-		mtxScl = XMMatrixScaling(m_scl.x, m_scl.y, m_scl.z);
+		mtxScl = XMMatrixScaling(m_box[i].m_scl.x, m_box[i].m_scl.y, m_box[i].m_scl.z);
 		mtxWorld = XMMatrixMultiply(mtxWorld, mtxScl);
 
 		// 移動を反映
@@ -115,13 +114,13 @@ void Box::Update() {
 
 
 	}
-	
+
 }
 
 //=============================
 //		描画
 //=============================
-void Box::Draw() {
+void DWBox::Draw() {
 	ID3D11DeviceContext* pDC = GetDeviceContext();
 
 	for (int i = 0; i < MAX_BOX; ++i)
@@ -133,7 +132,7 @@ void Box::Draw() {
 
 		// 不透明部分を描画
 		m_model.Draw(pDC, m_box[i].m_mtxWorld, eOpacityOnly);
-		DrawMesh(pDC, &g_boxMesh);
+		DrawMesh(pDC, &g_dwboxMesh);
 		// 半透明部分を描画
 		SetBlendState(BS_ALPHABLEND);	// アルファブレンド有効
 		SetZWrite(false);				// Zバッファ更新しない
@@ -146,40 +145,40 @@ void Box::Draw() {
 //=============================
 //		描画
 //=============================
-void Box::Draw(int num) {
+void DWBox::Draw(int num) {
 	ID3D11DeviceContext* pDC = GetDeviceContext();
-		//未使用なら描画しない
-		if (!m_box[num].m_use) {
-			return;
-		}
-		//破壊されていたら描画しない
-		if (!m_box[num].m_state) {
-			return;
-		}
-		// 不透明部分を描画
-		m_model.Draw(pDC, m_box[num].m_mtxWorld, eOpacityOnly);
+	//未使用なら描画しない
+	if (!m_box[num].m_use) {
+		return;
+	}
+	//破壊されていたら描画しない
+	if (!m_box[num].m_state) {
+		return;
+	}
+	// 不透明部分を描画
+	m_model.Draw(pDC, m_box[num].m_mtxWorld, eOpacityOnly);
 
-		// 半透明部分を描画
-		SetBlendState(BS_ALPHABLEND);	// アルファブレンド有効
-		SetZWrite(false);				// Zバッファ更新しない
-		m_model.Draw(pDC, m_box[num].m_mtxWorld, eTransparentOnly);
-		DrawMesh(pDC, &g_boxMesh);
-		SetZWrite(true);				// Zバッファ更新する
-		SetBlendState(BS_NONE);			// アルファブレンド無効
+	// 半透明部分を描画
+	SetBlendState(BS_ALPHABLEND);	// アルファブレンド有効
+	SetZWrite(false);				// Zバッファ更新しない
+	m_model.Draw(pDC, m_box[num].m_mtxWorld, eTransparentOnly);
+	DrawMesh(pDC, &g_dwboxMesh);
+	SetZWrite(true);				// Zバッファ更新する
+	SetBlendState(BS_NONE);			// アルファブレンド無効
 }
 
 //=============================
 //	箱生成 引数 : モデル座標、サイズ、ワールドマトリックス
 //=============================
-int Box::Create(XMFLOAT3 pos, int nCat) {
-	TBox* pBox = m_box;
-	for (int i = 0; i < MAX_BOX; ++i, ++pBox) {
-		if (pBox->m_use) continue;
-		pBox->m_pos = pos;
-		pBox->m_oldPos = pos;
-		pBox->m_state = true;
-		pBox->m_use = true;
-		pBox->m_nCat = nCat;
+int DWBox::Create(XMFLOAT3 pos, int nCat) {
+	TBox* pDWBox = m_box;
+	for (int i = 0; i < MAX_BOX; ++i, ++pDWBox) {
+		if (pDWBox->m_use) continue;
+		pDWBox->m_pos = pos;
+		pDWBox->m_oldPos = pos;
+		pDWBox->m_state = true;
+		pDWBox->m_use = true;
+		pDWBox->m_nCat = nCat;
 
 		return i;
 	}
@@ -189,28 +188,16 @@ int Box::Create(XMFLOAT3 pos, int nCat) {
 //=============================
 //	箱解放	引数 :キューブ番号
 //=============================
-void Box::Release(int num) {
+void DWBox::Release(int num) {
 	if (num < 0 || num >= MAX_BOX)
 		return;
 	m_box[num].m_use = false;
 }
 
 //=============================
-//	箱　破壊
-//=============================
-bool Box::Destroy(int num) {
-	if (num < 0 || num >= MAX_BOX)
-		return false;
-	if (!m_box[num].m_nCat == CARRY)
-		return false;
-	m_box[num].m_state = false;
-	return true;
-}
-
-//=============================
 //	箱の情報　取得
 //=============================
-TBox* Box::GetBox()
+TBox* DWBox::GetBox()
 {
 	return m_box;
 }
@@ -218,80 +205,66 @@ TBox* Box::GetBox()
 //=============================
 //	箱　座標取得
 //=============================
-XMFLOAT3 Box::GetPos(int num) {
+XMFLOAT3 DWBox::GetPos(int num) {
 	return m_box[num].m_pos;
 }
 
-//=============================
-//	箱　座標設定
-//=============================
-void Box::SetBoxPos(int num, XMFLOAT3 pos,int time) {
-	XMFLOAT3 boyPos = GetOld()->GetBoyPos();
-	if (!(m_box[num].m_nCat == CARRY))
-		return;
-
-	// 過去用
-	if (time == 0){
-		if (pos.x > 0.0f)
-			m_box[num].m_pos.x = boyPos.x + BOY_HUND_LONG;
-		else if (pos.x < 0.0f)
-			m_box[num].m_pos.x = boyPos.x - BOY_HUND_LONG;
-
-		if (!(boyPos.y - m_box[num].m_pos.y >= BOY_HUND_LONG || boyPos.y - m_box[num].m_pos.y <= -BOY_HUND_LONG))
-			m_box[num].m_pos.y += pos.y;
-		if (!(boyPos.z - m_box[num].m_pos.z >= BOY_HUND_LONG || boyPos.y - m_box[num].m_pos.z <= -BOY_HUND_LONG))
-			m_box[num].m_pos.z += pos.z;
-	}
-	// 未来用
-	if (time == 1) {
-		if (pos.x > 0.0f)
-			m_box[num].m_oldPos.x = boyPos.x + BOY_HUND_LONG;
-		else if (pos.x < 0.0f)
-			m_box[num].m_oldPos.x = boyPos.x - BOY_HUND_LONG;
-
-		if (!(boyPos.y - m_box[num].m_oldPos.y >= BOY_HUND_LONG || boyPos.y - m_box[num].m_oldPos.y <= -BOY_HUND_LONG))
-			m_box[num].m_oldPos.y += pos.y;
-		if (!(boyPos.z - m_box[num].m_oldPos.z >= BOY_HUND_LONG || boyPos.y - m_box[num].m_oldPos.z <= -BOY_HUND_LONG))
-			m_box[num].m_oldPos.z += pos.z;
-	}
-#ifndef TAKEI_HARUTO
-	PrintDebugProc("ﾎｿﾞﾝｻﾞﾋｮｳx:%2f,y:%2f,z:%2f\n", m_box[num].m_pos.x, m_box[num].m_pos.y, m_box[num].m_pos.z);
-	PrintDebugProc("ﾊﾝｴｲｻﾞﾋｮｳx:%2f,y:%2f,z:%2f\n", 
-		m_box[num].m_oldPos.x, m_box[num].m_oldPos.y, m_box[num].m_oldPos.z);
-#endif
-}
-
-//=============================
-//	箱　座標反映
-//=============================
-void Box::SetOldBoxPos(int num) {
-	if (!m_box[num].m_nCat == CARRY)	// 今だけNORMALにしてあります(本来ならMOVE)
-		return;
-
-	m_box[num].m_pos.x = m_box[num].m_oldPos.x;
-	m_box[num].m_pos.y = m_box[num].m_oldPos.y;
-	m_box[num].m_pos.z = m_box[num].m_oldPos.z;
-
-}
+////=============================
+////	箱　座標設定
+////=============================
+//void DWBox::SetDWBoxPos(int num, XMFLOAT3 pos, int time) {
+//	XMFLOAT3 boyPos = GetOld()->GetBoyPos();
+//	if (!m_box[num].m_nCat == CARRY)
+//		return;
+//
+//	// 過去用
+//	if (time == 0) {
+//		if (pos.x > 0.0f)
+//			m_box[num].m_pos.x = boyPos.x + BOY_HUND_LONG;
+//		else if (pos.x < 0.0f)
+//			m_box[num].m_pos.x = boyPos.x - BOY_HUND_LONG;
+//
+//		if (!(boyPos.y - m_box[num].m_pos.y >= BOY_HUND_LONG || boyPos.y - m_box[num].m_pos.y <= -BOY_HUND_LONG))
+//			m_box[num].m_pos.y += pos.y;
+//		if (!(boyPos.z - m_box[num].m_pos.z >= BOY_HUND_LONG || boyPos.y - m_box[num].m_pos.z <= -BOY_HUND_LONG))
+//			m_box[num].m_pos.z += pos.z;
+//	}
+//	// 未来用
+//	if (time == 1) {
+//		if (pos.x > 0.0f)
+//			m_box[num].m_oldPos.x = boyPos.x + BOY_HUND_LONG;
+//		else if (pos.x < 0.0f)
+//			m_box[num].m_oldPos.x = boyPos.x - BOY_HUND_LONG;
+//
+//		if (!(boyPos.y - m_box[num].m_oldPos.y >= BOY_HUND_LONG || boyPos.y - m_box[num].m_oldPos.y <= -BOY_HUND_LONG))
+//			m_box[num].m_oldPos.y += pos.y;
+//		if (!(boyPos.z - m_box[num].m_oldPos.z >= BOY_HUND_LONG || boyPos.y - m_box[num].m_oldPos.z <= -BOY_HUND_LONG))
+//			m_box[num].m_oldPos.z += pos.z;
+//	}
+//#ifndef TAKEI_HARUTO
+//	PrintDebugProc("ﾎｿﾞﾝｻﾞﾋｮｳx:%2f,y:%2f,z:%2f\n", m_box[num].m_pos.x, m_box[num].m_pos.y, m_box[num].m_pos.z);
+//	PrintDebugProc("ﾊﾝｴｲｻﾞﾋｮｳx:%2f,y:%2f,z:%2f\n",
+//		m_box[num].m_oldPos.x, m_box[num].m_oldPos.y, m_box[num].m_oldPos.z);
+//#endif
+//}
 
 //=============================
 //	箱　サイズ取得
 //=============================
-XMFLOAT2 Box::GetSize() {
-	return XMFLOAT2(BOX_COLLISION_SIZE_X, BOX_COLLISION_SIZE_Y);
+XMFLOAT2 DWBox::GetSize(int num) {
+	return m_box[num].m_collision;
 }
-
 //=============================
 //	箱　状態取得
 //=============================
-bool Box::GetState(int num) {
+bool DWBox::GetState(int num) {
 	return m_box[num].m_state;
 }
 
 //===============================================
 //		今と過去を分けれる描画(0が今、1が過去)
 //===============================================
-void Box::DrawOldNow(int nTime) {
+void DWBox::DrawOldNow(int nTime) {
 	ID3D11DeviceContext* pDC = GetDeviceContext();
 
 	for (int i = 0; i < MAX_BOX; ++i)
@@ -318,26 +291,35 @@ void Box::DrawOldNow(int nTime) {
 //=======================================
 //	キューブ生成(0が今、1が過去)
 //=======================================
-int Box::CreateOldNow(XMFLOAT3 pos, int nTime) {
-	TBox* pBox = m_box;
-	for (int i = 0; i < MAX_BOX; ++i, ++pBox) {
-		if (pBox->m_use) continue;
-		pBox->m_pos = pos;
-		pBox->m_oldPos = pos;
-		pBox->m_state = true;
-		pBox->m_use = true;
-		pBox->m_nTime = nTime;
+int DWBox::CreateOldNow(XMFLOAT3 pos, int nTime/*, XMFLOAT3 scl*/) {
+	TBox* pDWBox = m_box;
+	for (int i = 0; i < MAX_BOX; ++i, ++pDWBox) {
+		if (pDWBox->m_use) continue;
+		pDWBox->m_pos = pos;
+		pDWBox->m_oldPos = pos;
+		pDWBox->m_state = true;
+		pDWBox->m_use = true;
+		pDWBox->m_nTime = nTime;
+		// pDWBox->m_scl = scl; スケールの設定
+		pDWBox->m_collision = XMFLOAT2(DWBOX_COLLISION_SIZE_X*pDWBox->m_scl.x, DWBOX_COLLISION_SIZE_Y*pDWBox->m_scl.y);
 		return i;
 	}
 	return -1;
 }
 
 //=======================================
-//	重力設定
+//	当たり判定
 //=======================================
-void Box::SetGravity(int nObject, int nPat)
-{
-	if(GetOld()->GetPlayerBoy()->GetBoyHand() != nObject)
-		if(!(m_box[nObject].m_pos.y <= -49.0f))
-			m_box[nObject].m_pos.y -= BOX_GRAVITY;
+bool DWBox::Collision(XMFLOAT2 pos, XMFLOAT2 size) {
+	for (int i = 0; i < MAX_DWBOX; ++i) {
+		if (!m_box[i].m_use) {
+			break;
+		}
+		if (CollisionRect(pos, size, XMFLOAT2(m_box[i].m_pos.x, m_box[i].m_pos.y), m_box[i].m_collision)) {/*バグはここな*/
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
 }

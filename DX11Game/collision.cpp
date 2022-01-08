@@ -34,7 +34,7 @@ bool CollisionCircle(XMFLOAT2 vA, float fAr, XMFLOAT2 vB, float fBr) {
 //‹éŒ`“¯Žm‚Ì“–‚½‚è”»’è
 bool CollisionRect(XMFLOAT2 vA, XMFLOAT2 vAs, XMFLOAT2 vB, XMFLOAT2 vBs) {
 	return	vA.x - vAs.x <= vB.x + vBs.x &&
-		vB.x - vBs.x <= vA.x + vAs.x &&
-		vA.y - vAs.y <= vB.y + vBs.y &&
-		vB.y - vBs.y <= vA.y + vAs.y;
+			vB.x - vBs.x <= vA.x + vAs.x &&
+			vA.y - vAs.y <= vB.y + vBs.y &&
+			vB.y - vBs.y <= vA.y + vAs.y;
 }

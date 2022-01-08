@@ -6,6 +6,9 @@
 #pragma once
 #include "main.h"
 #include "box.h"
+#include "DWBox.h"
+#include "HalfBox.h"
+#include "Monument.h"
 //*****構造体定義*****
 typedef struct {
 	int m_nCategory;	//オブジェクトの種類
@@ -23,6 +26,7 @@ enum MAP_OBJECT
 	BREAK,		// 壊せる箱
 	CARRY,		// 運べる箱
 	PUSH,		// 押せる箱
+	GOAL,		// ゴールの石碑
 };		
 
 //*****マクロ定義*****
@@ -39,4 +43,7 @@ OBJECT_INFO CollisionOldMap(XMFLOAT2 pos, XMFLOAT2 size);
 OBJECT_INFO	CollisionNowMap(XMFLOAT2 pos, XMFLOAT2 size);
 
 Box* GetBox();
+DWBox* GetDWBox();
+HalfBox* GetHalfBox();
+Monument* GetMonument();
 OBJECT_INFO* GetMap(int);
