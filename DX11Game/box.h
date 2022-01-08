@@ -51,6 +51,8 @@ public:
 	void DrawOldNow(int nTime);
 	int CreateOldNow(XMFLOAT3 pos, int nTime);
 
+	void SetGravity(int, int);
+
 private:
 	CAssimpModel	m_model;	//モデル
 	XMFLOAT4X4		m_mtxWorld;		// ワールドマトリックス

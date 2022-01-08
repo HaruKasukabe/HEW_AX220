@@ -6,23 +6,23 @@
 //=============================================================================
 #pragma once
 
-#include "box.h"
+#include "Tree.h"
 
-class Tree
+class Plant
 {
 public:
-	Tree();
-	~Tree();
+	Plant();
+	~Plant();
 
 	void Update();
 
 	void OldDraw();
 	void NowDraw();
 
-	void Plant(XMFLOAT3);		// êAÇ¶ÇÈ
+	void Plants(XMFLOAT3);		// êAÇ¶ÇÈ
 	void Grow(XMFLOAT3);		// ê∂Ç¶ÇÈ
 
 private:
-	Box* m_pBox;
+	Tree* m_pTree;
 	XMFLOAT3 m_treePos;
 };

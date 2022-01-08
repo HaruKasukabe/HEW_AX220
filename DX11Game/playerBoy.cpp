@@ -14,8 +14,7 @@
 enum DIR { RIGHT, LEFT };
 
 //*****定数定義*****
-#define PLAYER_BOY_MODEL_PATH			"data/model/girl_walking.fbx"
-
+#define PLAYER_BOY_MODEL_PATH			"data/model/boy_walking.fbx"
 
 #define	PLAYER_BOY_VALUE_MOVE	(0.15f)		// 移動速度
 #define	PLAYER_BOY_RATE_MOVE		(0.20f)		// 移動慣性係数
@@ -28,8 +27,8 @@ enum DIR { RIGHT, LEFT };
 
 #define PLAYER_BOY_COLLISION_SIZE_RAD	4.0f
 
-#define JUMP_POWER		(17.0f)
-#define JUMP_WHILE		(15)
+#define JUMP_POWER		(23.0f)
+#define JUMP_WHILE		(25)
 #define GRAVITY_BOY		(1.0f)	// 重力
 #define RESIST_X		(0.7f)
 
@@ -68,6 +67,7 @@ Player_Boy::Player_Boy()
 	if (!m_model.Load(pDevice, pDeviceContext, PLAYER_BOY_MODEL_PATH)) {
 		MessageBoxA(GetMainWnd(), "モデルデータ読み込みエラー", "InitModel", MB_OK);
 	}
+
 	//境界球生成
 	m_nSphere = CreateBSphere(XMFLOAT3(0.0f, 0.0f, 0.0f), PLAYER_BOY_COLLISION_SIZE_RAD, m_mtxWorld);
 }
@@ -248,8 +248,11 @@ void Player_Boy::Update() {
 	}
 
 	// 持ち物を一緒に移動
-	GetBox()->SetBoxPos(m_nHand, m_move, 0);   // 過去の座標を反映
-	GetBox()->SetBoxPos(g_nowHand, m_move, 1); // 未来の座標を一時保存
+	if (m_nHand != 9999)
+	{
+		GetBox()->SetBoxPos(m_nHand, m_move, 0);   // 過去の座標を反映
+		GetBox()->SetBoxPos(g_nowHand, m_move, 1); // 未来の座標を一時保存
+	}
 
 
 	XMMATRIX mtxWorld, mtxRot, mtxTranslate;
@@ -272,7 +275,7 @@ void Player_Boy::Update() {
 	//境界球移動
 	MoveBSphere(m_nSphere, m_mtxWorld);
 
-
+	PrintDebugProc("ｲﾁx:%2fy:%2fz:%2f", m_pos.x, m_pos.y, m_pos.z);
 }
 //==============================================================
 //描画
@@ -306,6 +309,13 @@ XMFLOAT3 Player_Boy::GetBoyMove() {
 }
 
 //==============================================================
+//男の子の持ち物取得
+//==============================================================
+int Player_Boy::GetBoyHand() {
+	return m_nHand;
+}
+
+//==============================================================
 //男の子の当たり判定
 //==============================================================
 bool Player_Boy::CheckField(){
@@ -323,19 +333,13 @@ bool Player_Boy::CheckField(){
 				break;
 			}
 			boxPos = pBox->GetPos(pOldMap->m_nObject);
-			if (m_pos.x <= boxPos.x - 6.0f) continue;
-			if (boxPos.x + 6.0f <= m_pos.x) continue;
+			if (m_pos.x <= boxPos.x - 2.0f) continue;
+			if (boxPos.x + 2.0f <= m_pos.x) continue;
 
 			if (m_pos.y >= boxPos.y + 6.0f && g_oldBoyPos.y <= boxPos.y + 6.0f)
 			{
 				m_pos.y = boxPos.y + 18.0f;
 				return true;
-			}
-			else if (m_pos.y <= boxPos.y - 5.0f && g_oldBoyPos.y >= boxPos.y - 5.0f)
-			{
-				m_pos.y = boxPos.y - 5.0f;
-				m_move.y = 0.0f;
-				return false;
 			}
 			break;
 		}

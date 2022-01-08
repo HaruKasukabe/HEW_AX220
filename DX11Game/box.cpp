@@ -12,7 +12,7 @@
 //*********************************************************
 //マクロ定義
 //*********************************************************
-#define BOX_MODEL_PATH	"data/model/box001.x"
+#define BOX_MODEL_PATH	"data/model/iwa.fbx"
 #define BOX_TEXTURE_PATH "data/texture/stone.jpg"
 
 #define M_DIFFUSE			XMFLOAT4(1.0f,1.0f,1.0f,1.0f)
@@ -21,8 +21,9 @@
 #define M_AMBIENT			XMFLOAT4(1.0f,1.0f,1.0f,1.0f)
 #define M_EMISSIVE			XMFLOAT4(0.0f,0.0f,0.0f,1.0f)
 
-#define BOX_COLLISION_SIZE_X	5.0f
-#define BOX_COLLISION_SIZE_Y	16.0f
+#define BOX_COLLISION_SIZE_X	4.0f
+#define BOX_COLLISION_SIZE_Y	10.0f
+#define BOX_GRAVITY				0.15f
 
 #define BOY_HUND_LONG			10.0f
 
@@ -49,7 +50,7 @@ Box::Box(){
 
 	g_boxMesh.pos = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	g_boxMesh.rot = XMFLOAT3(0.0f, 0.0f, 0.0f);
-	m_scl = XMFLOAT3(2.0f, 2.0f, 2.0f);
+	m_scl = XMFLOAT3(5.0f, 5.0f, 5.0f);
 
 	// マテリアルの初期設定
 	m_material.Diffuse = M_DIFFUSE;
@@ -226,7 +227,7 @@ XMFLOAT3 Box::GetPos(int num) {
 //=============================
 void Box::SetBoxPos(int num, XMFLOAT3 pos,int time) {
 	XMFLOAT3 boyPos = GetOld()->GetBoyPos();
-	if (!m_box[num].m_nCat == CARRY)
+	if (!(m_box[num].m_nCat == CARRY))
 		return;
 
 	// 過去用
@@ -329,4 +330,14 @@ int Box::CreateOldNow(XMFLOAT3 pos, int nTime) {
 		return i;
 	}
 	return -1;
+}
+
+//=======================================
+//	重力設定
+//=======================================
+void Box::SetGravity(int nObject, int nPat)
+{
+	if(GetOld()->GetPlayerBoy()->GetBoyHand() != nObject)
+		if(!(m_box[nObject].m_pos.y <= -49.0f))
+			m_box[nObject].m_pos.y -= BOX_GRAVITY;
 }

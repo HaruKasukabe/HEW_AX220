@@ -12,47 +12,45 @@
 // グローバル変数
 Player_Girl* g_pPlayerGirl;
 
-Tree::Tree()
+Plant::Plant()
 {
-	m_pBox = new Box;
+	m_pTree = new Tree;
 }
-Tree::~Tree()
+Plant::~Plant()
 {
-	delete m_pBox;
+	delete m_pTree;
 }
-void Tree::Update()
+void Plant::Update()
 {
 	g_pPlayerGirl = GetNow()->GetPlayerGirl();
 	if (g_pPlayerGirl->GetGirlPos().x >= m_treePos.x - 3.5f && g_pPlayerGirl->GetGirlPos().x <= m_treePos.x + 3.5f)
 		g_pPlayerGirl->SetGirlPos(m_treePos);
-	m_pBox->Update();
+	m_pTree->Update();
 }
-void Tree::OldDraw()
+
+void Plant::OldDraw()
 {
-	m_pBox->DrawOldNow(1);
+	m_pTree->DrawOldNow(1);
 }
-void Tree::NowDraw()
+
+void Plant::NowDraw()
 {
-	m_pBox->DrawOldNow(0);
+	m_pTree->DrawOldNow(0);
 }
 
 // 木の種を植える(男の子の行動)
-void Tree::Plant(XMFLOAT3 pos)
+void Plant::Plants(XMFLOAT3 pos)
 {
 	pos.x += 2.0f;
 	pos.y += -8.0f;
-	m_pBox->CreateOldNow(pos, 1);
+	m_pTree->CreateOldNow(pos, 1);
 }
 
 // 木が生える(今での変化)
-void Tree::Grow(XMFLOAT3 pos)
+void Plant::Grow(XMFLOAT3 pos)
 {
 	pos.x += 2.0f;
-	for (int i = 0; i < 9; i++)
-	{
-		m_pBox->CreateOldNow(pos, 0);
-		pos.y += 10.0f;
-	}
-	g_pPlayerGirl->SetGirlPos(pos);
-	m_treePos = pos;
+	pos.y += -8.0f;
+	m_pTree->CreateOldNow(pos, 0);
+	
 }

@@ -16,6 +16,7 @@ public:
 	void Draw();
 	XMFLOAT3 GetBoyPos();
 	XMFLOAT3 GetBoyMove();
+	int GetBoyHand();
 	bool CheckField();
 	bool GetHaveFlg();
 private:

@@ -13,8 +13,8 @@
 //*********************************************************
 //マクロ定義
 //*********************************************************
-#define DWBOX_MODEL_PATH	"data/model/box001.x"
-#define DWBOX_TEXTURE_PATH "data/texture/glass.png"
+#define DWBOX_MODEL_PATH	"data/model/Quadrock.fbx"
+#define DWBOX_TEXTURE_PATH "data/texture/Rock.jpg"
 
 #define M_DIFFUSE			XMFLOAT4(1.0f,1.0f,1.0f,1.0f)
 #define M_SPECULAR			XMFLOAT4(0.0f,0.0f,0.0f,1.0f)
@@ -22,8 +22,8 @@
 #define M_AMBIENT			XMFLOAT4(1.0f,1.0f,1.0f,1.0f)
 #define M_EMISSIVE			XMFLOAT4(0.0f,0.0f,0.0f,1.0f)
 
-#define DWBOX_COLLISION_SIZE_X	4.0f // sclが1のときの設定
-#define DWBOX_COLLISION_SIZE_Y	4.0f // sclが1のときの設定
+#define DWBOX_COLLISION_SIZE_X	1.0f // sclが1のときの設定
+#define DWBOX_COLLISION_SIZE_Y	1.0f // sclが1のときの設定
 
 //*********************************************************
 //グローバル変数

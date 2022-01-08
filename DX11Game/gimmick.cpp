@@ -9,26 +9,26 @@
 
 Gimmick::Gimmick()
 {
-	m_pTree = new Tree;
+	m_pPlant = new Plant;
 }
 Gimmick::~Gimmick()
 {
-	delete m_pTree;
+	delete m_pPlant;
 }
 void Gimmick::Update(XMFLOAT3 pos)
 {
 	if (GetKeyTrigger(VK_P))
 	{
-		m_pTree->Plant(pos);
-		m_pTree->Grow(pos);
+		m_pPlant->Plants(pos);
+		m_pPlant->Grow(pos);
 	}
-	m_pTree->Update();
+	m_pPlant->Update();
 }
 void Gimmick::OldDraw()
 {
-	m_pTree->OldDraw();
+	m_pPlant->OldDraw();
 }
 void Gimmick::NowDraw()
 {
-	m_pTree->NowDraw();
+	m_pPlant->NowDraw();
 }

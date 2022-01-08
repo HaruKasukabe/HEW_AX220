@@ -5,254 +5,257 @@
 //
 //=============================================================================
 #include "tree.h"
-#include "Camera.h"
-#include "shadow.h"
 #include "Texture.h"
-#include "mesh.h"
-#include "Light.h"
+#include "Shader.h"
+#include "bsphere.h"
+#include "sceneGame.h"
+#include "map.h"
 
 //*****************************************************************************
 // マクロ定義
 //*****************************************************************************
-#define	TEXTURE_TREE	L"data/texture/tree000.png"	// 読み込むテクスチャファイル名
-#define	TREE_WIDTH		(50.0f)						// 木の幅
-#define	TREE_HEIGHT		(80.0f)						// 木の高さ
+#define MODEL_TREE      "data/model/Tree.fbx"
+#define	TEXTURE_TREE	"data/texture/Leaves.png"	// 読み込むテクスチャファイル名
+#define MODEL_SEED      "data/model/seed.fbx"
+#define TEXTURE_SEED    "data/texture/seed_color.jpg"
 
-//*****************************************************************************
-// プロトタイプ宣言
-//*****************************************************************************
-HRESULT MakeVertexTree(ID3D11Device* pDevice);
-void SetVertexTree(int idxTree, float width, float height);
-void SetColorTree(int idxTree, XMFLOAT4 col);
+#define M_DIFFUSE			XMFLOAT4(1.0f,1.0f,1.0f,1.0f)
+#define M_SPECULAR			XMFLOAT4(0.0f,0.0f,0.0f,1.0f)
+#define M_POWER				(50.0f)
+#define M_AMBIENT			XMFLOAT4(1.0f,1.0f,1.0f,1.0f)
+#define M_EMISSIVE			XMFLOAT4(0.0f,0.0f,0.0f,1.0f)
+
+#define TREE_COLLISION_SIZE_X 4.0f
+#define TREE_COLLISION_SIZE_Y 4.0f
 
 //*****************************************************************************
 // グローバル変数
 //*****************************************************************************
-static MESH				g_mesh;				// メッシュ情報
-static MATERIAL			g_material;			// マテリアル
-static TTree			g_tree[MAX_TREE];	// 木ワーク
+static MESH				g_treeMesh;				// メッシュ情報
+static MESH             g_seedMesh;
 
 //=============================================================================
-// 初期化処理
+// コンストラクタ
 //=============================================================================
-HRESULT InitTree(void)
+Tree::Tree()
 {
 	ID3D11Device* pDevice = GetDevice();
+	ID3D11DeviceContext* pDeviceContext = GetDeviceContext();
 
-	// 頂点情報の作成
-	MakeVertexTree(pDevice);
-
-	// テクスチャの読み込み
-	CreateTextureFromFile(pDevice,				// デバイスへのポインタ
-						  TEXTURE_TREE,			// ファイルの名前
-						  &g_mesh.pTexture);	// 読み込むメモリ
-	XMStoreFloat4x4(&g_mesh.mtxTexture, XMMatrixIdentity());
-
-	g_material.Diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-	g_material.Ambient = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
-	g_material.Specular = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
-	g_material.Emissive = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
-	g_material.Power = 0.0f;
-	g_mesh.pMaterial = &g_material;
-
-	for (int cntTree = 0; cntTree < MAX_TREE; ++cntTree) {
-		g_tree[cntTree].pos = XMFLOAT3(0.0f, 0.0f, 0.0f);
-		g_tree[cntTree].col = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-		g_tree[cntTree].width = TREE_WIDTH;
-		g_tree[cntTree].height = TREE_HEIGHT;
-		g_tree[cntTree].use = false;
+	// 木の情報初期化
+	for (int i = 0; i < MAX_TREE; ++i){
+		m_tree[i].m_pos = XMFLOAT3(0.0f, 0.0f, 0.0f);
+		m_tree[i].m_use = false;
+		m_tree[i].m_scl = XMFLOAT3(0.5f, 1.0f, 0.5f);
+		m_tree[i].m_collision = XMFLOAT2(TREE_COLLISION_SIZE_X * m_tree[i].m_scl.x, TREE_COLLISION_SIZE_Y * m_tree[i].m_scl.y);
+		m_tree[i].m_nTime = -1;
 	}
 
-	return S_OK;
+	g_treeMesh.pos = XMFLOAT3(0.0f, 0.0f, 0.0f);
+	g_treeMesh.rot = XMFLOAT3(0.0f, 0.0f, 0.0f);
+
+	g_seedMesh.pos = XMFLOAT3(0.0f, 0.0f, 0.0f);
+	g_seedMesh.rot = XMFLOAT3(0.0f, 0.0f, 0.0f);
+
+	// マテリアルの初期設定
+	m_material.Diffuse = M_DIFFUSE;
+	m_material.Ambient = M_AMBIENT;
+	m_material.Specular = M_SPECULAR;
+	m_material.Power = M_POWER;
+	m_material.Emissive = M_EMISSIVE;
+	g_treeMesh.pMaterial = &m_material;
+
+	m_seedMaterial.Diffuse = M_DIFFUSE;
+	m_seedMaterial.Ambient = M_AMBIENT;
+	m_seedMaterial.Specular = M_SPECULAR;
+	m_seedMaterial.Power = M_POWER;
+	m_seedMaterial.Emissive = M_EMISSIVE;
+	g_treeMesh.pMaterial = &m_seedMaterial;
+
+	// モデルデータの読み込み
+	if (!m_model.Load(pDevice, pDeviceContext, MODEL_TREE)) {
+		MessageBoxA(GetMainWnd(), "モデルデータ読み込みエラー", "木のモデル", MB_OK);
+	}
+
+	// テクスチャの読み込み
+	static TAssimpMaterial material;
+	HRESULT hr = CreateTextureFromFile(pDevice, TEXTURE_TREE, &material.pTexture);
+	if (FAILED(hr)) {
+		MessageBoxA(GetMainWnd(), "テクスチャ読み込みエラー", "木のテクスチャ", MB_OK);
+	}
+	m_model.SetMaterial(&material);
+
+	XMStoreFloat4x4(&g_treeMesh.mtxTexture, XMMatrixIdentity());
+
+	// モデルデータの読み込み
+	if (!m_sModel.Load(pDevice, pDeviceContext, MODEL_SEED)) {
+		MessageBoxA(GetMainWnd(), "モデルデータ読み込みエラー", "種のモデル", MB_OK);
+	}
+
+	// テクスチャの読み込み
+	static TAssimpMaterial material_Seed;
+	hr = CreateTextureFromFile(pDevice, TEXTURE_SEED, &material_Seed.pTexture);
+	if (FAILED(hr)) {
+		MessageBoxA(GetMainWnd(), "テクスチャ読み込みエラー", "木のテクスチャ", MB_OK);
+	}
+	m_model.SetMaterial(&material_Seed);
+
 }
 
 //=============================================================================
-// 終了処理
+// デストラクタ
 //=============================================================================
-void UninitTree(void)
+Tree::~Tree()
 {
-	for (int cntTree = 0; cntTree < MAX_TREE; ++cntTree) {
-		if (g_tree[cntTree].use) {
-			ReleaseShadow(g_tree[cntTree].idxShadow);
-			g_tree[cntTree].idxShadow = -1;
-			g_tree[cntTree].use = false;
-		}
-	}
-	// メッシュの開放
-	ReleaseMesh(&g_mesh);
+	// モデルの開放
+	m_model.Release();
+	ReleaseMesh(&g_treeMesh);
+	m_sModel.Release();
+	ReleaseMesh(&g_seedMesh);
 }
 
 //=============================================================================
 // 更新処理
 //=============================================================================
-void UpdateTree(void)
+void Tree::Update()
 {
-	for (int cntTree = 0; cntTree < MAX_TREE; ++cntTree) {
+	XMMATRIX mtxWorld, mtxScl, mtxTranslate;
+	// メッシュ更新
+	UpdateMesh(&g_treeMesh);
+	UpdateMesh(&g_seedMesh);
+
+	for (int i = 0; i < MAX_TREE; ++i) {
 		// 未使用ならスキップ
-		if (!g_tree[cntTree].use) {
+		if (!m_tree[i].m_use) {
 			continue;
 		}
-		// 影の位置設定
-		MoveShadow(g_tree[cntTree].idxShadow, XMFLOAT3(g_tree[cntTree].pos.x, 0.1f, g_tree[cntTree].pos.z));
+		// ワールドマトリックスの初期化
+		mtxWorld = XMMatrixIdentity();
+
+		mtxScl = XMMatrixScaling(m_tree[i].m_scl.x, m_tree[i].m_scl.y, m_tree[i].m_scl.z);
+		mtxWorld = XMMatrixMultiply(mtxWorld, mtxScl);
+
+		// 移動を反映
+		mtxTranslate = XMMatrixTranslation(m_tree[i].m_pos.x, m_tree[i].m_pos.y, m_tree[i].m_pos.z);
+		mtxWorld = XMMatrixMultiply(mtxWorld, mtxTranslate);
+
+		// ワールドマトリックス設定
+		XMStoreFloat4x4(&m_tree[i].m_mtxWorld, mtxWorld);
 	}
 }
 
 //=============================================================================
 // 描画処理
 //=============================================================================
-void DrawTree(void)
+void Tree::Draw()
 {
-	ID3D11DeviceContext* pDeviceContext = GetDeviceContext();
-	XMMATRIX mtxWorld, mtxScale, mtxTranslate;
+	ID3D11DeviceContext* pDC = GetDeviceContext();
 
-	CLight::Get()->SetDisable();	// 光源無効
-	SetBlendState(BS_ALPHABLEND);	// αブレンディング有効
-
-	// ビューマトリックスを取得
-	XMFLOAT4X4& mtxView = CCamera::Get()->GetViewMatrix();
-
-	for (int cntTree = 0; cntTree < MAX_TREE; ++cntTree) {
+	for (int i = 0; i < MAX_TREE; ++i) {
 		// 未使用ならスキップ
-		if (!g_tree[cntTree].use) {
+		if (!m_tree[i].m_use) {
 			continue;
 		}
-		// ワールド マトリックス初期化
-		mtxWorld = XMMatrixIdentity();
-		XMStoreFloat4x4(&g_mesh.mtxWorld, mtxWorld);
 
-		// 回転を反映
-		g_mesh.mtxWorld._11 = mtxView._11;
-		g_mesh.mtxWorld._12 = mtxView._21;
-		g_mesh.mtxWorld._13 = mtxView._31;
-		g_mesh.mtxWorld._21 = mtxView._12;
-		g_mesh.mtxWorld._22 = mtxView._22;
-		g_mesh.mtxWorld._23 = mtxView._32;
-		g_mesh.mtxWorld._31 = mtxView._13;
-		g_mesh.mtxWorld._32 = mtxView._23;
-		g_mesh.mtxWorld._33 = mtxView._33;
-		mtxWorld = XMLoadFloat4x4(&g_mesh.mtxWorld);
-
-		// スケールを反映 (回転より先に反映)
-		mtxScale = XMMatrixScaling(g_tree[cntTree].width, g_tree[cntTree].height, 1.0f);
-		mtxWorld = XMMatrixMultiply(mtxScale, mtxWorld);
-
-		// 移動を反映
-		mtxTranslate = XMMatrixTranslation(g_tree[cntTree].pos.x, g_tree[cntTree].pos.y, g_tree[cntTree].pos.z);
-		mtxWorld = XMMatrixMultiply(mtxWorld, mtxTranslate);
-
-		// ワールドマトリックスの設定
-		XMStoreFloat4x4(&g_mesh.mtxWorld, mtxWorld);
-
-		// 色の設定
-		g_material.Diffuse = g_tree[cntTree].col;
-
-		// ポリゴンの描画
-		DrawMesh(pDeviceContext, &g_mesh);
-	}
-
-	SetBlendState(BS_NONE);		// αブレンディング無効
-	CLight::Get()->SetEnable();	// 光源有効
-}
-
-//=============================================================================
-// 頂点情報の作成
-//=============================================================================
-HRESULT MakeVertexTree(ID3D11Device* pDevice)
-{
-	// 一時的な頂点配列を生成
-	g_mesh.nNumVertex = 4;
-	VERTEX_3D* pVertexWk = new VERTEX_3D[g_mesh.nNumVertex];
-
-	// 頂点配列の中身を埋める
-	VERTEX_3D* pVtx = pVertexWk;
-
-	// 頂点座標の設定
-	pVtx[0].vtx = XMFLOAT3(-1.0f / 2.0f, 0.0f, 0.0f);
-	pVtx[1].vtx = XMFLOAT3(-1.0f / 2.0f, 1.0f, 0.0f);
-	pVtx[2].vtx = XMFLOAT3( 1.0f / 2.0f, 0.0f, 0.0f);
-	pVtx[3].vtx = XMFLOAT3( 1.0f / 2.0f, 1.0f, 0.0f);
-
-	// 法線の設定
-	pVtx[0].nor = XMFLOAT3(0.0f, 0.0f, -1.0f);
-	pVtx[1].nor = XMFLOAT3(0.0f, 0.0f, -1.0f);
-	pVtx[2].nor = XMFLOAT3(0.0f, 0.0f, -1.0f);
-	pVtx[3].nor = XMFLOAT3(0.0f, 0.0f, -1.0f);
-
-	// 反射光の設定
-	pVtx[0].diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-	pVtx[1].diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-	pVtx[2].diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-	pVtx[3].diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-
-	// テクスチャ座標の設定
-	pVtx[0].tex = XMFLOAT2(0.0f, 1.0f);
-	pVtx[1].tex = XMFLOAT2(0.0f, 0.0f);
-	pVtx[2].tex = XMFLOAT2(1.0f, 1.0f);
-	pVtx[3].tex = XMFLOAT2(1.0f, 0.0f);
-
-	g_mesh.nNumIndex = 4;
-	int* pIndexWk = new int[g_mesh.nNumIndex];
-	pIndexWk[0] = 0;
-	pIndexWk[1] = 1;
-	pIndexWk[2] = 2;
-	pIndexWk[3] = 3;
-
-	HRESULT hr = MakeMeshVertex(pDevice, &g_mesh, pVertexWk, pIndexWk);
-
-	delete[] pIndexWk;
-	delete[] pVertexWk;
-
-	return hr;
-}
-
-//=============================================================================
-// 頂点座標の設定
-//=============================================================================
-void SetVertexTree(int idxTree, float width, float height)
-{
-	if (idxTree >= 0 && idxTree < MAX_TREE) {
-		g_tree[idxTree].width = width;
-		g_tree[idxTree].height = height;
+		// 不透明な部分を作成
+		m_model.Draw(pDC, m_mtxWorld, eOpacityOnly);
+		DrawMesh(pDC, &g_treeMesh);
+		// 半透明な部分を作成
+		SetBlendState(BS_ALPHABLEND); // αブレンド有効
+		SetZWrite(false);             // Zバッファ更新しない
+		m_model.Draw(pDC, m_tree[i].m_mtxWorld, eTransparentOnly);
+		SetZWrite(true);              // Zバッファ更新
+		SetBlendState(BS_NONE);       // αブレンド無効
 	}
 }
 
 //=============================================================================
-// 頂点カラーの設定
+// 描画処理
 //=============================================================================
-void SetColorTree(int idxTree, XMFLOAT4 col)
+void Tree::Draw(int num)
 {
-	if (idxTree >= 0 && idxTree < MAX_TREE) {
-		g_tree[idxTree].col = col;
+	ID3D11DeviceContext* pDC = GetDeviceContext();
+	// 未使用ならスキップ
+	if (!m_tree[num].m_use) {
+		return;
 	}
+
+	// 不透明な部分を作成
+	m_model.Draw(pDC, m_mtxWorld, eOpacityOnly);
+	DrawMesh(pDC, &g_treeMesh);
+	// 半透明な部分を作成
+	SetBlendState(BS_ALPHABLEND); // αブレンド有効
+	SetZWrite(false);             // Zバッファ更新しない
+	m_model.Draw(pDC, m_tree[num].m_mtxWorld, eTransparentOnly);
+	SetZWrite(true);              // Zバッファ更新
+	SetBlendState(BS_NONE);       // αブレンド無効
 }
 
-//=============================================================================
-// 頂点情報の作成
-//=============================================================================
-int SetTree(XMFLOAT3 pos, float width, float height, XMFLOAT4 col)
+// ========================
+// 木  情報取得
+// ========================
+TTree* Tree::GetTree()
 {
-	int idxTree = -1;
+	return m_tree;
+}
 
-	for (int cntTree = 0; cntTree < MAX_TREE; ++cntTree) {
-		// 使用中ならスキップ
-		if (g_tree[cntTree].use) {
+// ========================
+// 木 過去未来わけ描画
+// ========================
+void Tree::DrawOldNow(int n_Time)
+{
+	ID3D11DeviceContext* pDC = GetDeviceContext();
+
+	for (int i = 0; i < MAX_TREE; ++i) 
+	{
+		if (!m_tree[i].m_use) {
 			continue;
 		}
-		g_tree[cntTree].use = true;
-		g_tree[cntTree].pos = pos;
+		if (m_tree[i].m_nTime != n_Time) {
+			continue;
+		}
+		if (m_tree[i].m_nTime == 0) {
+			// 不透明部分を描画
+			m_model.Draw(pDC, m_tree[i].m_mtxWorld, eOpacityOnly);
 
-		// 頂点座標の設定
-		SetVertexTree(cntTree, width, height);
+			// 半透明部分を描画
+			SetBlendState(BS_ALPHABLEND);	// アルファブレンド有効
+			SetZWrite(false);				// Zバッファ更新しない
+			m_model.Draw(pDC, m_tree[i].m_mtxWorld, eTransparentOnly);
+			SetZWrite(true);				// Zバッファ更新する
+			SetBlendState(BS_NONE);			// アルファブレンド無効
+		}
+		if (m_tree[i].m_nTime == 1) {
+			// 不透明部分を描画
+			m_sModel.Draw(pDC, m_tree[i].m_mtxWorld, eOpacityOnly);
 
-		// 頂点カラーの設定
-		SetColorTree(cntTree, col);
-
-		// 影の設定
-		g_tree[cntTree].idxShadow = CreateShadow(g_tree[cntTree].pos, g_tree[cntTree].width * 0.5f);
-
-		idxTree = cntTree;
-		break;
+			// 半透明部分を描画
+			SetBlendState(BS_ALPHABLEND);	// アルファブレンド有効
+			SetZWrite(false);				// Zバッファ更新しない
+			m_sModel.Draw(pDC, m_tree[i].m_mtxWorld, eTransparentOnly);
+			SetZWrite(true);				// Zバッファ更新する
+			SetBlendState(BS_NONE);			// アルファブレンド無効
+		}
 	}
+}
 
-	return idxTree;
+// ========================
+// 木  生成(0が今、1が過去)
+// ========================
+int Tree::CreateOldNow(XMFLOAT3 pos, int n_Time)
+{
+	TTree* pTree = m_tree;
+	for (int i = 0; i < MAX_TREE; ++i, ++pTree)
+	{
+		if (pTree->m_use) continue;
+		pTree->m_pos = pos;
+		pTree->m_use = true;
+		pTree->m_nTime = n_Time;
+		if (n_Time == 1)
+		{
+			pTree->m_scl = XMFLOAT3(10.0f,10.0f,10.0f);
+		}
+		return i;
+	}
+	return -1;
 }
