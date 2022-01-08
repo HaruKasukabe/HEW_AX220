@@ -693,8 +693,64 @@ bool CAssimpModel::Load(ID3D11Device* pDevice, ID3D11DeviceContext* pDC, std::st
 void CAssimpModel::SetAnimTime(double dTime)
 {
 	if (m_pAnimator) {
-		m_pAnimator->Calculate(dTime);
+		m_pAnimator->Calculate(m_dCurrent);
 	}
+}
+
+// アニメーション設定
+void CAssimpModel::SetAnim(int nNum)
+{
+	m_pScene = m_pSceneSub[nNum];
+	m_pAnimator = m_pAnimatorSub[nNum];
+}
+// アニメーション読込
+void CAssimpModel::LoadAnimation(ID3D11Device* pDevice, ID3D11DeviceContext* pDC, std::string filename, int nNum)
+{
+	static unsigned int ppsteps = aiProcess_CalcTangentSpace | // calculate tangents and bitangents if possible
+		aiProcess_JoinIdenticalVertices | // join identical vertices/ optimize indexing
+		aiProcess_ValidateDataStructure | // perform a full validation of the loader's output
+		aiProcess_ImproveCacheLocality | // improve the cache locality of the output vertices
+		aiProcess_RemoveRedundantMaterials | // remove redundant materials
+		aiProcess_FindDegenerates | // remove degenerated polygons from the import
+		aiProcess_FindInvalidData | // detect invalid model data, such as invalid normal vectors
+		aiProcess_GenUVCoords | // convert spherical, cylindrical, box and planar mapping to proper UVs
+		aiProcess_TransformUVCoords | // preprocess UV transformations (scaling, translation ...)
+		aiProcess_FindInstances | // search for instanced meshes and remove them by references to one master
+		aiProcess_LimitBoneWeights | // limit bone weights to 4 per vertex
+		aiProcess_OptimizeMeshes | // join small meshes, if possible;
+		aiProcess_SplitByBoneCount | // split meshes with too many bones. Necessary for our (limited) hardware skinning shader
+		0;
+
+	Release();
+
+	aiPropertyStore* props = aiCreatePropertyStore();
+	aiSetImportPropertyInteger(props, AI_CONFIG_IMPORT_TER_MAKE_UVS, 1);
+	//aiSetImportPropertyFloat(props, AI_CONFIG_PP_GSN_MAX_SMOOTHING_ANGLE, g_smoothAngle);
+	//aiSetImportPropertyInteger(props, AI_CONFIG_PP_SBP_REMOVE, nopointslines ? aiPrimitiveType_LINE | aiPrimitiveType_POINT : 0);
+	aiSetImportPropertyInteger(props, AI_CONFIG_GLOB_MEASURE_TIME, 1);
+	m_pScene = (aiScene*)aiImportFileExWithProperties(filename.c_str(),
+		ppsteps |
+		aiProcess_GenSmoothNormals | // generate smooth normal vectors if not existing
+		aiProcess_SplitLargeMeshes | // split large, unrenderable meshes into submeshes
+		aiProcess_Triangulate | // triangulate polygons with more than 3 edges
+		aiProcess_ConvertToLeftHanded | // convert everything to D3D left handed space
+		aiProcess_SortByPType | // make 'clean' meshes which consist of a single typ of primitives
+		0, NULL, props);
+	aiReleasePropertyStore(props);
+
+	char szDrive[_MAX_DRIVE], szDir[_MAX_DIR], szFName[_MAX_FNAME], szExt[_MAX_EXT];
+	_splitpath_s(filename.c_str(), szDrive, _MAX_DRIVE, szDir, _MAX_DIR, szFName, _MAX_FNAME, szExt, _MAX_EXT);
+	m_directory = szDrive;
+	m_directory += szDir;
+	m_fname = szFName;
+	m_ext = szExt;
+
+	processNode(pDevice, m_pScene->mRootNode);
+
+	if (m_pScene->HasAnimations())
+		m_pAnimator = new SceneAnimator(m_pScene);
+
+	ScaleAsset();
 }
 
 // 描画
@@ -702,12 +758,13 @@ void CAssimpModel::Draw(ID3D11DeviceContext* pDC, XMFLOAT4X4& mtxWorld, EByOpaci
 {
 	if (!m_pScene) return;
 	// アニメーション更新
-	//if (m_pAnimator) {
-	//	m_dCurrent += clock() / double(CLOCKS_PER_SEC) - m_dLastPlaying;
-	//	double time = m_dCurrent;
-	//	m_pAnimator->Calculate(time);
-	//	m_dLastPlaying = m_dCurrent;
-	//}
+	if (m_pAnimator) {
+		m_dCurrent += clock() / double(CLOCKS_PER_SEC) - m_dLastPlaying;
+		double time = m_dCurrent;
+		m_pAnimator->Calculate(time);
+		m_dLastPlaying = m_dCurrent;
+	}
+
 
 	m_mtxWorld = mtxWorld;
 	// 使用するシェーダーの登録	

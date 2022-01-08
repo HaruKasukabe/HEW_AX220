@@ -224,7 +224,9 @@ private:
 	DirectX::XMFLOAT3 m_vCenter;
 
 	const aiScene* m_pScene;
+	const aiScene* m_pSceneSub[6];
 	SceneAnimator* m_pAnimator;
+	SceneAnimator* m_pAnimatorSub[6];
 	double m_dCurrent;
 	double m_dLastPlaying;
 
@@ -252,6 +254,8 @@ public:
 	UINT GetAnimCount();
 	double GetAnimDuration(int nAnimIndex = -1/* -1:åªç›ÇÃÉAÉjÉÅ */);
 	void SetAnimTime(double dTime);
+	void SetAnim(int nNum);
+	void LoadAnimation(ID3D11Device* pDevice, ID3D11DeviceContext* pDC, std::string filename, int nNum);
 
 	void Release();
 

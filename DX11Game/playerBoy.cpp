@@ -12,8 +12,20 @@
 //*****列挙型*****
 enum DIR { RIGHT, LEFT };
 
+enum BOY_ANIM { STOP, WALK, JUMP, PUSH_BOY, CARRY_BOY, UP, DOWN, MAX_BOY_ANIM, };
+
 //*****定数定義*****
-#define PLAYER_BOY_MODEL_PATH			"data/model/boy_walking.fbx"
+#define PLAYER_BOY_STOP_MODEL_PATH			"data/model/boy_stopping.fbx"
+#define PLAYER_BOY_WALKING_MODEL_PATH		"data/model/boy_walking.fbx"
+#define PLAYER_BOY_JUMP_MODEL_PATH			"data/model/boy_jumping.fbx"
+#define PLAYER_BOY_PUSH_MODEL_PATH			"data/model/boy_pushing.fbx"
+#define PLAYER_BOY_CARRY_MODEL_PATH			"data/model/boy_carrying.fbx"
+#define PLAYER_BOY_UP_MODEL_PATH			"data/model/boy_up.fbx"
+#define PLAYER_BOY_DOWN_MODEL_PATH			"data/model/boy_down.fbx"
+
+#define PLAYER_BOY_JUMP_ANIM_TIME			(60)
+#define PLAYER_BOY_UP_ANIM_TIME				(60)
+#define PLAYER_BOY_DOWN_ANIM_TIME			(60)
 
 #define	PLAYER_BOY_VALUE_MOVE	(0.15f)		// 移動速度
 #define	PLAYER_BOY_RATE_MOVE		(0.20f)		// 移動慣性係数
@@ -30,6 +42,17 @@ enum DIR { RIGHT, LEFT };
 #define JUMP_WHILE		(25)
 #define GRAVITY_BOY		(1.0f)	// 重力
 #define RESIST_X		(0.7f)
+
+//*****構造体*****
+static std::string g_BoyAnimFile[] = {
+	PLAYER_BOY_STOP_MODEL_PATH,
+	PLAYER_BOY_WALKING_MODEL_PATH,
+	PLAYER_BOY_JUMP_MODEL_PATH,
+	PLAYER_BOY_PUSH_MODEL_PATH,	
+	PLAYER_BOY_CARRY_MODEL_PATH,
+	PLAYER_BOY_UP_MODEL_PATH,	
+	PLAYER_BOY_DOWN_MODEL_PATH,
+};
 
 //*****グローバル変数*****
 XMFLOAT3 g_oldBoyPos;
@@ -63,9 +86,11 @@ Player_Boy::Player_Boy()
 	m_pad = GetJoyState(0);
 
 	// モデルデータの読み込み
-	if (!m_model.Load(pDevice, pDeviceContext, PLAYER_BOY_MODEL_PATH)) {
+	if (!m_model.Load(pDevice, pDeviceContext, PLAYER_BOY_STOP_MODEL_PATH)) {
 		MessageBoxA(GetMainWnd(), "モデルデータ読み込みエラー", "InitModel", MB_OK);
 	}
+	for(int i = 0; i < MAX_BOY_ANIM; i++)
+		m_modelSub[i].Load(pDevice, pDeviceContext, g_BoyAnimFile[i]);
 
 	//境界球生成
 	m_nSphere = CreateBSphere(XMFLOAT3(0.0f, 0.0f, 0.0f), PLAYER_BOY_COLLISION_SIZE_RAD, m_mtxWorld);
@@ -75,7 +100,10 @@ Player_Boy::Player_Boy()
 //==============================================================
 Player_Boy::~Player_Boy() {
 	// モデルの解放
+	SetAnim(STOP);
 	m_model.Release();
+	for (int i = 1; i < MAX_BOY_ANIM; i++)
+		m_modelSub[i].Release();
 	//境界球解放
 	ReleaseBSphere(m_nSphere);
 }
@@ -85,8 +113,12 @@ Player_Boy::~Player_Boy() {
 void Player_Boy::Update() {
 	g_oldBoyPos = m_pos;
 	g_nJumpCnt--;
+	m_nAnimTime--;
 
 	m_pad = GetJoyState(0);
+
+	// 待機アニメーションに設定
+	m_nAnim = STOP;
 
 	// カメラの向き取得
 	XMFLOAT3 rotCamera = CCamera::Get()->GetAngle();
@@ -94,6 +126,7 @@ void Player_Boy::Update() {
 	if (GetKeyPress(VK_LEFT)|| (g_GamePadNum > 0 && (31000 >= m_pad->dwPOV && m_pad->dwPOV >= 18001)/*左*/)){
 		m_dir = LEFT;
 			// 左移動
+			m_nAnim = WALK;
 			m_move.x -= SinDeg(rotCamera.y + 90.0f) * PLAYER_BOY_VALUE_MOVE;
 			m_move.z -= CosDeg(rotCamera.y + 90.0f) * PLAYER_BOY_VALUE_MOVE;
 
@@ -102,6 +135,7 @@ void Player_Boy::Update() {
 	}else if (GetKeyPress(VK_RIGHT) || (g_GamePadNum > 0 && (13500 >= m_pad->dwPOV && m_pad->dwPOV >= 4001)/*右*/)) {
 		m_dir = RIGHT;
 			// 右移動
+			m_nAnim = WALK;
 			m_move.x -= SinDeg(rotCamera.y - 90.0f) * PLAYER_BOY_VALUE_MOVE;
 			m_move.z -= CosDeg(rotCamera.y - 90.0f) * PLAYER_BOY_VALUE_MOVE;
 
@@ -110,6 +144,7 @@ void Player_Boy::Update() {
 	if (GetKeyTrigger(VK_UP)|| (g_GamePadNum > 0 && (35999 >= m_pad->dwPOV >= 31001 || m_pad->dwPOV <= 4000)))
 	{
 		// ジャンプ
+		m_nAnim = JUMP;
 		if (g_nJumpCnt < 0)
 		{
 			m_move.y += JUMP_POWER;
@@ -219,11 +254,15 @@ void Player_Boy::Update() {
 	if ((GetKeyPress(VK_A) || GetJoyTrigger(0, JOYSTICKID1)) && !m_bHave)
 	{
 		if (CollisionOldMap(XMFLOAT2(m_pos.x + 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nCategory == CARRY) {
+			m_nAnim = UP;
+			m_nAnimTime = PLAYER_BOY_UP_ANIM_TIME;
 			m_nHand = CollisionOldMap(XMFLOAT2(m_pos.x + 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nObject;
 			g_nowHand = CollisionNowMap(XMFLOAT2(m_pos.x + 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nObject;
 			m_bHave = true;
 		}
 		if (CollisionOldMap(XMFLOAT2(m_pos.x - 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nCategory == CARRY) {
+			m_nAnim = UP;
+			m_nAnimTime = PLAYER_BOY_UP_ANIM_TIME;
 			m_nHand = CollisionOldMap(XMFLOAT2(m_pos.x - 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nObject;
 			g_nowHand = CollisionNowMap(XMFLOAT2(m_pos.x - 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nObject;
 			m_bHave = true;
@@ -232,6 +271,7 @@ void Player_Boy::Update() {
 	// オブジェクトを放す
 	if ((GetKeyPress(VK_S) || GetJoyTrigger(0, JOYSTICKID2)) &&m_bHave)
 	{
+		m_nAnim = DOWN;
 		m_nHand = 9999;
 		GetBox()->SetOldBoxPos(g_nowHand);
 		g_nowHand = 9999;
@@ -245,6 +285,8 @@ void Player_Boy::Update() {
 		GetBox()->SetBoxPos(g_nowHand, m_move, 1); // 未来の座標を一時保存
 	}
 
+	// アニメーション更新
+	SetAnim(m_nAnim);
 
 	XMMATRIX mtxWorld, mtxRot, mtxTranslate;
 
@@ -335,5 +377,59 @@ bool Player_Boy::CheckField()
 			}
 			break;
 		}
+	}
+}
+
+//==============================================================
+//男の子のアニメーション設定
+//==============================================================
+void Player_Boy::SetAnim(int nAnim)
+{
+	if (m_bHave && m_nAnimNow == CARRY_BOY)
+		if (nAnim != DOWN)
+			return;
+
+	if (m_nAnimNow == UP)
+		if (m_nAnimTime <= 0)
+			nAnim = CARRY_BOY;
+
+	switch (nAnim)
+	{
+	case STOP:
+		if (m_nAnimTime <= 0)
+		{
+			m_model = m_modelSub[nAnim];
+			m_nAnimNow = STOP;
+		}
+		break;
+	case WALK:
+		if (m_nAnimTime <= 0)
+		{
+			m_model = m_modelSub[nAnim];
+			m_nAnimNow = WALK;
+		}
+		break;
+	case JUMP:
+		m_model = m_modelSub[nAnim];
+		m_nAnimTime = PLAYER_BOY_JUMP_ANIM_TIME;
+		m_nAnimNow = JUMP;
+		break;
+	case PUSH_BOY:
+		m_model = m_modelSub[nAnim];
+		m_nAnimNow = PUSH_BOY;
+		break;
+	case CARRY_BOY:
+		m_model = m_modelSub[nAnim];
+		m_nAnimNow = CARRY_BOY;
+		break;
+	case UP:
+		m_model = m_modelSub[nAnim];
+		m_nAnimNow = UP;
+		break;
+	case DOWN:
+		m_model = m_modelSub[nAnim];
+		m_nAnimTime = PLAYER_BOY_DOWN_ANIM_TIME;
+		m_nAnimNow = DOWN;
+		break;
 	}
 }
