@@ -168,6 +168,15 @@
     <ClCompile Include="pause.cpp">
       <Filter>ソース ファイル\シーン</Filter>
     </ClCompile>
+    <ClCompile Include="DWBox.cpp">
+      <Filter>ソース ファイル\3Dオブジェクト</Filter>
+    </ClCompile>
+    <ClCompile Include="HalfBox.cpp">
+      <Filter>ソース ファイル\3Dオブジェクト</Filter>
+    </ClCompile>
+    <ClCompile Include="Monument.cpp">
+      <Filter>ソース ファイル\3Dオブジェクト</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="input.h">
@@ -319,6 +328,15 @@
     </ClInclude>
     <ClInclude Include="pause.h">
       <Filter>ヘッダー ファイル\シーン</Filter>
+    </ClInclude>
+    <ClInclude Include="DWBox.h">
+      <Filter>ヘッダー ファイル\3Dオブジェクト</Filter>
+    </ClInclude>
+    <ClInclude Include="HalfBox.h">
+      <Filter>ヘッダー ファイル\3Dオブジェクト</Filter>
+    </ClInclude>
+    <ClInclude Include="Monument.h">
+      <Filter>ヘッダー ファイル\3Dオブジェクト</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
