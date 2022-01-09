@@ -8,8 +8,8 @@
 // マクロ定義
 #define BG_TEXTURE_PATH_SAMPLE		L"data/texture/sky001.jpg"
 #define BG_TEXTURE_PATH_TITLE		L"data/texture/field000.jpg"
-#define BG_TEXTURE_PATH_GAME_NOW	L"data/texture/神殿.jpg"
-#define BG_TEXTURE_PATH_GAME_OLD	L"data/texture/sky001.jpg"
+#define BG_TEXTURE_PATH_GAME_NOW	L"data/texture/back2.png"
+#define BG_TEXTURE_PATH_GAME_OLD	L"data/texture/back1.png"
 #define BG_POS_X		0.0f
 #define BG_POS_Y		0.0f
 #define BG_SIZE_X		SCREEN_WIDTH

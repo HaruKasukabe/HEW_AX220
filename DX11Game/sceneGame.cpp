@@ -10,7 +10,6 @@
 #include "input.h"
 //#include "box.h"
 #include "map.h"
-#include "gimmick.h"
 #include "pause.h"
 #include "Sound.h"
 #include "bg.h"
@@ -26,7 +25,6 @@
 static Old* g_pOld;			//‰ß‹Ž
 static Now* g_pNow;			//Œ»Ý
 //static Box* g_pBox;		//” 
-static Gimmick* g_pGimmick;	//ƒMƒ~ƒbƒN
 static BG* g_pBG;			//”wŒi
 static Goal* g_pGoal;		//ƒS[ƒ‹
 
@@ -50,8 +48,6 @@ HRESULT InitSceneGame() {
 	g_pOld = new Old;
 	//Œ»Ý‰Šú‰»
 	g_pNow = new Now;
-	//ƒMƒ~ƒbƒN‰Šú‰»
-	g_pGimmick = new Gimmick;
 	// ”wŒi‰Šú‰»
 	g_pBG = new BG;
 	//ƒS[ƒ‹‰Šú‰»
@@ -102,8 +98,6 @@ void UninitSceneGame() {
 	delete g_pOld;
 	//Œ»ÝI—¹
 	delete g_pNow;
-	//ƒMƒ~ƒbƒNI—¹
-	delete g_pGimmick;
 	//”wŒiI—¹ˆ—
 	delete g_pBG;
 	//ƒS[ƒ‹I—¹ˆ—
@@ -174,9 +168,6 @@ void UpdateSceneGame() {
 		g_fBoyOldPosX = g_pOld->GetBoyPos().x;
 	}
 
-	//ƒMƒ~ƒbƒNXV
-	g_pGimmick->Update(g_pOld->GetBoyPos());
-
 	if (GetKeyPress(VK_F1)) {
 		StartFadeOut(SCENE_TITLE);
 	}
@@ -197,13 +188,11 @@ void DrawSceneGame() {
 	d3dDeviceContext->RSSetViewports(1, &viewPorts[0]);
 	//¡•`‰æ
 	g_pNow->Draw();
-	g_pGimmick->NowDraw();
 
 	//ƒrƒ…[ƒ|[ƒg‚ðÝ’è@‰º‰æ–Ê
 	d3dDeviceContext->RSSetViewports(1, &viewPorts[1]);
 	//‰ß‹Ž•`‰æ
 	g_pOld->Draw();
-	g_pGimmick->OldDraw();
 
 	//ƒrƒ…[ƒ|[ƒg‚ÌÝ’è‚ðŒ³‚É–ß‚·
 	d3dDeviceContext->RSSetViewports(1, &viewPortsReset);
