@@ -76,20 +76,20 @@ void CCamera::Init()
 // 更新
 void CCamera::Update()
 {
-	if (GetKeyPress(VK_C)) {
-		// 右旋回
-		m_vDestAngle.y -= VALUE_ROTATE_CAMERA;
-		if (m_vDestAngle.y < -180.0f) {
-			m_vDestAngle.y += 360.0f;
-		}
-	}
-	if (GetKeyPress(VK_Z)) {
-		// 左旋回
-		m_vDestAngle.y += VALUE_ROTATE_CAMERA;
-		if (m_vDestAngle.y >= 180.0f) {
-			m_vDestAngle.y -= 360.0f;
-		}
-	}
+	//if (GetKeyPress(VK_C)) {
+	//	// 右旋回
+	//	m_vDestAngle.y -= VALUE_ROTATE_CAMERA;
+	//	if (m_vDestAngle.y < -180.0f) {
+	//		m_vDestAngle.y += 360.0f;
+	//	}
+	//}
+	//if (GetKeyPress(VK_Z)) {
+	//	// 左旋回
+	//	m_vDestAngle.y += VALUE_ROTATE_CAMERA;
+	//	if (m_vDestAngle.y >= 180.0f) {
+	//		m_vDestAngle.y -= 360.0f;
+	//	}
+	//}
 
 	// 目的の角度までの差分
 	float fDiffRotY = m_vDestAngle.y - m_vAngle.y;
@@ -147,10 +147,10 @@ void CCamera::Update()
 	//PrintDebugProc("[ｶﾒﾗ ﾑｷ : (%f)]\n", m_vAngle.y);
 	//PrintDebugProc("\n");
 
-	PrintDebugProc("*** ｼﾃﾝ ｿｳｻ ***\n");
+	/*PrintDebugProc("*** ｼﾃﾝ ｿｳｻ ***\n");
 	PrintDebugProc("ﾋﾀﾞﾘ ｾﾝｶｲ : Z\n");
 	PrintDebugProc("ﾐｷﾞ  ｾﾝｶｲ : C\n");
-	PrintDebugProc("\n");
+	PrintDebugProc("\n");*/
 }
 
 // ビュー/プロジェクション マトリックス更新

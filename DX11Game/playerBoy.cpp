@@ -79,6 +79,7 @@ Player_Boy::Player_Boy()
 	m_bJump = false;
 	m_bLand = false;
 	m_bHave = false;
+	m_collision = false;
 	m_nHand = 9999;
 	g_nowHand = 9999;
 	timeJudge = 0;
@@ -148,9 +149,16 @@ void Player_Boy::Update() {
 		m_nAnim = JUMP;
 		if (g_nJumpCnt < 0)
 		{
-			m_move.y += JUMP_POWER;
 			m_bJump = true;
 			g_nJumpCnt = JUMP_WHILE;
+			for (int i = 0; i < JUMP_POWER; i++)
+			{
+				OBJECT_INFO hantei = CollisionOldMap(XMFLOAT2(m_pos.x, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y));
+				if (hantei.m_nCategory > 0)
+					continue;
+				else
+					m_move.y = 1.0f;
+			}
 		}
 	}
 
