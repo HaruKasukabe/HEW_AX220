@@ -36,7 +36,7 @@ Monument::Monument(){
 	for (int i = 0; i < MAX_MONUMENT; ++i) {
 		m_monument[i].m_pos = XMFLOAT3(0.0f, 0.0f, 0.0f);
 		m_monument[i].m_use = false;
-		m_monument[i].m_scl = XMFLOAT3(2.0f, 2.0f, 2.0f);
+		m_monument[i].m_scl = XMFLOAT3(1.5f, 2.0f, 1.0f);
 		m_monument[i].m_nTime = -1;
 	}
 

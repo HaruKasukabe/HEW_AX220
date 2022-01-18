@@ -171,6 +171,12 @@
     <ClCompile Include="Monument.cpp">
       <Filter>ソース ファイル\3Dオブジェクト</Filter>
     </ClCompile>
+    <ClCompile Include="gimmick.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="plant.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="input.h">
@@ -325,6 +331,12 @@
     </ClInclude>
     <ClInclude Include="Monument.h">
       <Filter>ヘッダー ファイル\3Dオブジェクト</Filter>
+    </ClInclude>
+    <ClInclude Include="gimmick.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="plant.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -13,7 +13,10 @@
 //マクロ定義
 //*********************************************************
 #define BOX_MODEL_PATH	"data/model/iwa.fbx"
-#define BOX_TEXTURE_PATH "data/texture/stone.jpg"
+#define BOX_NOW_TEXTURE_PATH "data/texture/iwa_color2.jpg"
+#define BOX_OLD_TEXTURE_PATH "data/texture/iwa_color.jpg"
+
+#define MAX_BOX_TEXTURE		(2)
 
 #define M_DIFFUSE			XMFLOAT4(1.0f,1.0f,1.0f,1.0f)
 #define M_SPECULAR			XMFLOAT4(0.0f,0.0f,0.0f,1.0f)
@@ -28,9 +31,19 @@
 #define BOY_HUND_LONG			10.0f
 
 //*********************************************************
+//構造体定義
+//*********************************************************
+const char* g_boxTexture[MAX_BOX_TEXTURE]
+{
+	BOX_NOW_TEXTURE_PATH,
+	BOX_OLD_TEXTURE_PATH,
+};
+
+//*********************************************************
 //グローバル変数
 //*********************************************************
 MESH g_boxMesh;
+static TAssimpMaterial g_boxMaterial[MAX_BOX_TEXTURE];
 
 //=============================
 //		ｺﾝｽﾄﾗｸﾀ
@@ -50,7 +63,7 @@ Box::Box(){
 
 	g_boxMesh.pos = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	g_boxMesh.rot = XMFLOAT3(0.0f, 0.0f, 0.0f);
-	m_scl = XMFLOAT3(5.0f, 5.0f, 5.0f);
+	m_scl = XMFLOAT3(0.5f, 0.9f, 0.5f);
 
 	// マテリアルの初期設定
 	m_material.Diffuse = M_DIFFUSE;
@@ -64,14 +77,18 @@ Box::Box(){
 	if (!m_model.Load(pDevice, pDeviceContext, BOX_MODEL_PATH)) {
 		MessageBoxA(GetMainWnd(), "モデルデータ読み込みエラー", "InitModel", MB_OK);
 	}
+
 	// テクスチャの読み込み
-	static TAssimpMaterial material;
-	HRESULT hr = CreateTextureFromFile(pDevice, BOX_TEXTURE_PATH, &material.pTexture);
-	if(FAILED(hr))
+	HRESULT hr;
+	for (int i = 0; i < MAX_BOX_TEXTURE; i++)
 	{
-		MessageBoxA(GetMainWnd(), "テクスチャ読み込みエラー","石のテクスチャ", MB_OK);
+		hr = CreateTextureFromFile(pDevice, g_boxTexture[i], &g_boxMaterial[i].pTexture);
+		if (FAILED(hr))
+		{
+			MessageBoxA(GetMainWnd(), "テクスチャ読み込みエラー", "石のテクスチャ", MB_OK);
+		}
 	}
-	m_model.SetMaterial(&material);
+	m_model.SetMaterial(&g_boxMaterial[0]);
 
 
 	XMStoreFloat4x4(&g_boxMesh.mtxTexture, XMMatrixIdentity());
@@ -156,6 +173,13 @@ void Box::Draw(int num) {
 		if (!m_box[num].m_state) {
 			return;
 		}
+
+		//時間に応じてテクスチャを変更
+		if (m_box[num].m_nTime == 0)
+			m_model.SetMaterial(&g_boxMaterial[0]);
+		else
+			m_model.SetMaterial(&g_boxMaterial[1]);
+
 		// 不透明部分を描画
 		m_model.Draw(pDC, m_box[num].m_mtxWorld, eOpacityOnly);
 
@@ -171,7 +195,7 @@ void Box::Draw(int num) {
 //=============================
 //	箱生成 引数 : モデル座標、サイズ、ワールドマトリックス
 //=============================
-int Box::Create(XMFLOAT3 pos, int nCat) {
+int Box::Create(XMFLOAT3 pos, int nCat, int nTime) {
 	TBox* pBox = m_box;
 	for (int i = 0; i < MAX_BOX; ++i, ++pBox) {
 		if (pBox->m_use) continue;
@@ -180,6 +204,7 @@ int Box::Create(XMFLOAT3 pos, int nCat) {
 		pBox->m_state = true;
 		pBox->m_use = true;
 		pBox->m_nCat = nCat;
+		pBox->m_nTime = nTime;
 
 		return i;
 	}

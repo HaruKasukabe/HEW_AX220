@@ -21,7 +21,6 @@
 #include "bsphere.h"
 #include "fire.h"
 #include "smoke.h"
-
 #include "scene.h"
 
 //-------- ライブラリのリンク
@@ -617,7 +616,11 @@ void Update(void)
 	//シーン更新
 	UpdateScene();
 	// カメラ更新
+	CCamera::Set(NOW_CAMERA);
 	CCamera::Get()->Update();
+	CCamera::Set(OLD_CAMERA);
+	CCamera::Get()->Update();
+	CCamera::Set(NOW_CAMERA);
 
 	//// 木の更新
 	//UpdateTree();

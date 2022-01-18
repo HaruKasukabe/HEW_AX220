@@ -7,6 +7,12 @@
 #pragma once
 #include "main.h"
 
+enum CAMERA_CAT
+{
+	NOW_CAMERA,
+	OLD_CAMERA,
+};
+
 class CCamera
 {
 private:
@@ -61,5 +67,5 @@ public:
 	XMFLOAT3& GetAngle() { return m_vAngle; }
 
 	static CCamera* Get() { return m_pCamera; }
-	static void Set(CCamera* pCamera) { m_pCamera = pCamera; }
+	static void Set(CAMERA_CAT);
 };

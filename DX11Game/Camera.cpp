@@ -8,6 +8,7 @@
 #include "input.h"
 #include "debugproc.h"
 #include "model.h"
+#include "sceneGame.h"
 
 //*****************************************************************************
 // グローバル変数
@@ -35,6 +36,7 @@ namespace {
 	const float CHASE_HEIGHT_R = 10.0f;				// 追跡時の注視点の高さ
 
 	CCamera g_camera;								// カメラ インスタンス
+	CCamera g_camera2;
 }
 
 CCamera* CCamera::m_pCamera = &g_camera;			// 現在のカメラ
@@ -112,23 +114,23 @@ void CCamera::Update()
 	m_vSrcPos.z = -CosDeg(m_vAngle.y) * m_fLengthInterval;
 
 	// 追跡カメラ
-	XMFLOAT3& vModelPos = GetModelPos();	// モデル座標
+	//XMFLOAT3 vModelPos = GetOld()->GetBoyPos();	// モデル座標
 	// 視点座標移動先を算出
-	m_vDestPos.x = m_vSrcPos.x + vModelPos.x;
-	m_vDestPos.y = m_vSrcPos.y + vModelPos.y;
-	m_vDestPos.z = m_vSrcPos.z + vModelPos.z;
-	// 注視点座標移動先を算出
-	m_vDestTarget.x = CAM_POS_R_X + vModelPos.x;
-	m_vDestTarget.y = CAM_POS_R_Y + vModelPos.y;
-	m_vDestTarget.z = CAM_POS_R_Z + vModelPos.z;
-	// 視点を徐々に移動先に近づける
-	m_vPos.x = m_vPos.x * 0.9f + m_vDestPos.x * 0.1f;
-	m_vPos.y = m_vPos.y * 0.9f + m_vDestPos.y * 0.1f;
-	m_vPos.z = m_vPos.z * 0.9f + m_vDestPos.z * 0.1f;
-	// 注視点を徐々に移動先に近づける
-	m_vTarget.x = m_vTarget.x * 0.9f + m_vDestTarget.x * 0.1f;
-	m_vTarget.y = m_vTarget.y * 0.9f + m_vDestTarget.y * 0.1f;
-	m_vTarget.z = m_vTarget.z * 0.9f + m_vDestTarget.z * 0.1f;
+	//m_vDestPos.x = m_vSrcPos.x + vModelPos.x;
+	//m_vDestPos.y = m_vSrcPos.y + vModelPos.y;
+	//m_vDestPos.z = m_vSrcPos.z + vModelPos.z;
+	//// 注視点座標移動先を算出
+	//m_vDestTarget.x = CAM_POS_R_X + vModelPos.x;
+	//m_vDestTarget.y = CAM_POS_R_Y + vModelPos.y;
+	//m_vDestTarget.z = CAM_POS_R_Z + vModelPos.z;
+	//// 視点を徐々に移動先に近づける
+	//m_vPos.x = m_vPos.x * 0.9f + m_vDestPos.x * 0.1f;
+	//m_vPos.y = m_vPos.y * 0.9f + m_vDestPos.y * 0.1f;
+	//m_vPos.z = m_vPos.z * 0.9f + m_vDestPos.z * 0.1f;
+	//// 注視点を徐々に移動先に近づける
+	//m_vTarget.x = m_vTarget.x * 0.9f + m_vDestTarget.x * 0.1f;
+	//m_vTarget.y = m_vTarget.y * 0.9f + m_vDestTarget.y * 0.1f;
+	//m_vTarget.z = m_vTarget.z * 0.9f + m_vDestTarget.z * 0.1f;
 
 	if (GetKeyTrigger(VK_HOME)) {
 		// リセット
@@ -203,4 +205,12 @@ XMFLOAT4X4& CCamera::CalcWorldMatrix()
 	m_mtxWorld._44 = 1.0f;
 
 	return m_mtxWorld;
+}
+
+void CCamera::Set(CAMERA_CAT camera)
+{
+	if(camera == NOW_CAMERA)
+		m_pCamera = &g_camera;
+	else
+		m_pCamera = &g_camera2;
 }

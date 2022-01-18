@@ -19,7 +19,7 @@ public:
 	void Draw();
 	void Draw(int num);
 
-	int Create(XMFLOAT3 pos, int nCat);
+	int Create(XMFLOAT3 pos, int nCat, int nTime);
 
 	void Release(int num);
 

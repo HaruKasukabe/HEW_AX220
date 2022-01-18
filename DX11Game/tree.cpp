@@ -15,7 +15,7 @@
 // マクロ定義
 //*****************************************************************************
 #define MODEL_TREE      "data/model/Tree.fbx"
-#define	TEXTURE_TREE	"data/texture/Leaves.png"	// 読み込むテクスチャファイル名
+#define	TEXTURE_TREE	"data/texture/tree_color.jpg"	// 読み込むテクスチャファイル名
 #define MODEL_SEED      "data/model/seed.fbx"
 #define TEXTURE_SEED    "data/texture/seed_color.jpg"
 
@@ -98,7 +98,7 @@ Tree::Tree()
 	if (FAILED(hr)) {
 		MessageBoxA(GetMainWnd(), "テクスチャ読み込みエラー", "木のテクスチャ", MB_OK);
 	}
-	m_model.SetMaterial(&material_Seed);
+	m_sModel.SetMaterial(&material_Seed);
 
 }
 

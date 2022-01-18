@@ -8,8 +8,11 @@
 // É}ÉNÉçíËã`
 #define BG_TEXTURE_PATH_SAMPLE		L"data/texture/sky001.jpg"
 #define BG_TEXTURE_PATH_TITLE		L"data/texture/field000.jpg"
-#define BG_TEXTURE_PATH_GAME_NOW	L"data/texture/back2.png"
-#define BG_TEXTURE_PATH_GAME_OLD	L"data/texture/back1.png"
+#define BG_TEXTURE_PATH_GAME_NOW	L"data/texture/back_tower2.png"
+#define BG_TEXTURE_PATH_GAME_OLD	L"data/texture/back_tower1.png"
+#define BG_TEXTURE_PATH_GAME_NOW2	L"data/texture/back_dungeon.png"
+#define BG_TEXTURE_PATH_GAME_OLD2	L"data/texture/back_sky.png"
+
 #define BG_POS_X		0.0f
 #define BG_POS_Y		0.0f
 #define BG_SIZE_X		SCREEN_WIDTH
@@ -23,6 +26,8 @@
 static LPCWSTR g_BgTex[] = {
 	BG_TEXTURE_PATH_GAME_NOW,
 	BG_TEXTURE_PATH_GAME_OLD,
+	BG_TEXTURE_PATH_GAME_NOW2,
+	BG_TEXTURE_PATH_GAME_OLD2,
 };
 
 //ÉOÉçÅ[ÉoÉãïœêî
@@ -50,7 +55,7 @@ BG::BG()
 		hr = CreateTextureFromFile(pDevice, BG_TEXTURE_PATH_TITLE, &m_pTexture[0]);
 		break;
 	case SCENE_GAME:
-		for(int i = 0; i < 2; i++)
+		for(int i = 0; i < MAX_BG_TEXTURE; i++)
 			hr = CreateTextureFromFile(pDevice, g_BgTex[i], &m_pTexture[i]);
 		break;
 	case SCENE_RESULT:
@@ -71,7 +76,7 @@ BG::~BG() {
 		SAFE_RELEASE(m_pTexture[0]);
 		break;
 	case SCENE_GAME:
-		for (int i = 0; i < 2; i++)
+		for (int i = 0; i < MAX_BG_TEXTURE; i++)
 			SAFE_RELEASE(m_pTexture[i]);
 		break;
 	}
@@ -134,6 +139,12 @@ void BG::Draw() {
 	case SCENE_GAME:
 		// ç°ÇÃï`âÊ
 		SetPolygonSize(m_sizeGame.x, m_sizeGame.y);
+		SetPolygonPos(BG_POS_X, BG_POS_Y_NOW);
+		SetPolygonTexture(m_pTexture[2]);
+		SetPolygonUV(0.0f, 0.0f);
+		DrawPolygon(pDC);
+		SetBlendState(BS_ALPHABLEND);
+		SetPolygonSize(m_sizeGame.x, m_sizeGame.y);
 		SetPolygonPos(m_posNow.x, m_posNow.y);
 		SetPolygonTexture(m_pTexture[0]);
 		SetPolygonUV(0.0f, 0.0f);
@@ -143,8 +154,15 @@ void BG::Draw() {
 		SetPolygonTexture(m_pTexture[0]);
 		SetPolygonUV(0.0f, 0.0f);
 		DrawPolygon(pDC);
+		SetBlendState(BS_NONE);
 
 		// âﬂãéÇÃîwåiï`âÊ
+		SetPolygonSize(m_sizeGame.x, m_sizeGame.y);
+		SetPolygonPos(BG_POS_X, BG_POS_Y_OLD);
+		SetPolygonTexture(m_pTexture[3]);
+		SetPolygonUV(0.0f, 0.0f);
+		DrawPolygon(pDC);
+		SetBlendState(BS_ALPHABLEND);
 		SetPolygonSize(m_sizeGame.x, m_sizeGame.y);
 		SetPolygonPos(m_posOld.x, m_posOld.y);
 		SetPolygonTexture(m_pTexture[1]);
@@ -155,6 +173,7 @@ void BG::Draw() {
 		SetPolygonTexture(m_pTexture[1]);
 		SetPolygonUV(0.0f, 0.0f);
 		DrawPolygon(pDC);
+		SetBlendState(BS_NONE);
 		break;
 	}
 }
