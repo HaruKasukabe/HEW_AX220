@@ -20,16 +20,16 @@ enum GIRL_ANIM { STOP, WALK, JUMP, MAX_GIRL_ANIM, };
 
 #define PLAYER_GIRL_JUMP_ANIM_TIME	(60)
 
-#define	PLAYER_BOY_VALUE_MOVE	(0.05f)		// à⁄ìÆë¨ìx
-#define	PLAYER_BOY_RATE_MOVE	(0.20f)		// à⁄ìÆäµê´åWêî
-#define	PLAYER_BOY_VALUE_ROTATE	(9.0f)		// âÒì]ë¨ìx
-#define	PLAYER_BOY_RATE_ROTATE	(0.20f)		// âÒì]äµê´åWêî
+#define	PLAYER_GIRL_VALUE_MOVE	(0.05f)		// à⁄ìÆë¨ìx
+#define	PLAYER_GIRL_RATE_MOVE	(0.20f)		// à⁄ìÆäµê´åWêî
+#define	PLAYER_GIRL_VALUE_ROTATE	(9.0f)		// âÒì]ë¨ìx
+#define	PLAYER_GIRL_RATE_ROTATE	(0.20f)		// âÒì]äµê´åWêî
 
-#define PLAYER_BOY_COLLISION_SIZE_X		4.0f
-#define PLAYER_BOY_COLLISION_SIZE_Y		4.0f
-#define PLAYER_BOY_COLLISION_SIZE_Z		2.5f
+#define PLAYER_GIRL_COLLISION_SIZE_X		4.0f
+#define PLAYER_GIRL_COLLISION_SIZE_Y		4.0f
+#define PLAYER_GIRL_COLLISION_SIZE_Z		2.5f
 
-#define PLAYER_BOY_COLLISION_SIZE_RAD	4.0f
+#define PLAYER_GIRL_COLLISION_SIZE_RAD	4.0f
 
 #define GRAVITY_GIRL	(2.0f)	// èdóÕ
 
@@ -99,8 +99,8 @@ void Player_Girl::Update() {
 
 	// âEà⁄ìÆ
 	m_nAnim = WALK;
-	m_move.x -= SinDeg(rotCamera.y - 90.0f) * PLAYER_BOY_VALUE_MOVE;
-	m_move.z -= CosDeg(rotCamera.y - 90.0f) * PLAYER_BOY_VALUE_MOVE;
+	m_move.x -= SinDeg(rotCamera.y - 90.0f) * PLAYER_GIRL_VALUE_MOVE;
+	m_move.z -= CosDeg(rotCamera.y - 90.0f) * PLAYER_GIRL_VALUE_MOVE;
 
 
 	m_rotDest.y = rotCamera.y - 90.0f;
@@ -118,7 +118,7 @@ void Player_Girl::Update() {
 	}
 
 	// ñ⁄ìIÇÃäpìxÇ‹Ç≈äµê´ÇÇ©ÇØÇÈ
-	m_rot.y += fDiffRotY * PLAYER_BOY_RATE_ROTATE;
+	m_rot.y += fDiffRotY * PLAYER_GIRL_RATE_ROTATE;
 	if (m_rot.y >= 180.0f) {
 		m_rot.y -= 360.0f;
 	}
@@ -135,9 +135,9 @@ void Player_Girl::Update() {
 
 
 	// à⁄ìÆó Ç…äµê´ÇÇ©ÇØÇÈ
-	m_move.x += (0.0f - m_move.x) * PLAYER_BOY_RATE_MOVE;
-	m_move.y += (0.0f - m_move.y) * PLAYER_BOY_RATE_MOVE;
-	m_move.z += (0.0f - m_move.z) * PLAYER_BOY_RATE_MOVE;
+	m_move.x += (0.0f - m_move.x) * PLAYER_GIRL_RATE_MOVE;
+	m_move.y += (0.0f - m_move.y) * PLAYER_GIRL_RATE_MOVE;
+	m_move.z += (0.0f - m_move.z) * PLAYER_GIRL_RATE_MOVE;
 
 	if (m_pos.x < -310.0f) {
 		m_pos.x = -310.0f;
@@ -161,16 +161,19 @@ void Player_Girl::Update() {
 	}
 
 	// ìñÇΩÇËîªíË
-	OBJECT_INFO collision = CollisionNowMap(XMFLOAT2(m_pos.x, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y));
-	if (collision.m_nCategory > 0)
+	std::vector<OBJECT_INFO> collision = WalkCollisionOldMap(XMFLOAT2(m_pos.x, m_pos.y), XMFLOAT2(PLAYER_GIRL_COLLISION_SIZE_X, PLAYER_GIRL_COLLISION_SIZE_Y));
+	std::vector<OBJECT_INFO>::iterator it = collision.begin();
+	while (it != collision.end())
 	{
-		if (m_bLand == true && collision.m_bOnBox == true)
-			m_pos.y = g_oldGirlPos.y;
-		else if (m_bLand == true)
+		if (it->m_nCategory > 0)
 		{
-			m_nAnim = STOP;
-			m_pos.x = g_oldGirlPos.x;
+			if (m_bLand == true && it->m_bOnBox == true)
+				m_pos.y = g_oldGirlPos.y;
+			else if (m_bLand == true)
+				m_pos.x = g_oldGirlPos.x;
 		}
+
+		it++;
 	}
 	//----ínå`Ç∆ÇÃìñÇΩÇËîªíË----
 	if (CheckField())
@@ -269,12 +272,28 @@ void Player_Girl::SetGirlPos(XMFLOAT3 pos)
 bool Player_Girl::CheckField()
 {
 	Box* pBox = GetBox();
+	DWBox* pDWBox = GetDWBox();
 	OBJECT_INFO* pNowMap = GetMap(0);
 
 	XMFLOAT3 boxPos;
 	for (int i = 0; i < MAP_HEIGHT * MAP_WIDTH; i++, pNowMap++) {
 		switch (pNowMap->m_nCategory) {
 		case 0:
+			break;
+		case NORMAL:
+			if (!pDWBox->GetState(pNowMap->m_nObject))
+			{
+				break;
+			}
+			boxPos = pDWBox->GetPos(pNowMap->m_nObject);
+			if (m_pos.x <= boxPos.x - 2.0f) continue;
+			if (boxPos.x + 2.0f <= m_pos.x) continue;
+
+			if (m_pos.y >= boxPos.y + 6.0f && g_oldGirlPos.y <= boxPos.y + 6.0f)
+			{
+				m_pos.y = boxPos.y + 18.0f;
+				return true;
+			}
 			break;
 		default:
 			if (!pBox->GetState(pNowMap->m_nObject))

@@ -13,7 +13,7 @@
 //マクロ定義
 //*********************************************************
 #define HALFBOX_MODEL_PATH	"data/model/box001.x"
-#define HALFBOX_TEXTURE_PATH "data/texture/pause2.png"
+#define HALFBOX_TEXTURE_PATH "data/texture/階段.jpg"
 
 #define M_DIFFUSE			XMFLOAT4(1.0f,1.0f,1.0f,1.0f)
 #define M_SPECULAR			XMFLOAT4(0.0f,0.0f,0.0f,1.0f)
@@ -290,7 +290,7 @@ void HalfBox::DrawOldNow(int nTime) {
 //=======================================
 //	キューブ生成(0が今、1が過去)
 //=======================================
-int HalfBox::CreateOldNow(XMFLOAT3 pos, int nTime/*, XMFLOAT3 scl*/) {
+int HalfBox::CreateOldNow(XMFLOAT3 pos, int nTime, int nObject/*, XMFLOAT3 scl*/) {
 	TBox* pHALFBox = m_box;
 	for (int i = 0; i < MAX_BOX; ++i, ++pHALFBox) {
 		if (pHALFBox->m_use) continue;
@@ -301,7 +301,17 @@ int HalfBox::CreateOldNow(XMFLOAT3 pos, int nTime/*, XMFLOAT3 scl*/) {
 		pHALFBox->m_nTime = nTime;
 		// pHALFBox->m_scl = scl; スケールの設定
 		pHALFBox->m_collision = XMFLOAT2(HALFBOX_COLLISION_SIZE_X*pHALFBox->m_scl.x, HALFBOX_COLLISION_SIZE_Y*pHALFBox->m_scl.y);
+
+		m_nObj.push_back(nObject);
 		return i;
 	}
 	return -1;
+}
+
+//=======================================
+//	オブジェクト番号取得
+//=======================================
+std::vector<int> HalfBox::GetObj()
+{
+	return m_nObj;
 }

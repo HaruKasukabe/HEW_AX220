@@ -180,6 +180,7 @@
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="map.cpp" />
+    <ClCompile Include="mapData.cpp" />
     <ClCompile Include="mapselect.cpp" />
     <ClCompile Include="mesh.cpp" />
     <ClCompile Include="meshfield.cpp" />
@@ -231,6 +232,7 @@
     <ClInclude Include="Light.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="map.h" />
+    <ClInclude Include="mapData.h" />
     <ClInclude Include="mapselect.h" />
     <ClInclude Include="mesh.h" />
     <ClInclude Include="meshfield.h" />

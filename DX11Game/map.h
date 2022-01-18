@@ -9,6 +9,8 @@
 #include "DWBox.h"
 #include "HalfBox.h"
 #include "Monument.h"
+#include <vector>
+
 //*****構造体定義*****
 typedef struct {
 	int m_nCategory;	//オブジェクトの種類
@@ -39,8 +41,13 @@ void UpdateMap();
 void DrawOldMap();
 void DrawNowMap();
 
+// 今までの当たり判定
 OBJECT_INFO CollisionOldMap(XMFLOAT2 pos, XMFLOAT2 size);
 OBJECT_INFO	CollisionNowMap(XMFLOAT2 pos, XMFLOAT2 size);
+
+// 移動用の当たり判定
+std::vector<OBJECT_INFO> WalkCollisionOldMap(XMFLOAT2 pos, XMFLOAT2 size);
+std::vector<OBJECT_INFO> WalkCollisionNowMap(XMFLOAT2 pos, XMFLOAT2 size);
 
 Box* GetBox();
 DWBox* GetDWBox();

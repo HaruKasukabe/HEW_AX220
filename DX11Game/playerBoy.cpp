@@ -39,8 +39,9 @@ enum BOY_ANIM { STOP, WALK, JUMP, PUSH_BOY, CARRY_BOY, UP, DOWN, MAX_BOY_ANIM, }
 
 #define PLAYER_BOY_COLLISION_SIZE_RAD	4.0f
 
-#define JUMP_POWER		(2.0f)
-#define JUMP_WHILE		(25)
+#define JUMP_POWER		(1.3f)
+#define JUMP_WHILE		(26)
+#define JUMP_TIME		(50)
 #define GRAVITY_BOY		(1.0f)	// 重力
 #define RESIST_X		(0.7f)
 
@@ -60,6 +61,7 @@ XMFLOAT3 g_oldBoyPos;
 static int g_nowHand;
 static int timeJudge; // 0:過去,1:未来
 static int g_nJumpCnt;
+static int g_nNoJumpTime;
 
 //==============================================================
 //ｺﾝｽﾄﾗｸﾀ
@@ -115,6 +117,7 @@ Player_Boy::~Player_Boy() {
 void Player_Boy::Update() {
 	g_oldBoyPos = m_pos;
 	m_nAnimTime--;
+	g_nNoJumpTime--;
 
 	m_pad = GetJoyState(0);
 
@@ -162,10 +165,11 @@ void Player_Boy::Update() {
 	{
 		// ジャンプ
 		m_nAnim = JUMP;
-		if (g_nJumpCnt < 0)
+		if (g_nJumpCnt < 0 && g_nNoJumpTime < 0)
 		{
 			m_bJump = true;
 			g_nJumpCnt = JUMP_WHILE;
+			g_nNoJumpTime = JUMP_TIME;
 		}
 	}
 
@@ -229,13 +233,19 @@ void Player_Boy::Update() {
 	}
 
 	// 当たり判定
-	OBJECT_INFO collision = CollisionOldMap(XMFLOAT2(m_pos.x, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y));
-	if (collision.m_nCategory > 0)
+	std::vector<OBJECT_INFO> collision = WalkCollisionOldMap(XMFLOAT2(m_pos.x, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y));
+	std::vector<OBJECT_INFO>::iterator it = collision.begin();
+	while (it != collision.end())
 	{
-		if (m_bLand == true && collision.m_bOnBox == true)
-			m_pos.y = g_oldBoyPos.y;
-		else if (m_bLand == true)
-			m_pos.x = g_oldBoyPos.x;
+		if (it->m_nCategory > 0)
+		{
+			if (m_bLand == true && it->m_bOnBox == true)
+				m_pos.y = g_oldBoyPos.y;
+			else if (m_bLand == true)
+				m_pos.x = g_oldBoyPos.x;
+		}
+
+		it++;
 	}
 	//----地形との当たり判定----
 	if (CheckField())
@@ -295,7 +305,7 @@ void Player_Boy::Update() {
 		bool aFlg = GetDWBox()->Collision(XMFLOAT2(aPos.x, aPos.y), aSize);
 		if (aFlg) {
 			GetBox()->Destroy(g_nowHand);
-			GetHalfBox()->CreateOldNow(bPos,1);
+			GetHalfBox()->CreateOldNow(bPos,1, g_nowHand);
 		}
 
 		m_nHand = 9999;
@@ -307,7 +317,9 @@ void Player_Boy::Update() {
 	// 持ち物を一緒に移動
 	if (m_nHand != 9999)
 	{
+		m_move.y += 10.0f;
 		GetBox()->SetBoxPos(m_nHand, m_move, 0);   // 過去の座標を反映
+		m_move.y -= 10.0f;
 		GetBox()->SetBoxPos(g_nowHand, m_move, 1); // 未来の座標を一時保存
 	}
 
@@ -379,12 +391,28 @@ int Player_Boy::GetBoyHand() {
 //==============================================================
 bool Player_Boy::CheckField(){
 	Box* pBox = GetBox();
+	DWBox* pDWBox = GetDWBox();
 	OBJECT_INFO* pOldMap = GetMap(1);
 
 	XMFLOAT3 boxPos;
 	for (int i = 0; i < MAP_HEIGHT * MAP_WIDTH; i++, pOldMap++) {
 		switch (pOldMap->m_nCategory) {
 		case 0:
+			break;
+		case NORMAL:
+			if (!pDWBox->GetState(pOldMap->m_nObject))
+			{
+				break;
+			}
+			boxPos = pDWBox->GetPos(pOldMap->m_nObject);
+			if (m_pos.x <= boxPos.x - 2.0f) continue;
+			if (boxPos.x + 2.0f <= m_pos.x) continue;
+
+			if (m_pos.y >= boxPos.y + 1.0f && g_oldBoyPos.y <= boxPos.y + 1.0f)
+			{
+				m_pos.y = boxPos.y + 1.0f;
+				return true;
+			}
 			break;
 		default:
 			if (!pBox->GetState(pOldMap->m_nObject))
@@ -395,9 +423,9 @@ bool Player_Boy::CheckField(){
 			if (m_pos.x <= boxPos.x - 2.0f) continue;
 			if (boxPos.x + 2.0f <= m_pos.x) continue;
 
-			if (m_pos.y >= boxPos.y + 6.0f && g_oldBoyPos.y <= boxPos.y + 6.0f)
+			if (m_pos.y >= boxPos.y + 1.0f && g_oldBoyPos.y <= boxPos.y + 1.0f)
 			{
-				m_pos.y = boxPos.y + 18.0f;
+				m_pos.y = boxPos.y + 1.0f;
 				return true;
 			}
 			break;

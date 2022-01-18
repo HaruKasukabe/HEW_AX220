@@ -25,8 +25,8 @@
 #define M_AMBIENT			XMFLOAT4(1.0f,1.0f,1.0f,1.0f)
 #define M_EMISSIVE			XMFLOAT4(0.0f,0.0f,0.0f,1.0f)
 
-#define DWBOX_COLLISION_SIZE_X	1.0f // scl‚ª1‚Ì‚Æ‚«‚ÌÝ’è
-#define DWBOX_COLLISION_SIZE_Y	1.0f // scl‚ª1‚Ì‚Æ‚«‚ÌÝ’è
+#define DWBOX_COLLISION_SIZE_X	6.0f // scl‚ª1‚Ì‚Æ‚«‚ÌÝ’è
+#define DWBOX_COLLISION_SIZE_Y	10.0f // scl‚ª1‚Ì‚Æ‚«‚ÌÝ’è
 
 //*********************************************************
 //\‘¢‘Ì’è‹`
