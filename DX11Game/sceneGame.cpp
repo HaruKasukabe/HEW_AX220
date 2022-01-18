@@ -10,11 +10,11 @@
 #include "input.h"
 //#include "box.h"
 #include "map.h"
-#include "gimmick.h"
 #include "pause.h"
 #include "Sound.h"
 #include "bg.h"
 #include "Goal.h"
+#include "gimmick.h"
 
 
 //*****定数定義*****
@@ -26,9 +26,9 @@
 static Old* g_pOld;			//過去
 static Now* g_pNow;			//現在
 //static Box* g_pBox;		//箱
-static Gimmick* g_pGimmick;	//ギミック
 static BG* g_pBG;			//背景
 static Goal* g_pGoal;		//ゴール
+static Gimmick* g_pGimmick;	//ギミック
 
 const float FRAME_BUFFER_W = SCREEN_WIDTH;   //フレームバッファの幅。
 const float FRAME_BUFFER_H = SCREEN_HEIGHT;   //フレームバッファの高さ。
@@ -41,6 +41,9 @@ float g_fGirlOldPosX;	// 女の子の過去座標
 
 bool PauseFlg = false;
 
+XMFLOAT3 g_girlCameraTarget;
+XMFLOAT3 g_boyCameraTarget;
+
 //=============================
 //		初期化
 //=============================
@@ -50,12 +53,12 @@ HRESULT InitSceneGame() {
 	g_pOld = new Old;
 	//現在初期化
 	g_pNow = new Now;
-	//ギミック初期化
-	g_pGimmick = new Gimmick;
 	// 背景初期化
 	g_pBG = new BG;
 	//ゴール初期化
 	g_pGoal = new Goal;
+	//ギミック初期化
+	g_pGimmick = new Gimmick;
 
 	//箱初期化
 	//g_pBox = new Box;
@@ -91,6 +94,9 @@ HRESULT InitSceneGame() {
 	CSound::Init();
 	CSound::Play(BGM_001);
 
+	g_girlCameraTarget = XMFLOAT3(0.0f, 0.0f, 0.0f);
+	g_boyCameraTarget = XMFLOAT3(0.0f, 0.0f, 0.0f);
+
 	return hr;
 }
 
@@ -102,12 +108,12 @@ void UninitSceneGame() {
 	delete g_pOld;
 	//現在終了
 	delete g_pNow;
-	//ギミック終了
-	delete g_pGimmick;
 	//背景終了処理
 	delete g_pBG;
 	//ゴール終了処理
 	delete g_pGoal;
+	//ギミック終了処理
+	delete g_pGimmick;
 
 	//マップ終了
 	UninitMap();
@@ -150,6 +156,9 @@ void UpdateSceneGame() {
 	//現在更新
 	g_pNow->Update();
 
+	//ギミック更新
+	g_pGimmick->Update(g_pOld->GetBoyPos());
+
 	//箱更新
 	//g_pBox->Update();
 
@@ -162,7 +171,12 @@ void UpdateSceneGame() {
 		//今の背景更新
 		g_pBG->Update(0);
 
-		viewPorts[0].TopLeftX -= g_pNow->GetPlayerGirl()->GetGirlMove().x * OLD_SCROLL_SPEED;
+		g_girlCameraTarget.x += g_pNow->GetPlayerGirl()->GetGirlMove().x * NOW_SCROLL_SPEED;
+
+		CCamera::Set(NOW_CAMERA);
+		XMFLOAT3 cameraPos = CCamera::Get()->GetPos();
+		CCamera::Get()->SetPos(cameraPos.x += g_pNow->GetPlayerGirl()->GetGirlMove().x * NOW_SCROLL_SPEED, cameraPos.y, cameraPos.z);
+		CCamera::Get()->SetTarget(g_girlCameraTarget);
 		g_fGirlOldPosX = g_pNow->GetPlayerGirl()->GetGirlPos().x;
 	}
 	if (g_fBoyOldPosX != g_pOld->GetBoyPos().x)
@@ -170,12 +184,14 @@ void UpdateSceneGame() {
 		//過去の背景更新
 		g_pBG->Update(1);
 
-		viewPorts[1].TopLeftX -= g_pOld->GetPlayerBoy()->GetBoyMove().x * NOW_SCROLL_SPEED;
+		g_boyCameraTarget.x += g_pOld->GetPlayerBoy()->GetBoyMove().x * OLD_SCROLL_SPEED;
+
+		CCamera::Set(OLD_CAMERA);
+		XMFLOAT3 cameraPos = CCamera::Get()->GetPos();
+		CCamera::Get()->SetPos(cameraPos.x += g_pOld->GetPlayerBoy()->GetBoyMove().x * OLD_SCROLL_SPEED, cameraPos.y, cameraPos.z);
+		CCamera::Get()->SetTarget(g_boyCameraTarget);
 		g_fBoyOldPosX = g_pOld->GetBoyPos().x;
 	}
-
-	//ギミック更新
-	g_pGimmick->Update(g_pOld->GetBoyPos());
 
 	if (GetKeyPress(VK_F1)) {
 		StartFadeOut(SCENE_TITLE);
@@ -194,12 +210,14 @@ void DrawSceneGame() {
 	g_pBG->Draw();
 
 	//ビューポートを設定　上画面
+	CCamera::Set(NOW_CAMERA);
 	d3dDeviceContext->RSSetViewports(1, &viewPorts[0]);
 	//今描画
 	g_pNow->Draw();
 	g_pGimmick->NowDraw();
 
 	//ビューポートを設定　下画面
+	CCamera::Set(OLD_CAMERA);
 	d3dDeviceContext->RSSetViewports(1, &viewPorts[1]);
 	//過去描画
 	g_pOld->Draw();

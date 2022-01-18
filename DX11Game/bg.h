@@ -8,6 +8,7 @@
 //void UpdateBG();	// çXêV
 //void DrawBG();		// ï`âÊ
 
+#define MAX_BG_TEXTURE	(4)
 
 class BG {
 public:
@@ -23,5 +24,5 @@ private:
 	XMFLOAT2	m_posOld2;
 	XMFLOAT2	m_size;
 	XMFLOAT2	m_sizeGame;
-	ID3D11ShaderResourceView* m_pTexture[2];
+	ID3D11ShaderResourceView* m_pTexture[MAX_BG_TEXTURE];
 };

@@ -24,11 +24,11 @@ enum BOY_ANIM { STOP, WALK, JUMP, PUSH_BOY, CARRY_BOY, UP, DOWN, MAX_BOY_ANIM, }
 #define PLAYER_BOY_UP_MODEL_PATH			"data/model/boy_up.fbx"
 #define PLAYER_BOY_DOWN_MODEL_PATH			"data/model/boy_down.fbx"
 
-#define PLAYER_BOY_JUMP_ANIM_TIME			(60)
+#define PLAYER_BOY_JUMP_ANIM_TIME			(120)
 #define PLAYER_BOY_UP_ANIM_TIME				(60)
 #define PLAYER_BOY_DOWN_ANIM_TIME			(60)
 
-#define	PLAYER_BOY_VALUE_MOVE	(0.15f)		// 移動速度
+#define	PLAYER_BOY_VALUE_MOVE	(0.10f)		// 移動速度
 #define	PLAYER_BOY_RATE_MOVE		(0.20f)		// 移動慣性係数
 #define	PLAYER_BOY_VALUE_ROTATE	(9.0f)		// 回転速度
 #define	PLAYER_BOY_RATE_ROTATE	(0.20f)		// 回転慣性係数
@@ -39,7 +39,7 @@ enum BOY_ANIM { STOP, WALK, JUMP, PUSH_BOY, CARRY_BOY, UP, DOWN, MAX_BOY_ANIM, }
 
 #define PLAYER_BOY_COLLISION_SIZE_RAD	4.0f
 
-#define JUMP_POWER		(23.0f)
+#define JUMP_POWER		(2.0f)
 #define JUMP_WHILE		(25)
 #define GRAVITY_BOY		(1.0f)	// 重力
 #define RESIST_X		(0.7f)
@@ -83,7 +83,7 @@ Player_Boy::Player_Boy()
 	m_nHand = 9999;
 	g_nowHand = 9999;
 	timeJudge = 0;
-	g_nJumpCnt = 0;
+	g_nJumpCnt = -1;
 
 	m_pad = GetJoyState(0);
 
@@ -102,9 +102,9 @@ Player_Boy::Player_Boy()
 //==============================================================
 Player_Boy::~Player_Boy() {
 	// モデルの解放
-	SetAnim(STOP);
-	m_model.Release();
-	for (int i = 1; i < MAX_BOY_ANIM; i++)
+	//SetAnim(STOP);
+	//m_model.Release();
+	for (int i = 0; i < MAX_BOY_ANIM; i++)
 		m_modelSub[i].Release();
 	//境界球解放
 	ReleaseBSphere(m_nSphere);
@@ -114,10 +114,16 @@ Player_Boy::~Player_Boy() {
 //==============================================================
 void Player_Boy::Update() {
 	g_oldBoyPos = m_pos;
-	g_nJumpCnt--;
 	m_nAnimTime--;
 
 	m_pad = GetJoyState(0);
+
+	// ジャンプの設定
+	if (g_nJumpCnt >= 0)
+	{
+		m_move.y += JUMP_POWER;
+		g_nJumpCnt--;
+	}
 
 	// 待機アニメーションに設定
 	m_nAnim = STOP;

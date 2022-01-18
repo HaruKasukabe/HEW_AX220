@@ -14,7 +14,10 @@
 //マクロ定義
 //*********************************************************
 #define DWBOX_MODEL_PATH	"data/model/Quadrock.fbx"
-#define DWBOX_TEXTURE_PATH "data/texture/Rock.jpg"
+#define DWBOX_NOW_TEXTURE_PATH	"data/texture/rock2_color.jpg"
+#define DWBOX_OLD_TEXTURE_PATH	"data/texture/rock_color.jpg"
+
+#define MAX_DWBOX_TEXTURE	(2)
 
 #define M_DIFFUSE			XMFLOAT4(1.0f,1.0f,1.0f,1.0f)
 #define M_SPECULAR			XMFLOAT4(0.0f,0.0f,0.0f,1.0f)
@@ -26,9 +29,19 @@
 #define DWBOX_COLLISION_SIZE_Y	1.0f // sclが1のときの設定
 
 //*********************************************************
+//構造体定義
+//*********************************************************
+const char* g_DWBoxTexture[MAX_DWBOX_TEXTURE]
+{
+	DWBOX_NOW_TEXTURE_PATH,
+	DWBOX_OLD_TEXTURE_PATH,
+};
+
+//*********************************************************
 //グローバル変数
 //*********************************************************
 MESH g_dwboxMesh;
+static TAssimpMaterial g_dwBoxMaterial[MAX_DWBOX_TEXTURE];
 
 //=============================
 //		ｺﾝｽﾄﾗｸﾀ
@@ -64,13 +77,16 @@ DWBox::DWBox() {
 		MessageBoxA(GetMainWnd(), "モデルデータ読み込みエラー", "InitModel", MB_OK);
 	}
 	// テクスチャの読み込み
-	static TAssimpMaterial material;
-	HRESULT hr = CreateTextureFromFile(pDevice, DWBOX_TEXTURE_PATH, &material.pTexture);
-	if (FAILED(hr))
+	HRESULT hr;
+	for (int i = 0; i < MAX_DWBOX_TEXTURE; i++)
 	{
-		MessageBoxA(GetMainWnd(), "テクスチャ読み込みエラー", "草ァ！のテクスチャ", MB_OK);
+		hr = CreateTextureFromFile(pDevice, g_DWBoxTexture[i], &g_dwBoxMaterial[i].pTexture);
+		if (FAILED(hr))
+		{
+			MessageBoxA(GetMainWnd(), "テクスチャ読み込みエラー", "草ァ！のテクスチャ", MB_OK);
+		}
 	}
-	m_model.SetMaterial(&material);
+	m_model.SetMaterial(&g_dwBoxMaterial[0]);
 
 
 	XMStoreFloat4x4(&g_dwboxMesh.mtxTexture, XMMatrixIdentity());
@@ -155,6 +171,13 @@ void DWBox::Draw(int num) {
 	if (!m_box[num].m_state) {
 		return;
 	}
+
+	//時間に応じてテクスチャを変更
+	if (m_box[num].m_nTime == 0)
+		m_model.SetMaterial(&g_dwBoxMaterial[0]);
+	else
+		m_model.SetMaterial(&g_dwBoxMaterial[1]);
+
 	// 不透明部分を描画
 	m_model.Draw(pDC, m_box[num].m_mtxWorld, eOpacityOnly);
 
@@ -170,7 +193,7 @@ void DWBox::Draw(int num) {
 //=============================
 //	箱生成 引数 : モデル座標、サイズ、ワールドマトリックス
 //=============================
-int DWBox::Create(XMFLOAT3 pos, int nCat) {
+int DWBox::Create(XMFLOAT3 pos, int nCat, int nTime) {
 	TBox* pDWBox = m_box;
 	for (int i = 0; i < MAX_BOX; ++i, ++pDWBox) {
 		if (pDWBox->m_use) continue;
@@ -179,6 +202,7 @@ int DWBox::Create(XMFLOAT3 pos, int nCat) {
 		pDWBox->m_state = true;
 		pDWBox->m_use = true;
 		pDWBox->m_nCat = nCat;
+		pDWBox->m_nTime = nTime;
 
 		return i;
 	}
