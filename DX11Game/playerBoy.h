@@ -33,6 +33,7 @@ private:
 	int				m_dir;		//
 	bool			m_bJump;	// ジャンプ中フラグ
 	bool			m_bLand;	// 着地・接地フラグ
+	bool            m_collision; // 箱にあたっている
 	bool            m_bHave;    // アイテムを持つフラグ
 
 	XMFLOAT4X4		m_mtxWorld;		// ワールドマトリックス

@@ -153,11 +153,16 @@ void Player_Boy::Update() {
 			g_nJumpCnt = JUMP_WHILE;
 			for (int i = 0; i < JUMP_POWER; i++)
 			{
-				OBJECT_INFO hantei = CollisionOldMap(XMFLOAT2(m_pos.x, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y));
+				OBJECT_INFO hantei = CollisionOldMap(XMFLOAT2(m_pos.x, m_pos.y+m_move.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y));
 				if (hantei.m_nCategory > 0)
-					continue;
+				{
+					if (m_bLand == true && hantei.m_bOnBox == true)
+					{
+						continue;
+					}
+				}
 				else
-					m_move.y = 1.0f;
+					m_move.y += 1.0f;
 			}
 		}
 	}
