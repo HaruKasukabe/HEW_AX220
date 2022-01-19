@@ -31,15 +31,11 @@ public:
 	bool GetState(int num);
 
 	void DrawOldNow(int nTime);
-	int CreateOldNow(XMFLOAT3 pos, int nTime, int nObject/*,XMFLOAT3 scl*/);
-
-	std::vector<int> GetObj();
+	int CreateOldNow(XMFLOAT3 pos, int nTime/*,XMFLOAT3 scl*/);
 private:
 	CAssimpModel	m_model;	//モデル
 	XMFLOAT4X4		m_mtxWorld;		// ワールドマトリックス
 	TBox			m_box[MAX_HALFBOX];		//動かない床の情報
 
 	MATERIAL m_material;
-
-	std::vector<int> m_nObj;
 };
