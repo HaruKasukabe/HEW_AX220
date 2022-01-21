@@ -9,7 +9,7 @@
 
 typedef struct
 {
-	OBJECT_INFO* nowMap;
+	OBJECT_INFO* pNowMap;
 	OBJECT_INFO* pOldMap;
 }MAP_DATA;
 

@@ -107,6 +107,10 @@ void Player_Girl::Update() {
 
 	// 重力
 	m_move.y -= GRAVITY_GIRL;
+	if (!m_bLand)
+	{
+		m_move.x *= 0.9f;
+	}
 
 	// 目的の角度までの差分
 	float fDiffRotY = m_rotDest.y - m_rot.y;
@@ -142,8 +146,8 @@ void Player_Girl::Update() {
 	if (m_pos.x < -310.0f) {
 		m_pos.x = -310.0f;
 	}
-	if (m_pos.x > 310.0f) {
-		m_pos.x = 310.0f;
+	if (m_pos.x > MAP_END) {
+		m_pos.x = MAP_END;
 	}
 	if (m_pos.z < -310.0f) {
 		m_pos.z = -310.0f;
@@ -161,32 +165,26 @@ void Player_Girl::Update() {
 	}
 
 	// 当たり判定
-	std::vector<OBJECT_INFO> collision = WalkCollisionOldMap(XMFLOAT2(m_pos.x, m_pos.y), XMFLOAT2(PLAYER_GIRL_COLLISION_SIZE_X, PLAYER_GIRL_COLLISION_SIZE_Y));
+	std::vector<OBJECT_INFO> collision = WalkCollisionNowMap(XMFLOAT2(m_pos.x, m_pos.y), XMFLOAT2(PLAYER_GIRL_COLLISION_SIZE_X, PLAYER_GIRL_COLLISION_SIZE_Y));
 	std::vector<OBJECT_INFO>::iterator it = collision.begin();
 	while (it != collision.end())
 	{
-		if (it->m_nCategory > 0)
+		//if (it->m_nCategory == 3)
+		//{
+		//	m_pos.y += 15.0f;
+		//}
+		if (it->m_bOnBox == true)
 		{
-			if (m_bLand == true && it->m_bOnBox == true)
-				m_pos.y = g_oldGirlPos.y;
-			else if (m_bLand == true)
-				m_pos.x = g_oldGirlPos.x;
+			m_nAnim = WALK;
+			m_bLand = true;
+			m_pos.y = g_oldGirlPos.y;
 		}
-
+		else
+		{
+			m_nAnim = STOP;
+			m_pos.x = g_oldGirlPos.x;
+		}
 		it++;
-	}
-	//----地形との当たり判定----
-	if (CheckField())
-	{	//乗った場合の処理
-		m_move.y = 0.0f;
-		m_bLand = true;
-	}
-	else
-	{
-		if (m_bLand)
-		{
-			m_bLand = false;
-		}
 	}
 
 	if (GetKeyPress(VK_RETURN)) {

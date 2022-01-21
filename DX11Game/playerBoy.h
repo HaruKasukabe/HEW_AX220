@@ -17,7 +17,6 @@ public:
 	XMFLOAT3 GetBoyPos();
 	XMFLOAT3 GetBoyMove();
 	int GetBoyHand();
-	bool CheckField();
 
 	void SetAnim(int);
 

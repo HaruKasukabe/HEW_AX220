@@ -166,6 +166,7 @@
     <ClCompile Include="bullet.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="collision.cpp" />
+    <ClCompile Include="crowd.cpp" />
     <ClCompile Include="cube.cpp" />
     <ClCompile Include="debugproc.cpp" />
     <ClCompile Include="DWBox.cpp" />
@@ -205,6 +206,7 @@
     <ClCompile Include="Sound.cpp" />
     <ClCompile Include="stageselect.cpp" />
     <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="title.cpp" />
     <ClCompile Include="tree.cpp" />
     <ClCompile Include="ui.cpp" />
   </ItemGroup>
@@ -217,6 +219,7 @@
     <ClInclude Include="bullet.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="collision.h" />
+    <ClInclude Include="crowd.h" />
     <ClInclude Include="cube.h" />
     <ClInclude Include="debugproc.h" />
     <ClInclude Include="Define.h" />
@@ -260,6 +263,7 @@
     <ClInclude Include="SoundData.hpp" />
     <ClInclude Include="stageselect.h" />
     <ClInclude Include="Texture.h" />
+    <ClInclude Include="title.h" />
     <ClInclude Include="tree.h" />
     <ClInclude Include="ui.h" />
     <ClInclude Include="userDefine.h" />

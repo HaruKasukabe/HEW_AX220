@@ -24,7 +24,7 @@ enum BOY_ANIM { STOP, WALK, JUMP, PUSH_BOY, CARRY_BOY, UP, DOWN, MAX_BOY_ANIM, }
 #define PLAYER_BOY_UP_MODEL_PATH			"data/model/boy_up.fbx"
 #define PLAYER_BOY_DOWN_MODEL_PATH			"data/model/boy_down.fbx"
 
-#define PLAYER_BOY_JUMP_ANIM_TIME			(120)
+#define PLAYER_BOY_JUMP_ANIM_TIME			(60)
 #define PLAYER_BOY_UP_ANIM_TIME				(60)
 #define PLAYER_BOY_DOWN_ANIM_TIME			(60)
 
@@ -39,11 +39,13 @@ enum BOY_ANIM { STOP, WALK, JUMP, PUSH_BOY, CARRY_BOY, UP, DOWN, MAX_BOY_ANIM, }
 
 #define PLAYER_BOY_COLLISION_SIZE_RAD	4.0f
 
-#define JUMP_POWER		(1.3f)
+#define JUMP_POWER		(1.4f)
 #define JUMP_WHILE		(26)
 #define JUMP_TIME		(50)
 #define GRAVITY_BOY		(1.0f)	// 重力
-#define RESIST_X		(0.7f)
+#define RESIST_X		(0.85f)
+
+#define UP_TIME			(1.0f)
 
 //*****構造体*****
 static std::string g_BoyAnimFile[] = {
@@ -62,6 +64,7 @@ static int g_nowHand;
 static int timeJudge; // 0:過去,1:未来
 static int g_nJumpCnt;
 static int g_nNoJumpTime;
+float g_fUpMoveY;
 
 //==============================================================
 //ｺﾝｽﾄﾗｸﾀ
@@ -118,21 +121,27 @@ void Player_Boy::Update() {
 	g_oldBoyPos = m_pos;
 	m_nAnimTime--;
 	g_nNoJumpTime--;
+	//g_nJumpCnt--;
 
 	m_pad = GetJoyState(0);
 
 	// ジャンプの設定
-	if (g_nJumpCnt >= 0)
+	if (g_nJumpCnt > 0)
 	{
-		OBJECT_INFO hantei = CollisionOldMap(XMFLOAT2(m_pos.x, m_pos.y + m_move.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y));
+		OBJECT_INFO hantei = CollisionOldMap(XMFLOAT2(m_pos.x, m_pos.y + 10.0f), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y));
 		if (hantei.m_nCategory > 0)
 		{
 			m_pos.y -= 2.0f;
 			g_nJumpCnt = -1;
+			m_bJump = false;
 			return;
 		}
 		else
+		{
 			m_move.y += JUMP_POWER;
+			m_bJump = true;
+			m_bLand = false;
+		}
 
 		g_nJumpCnt--;
 	}
@@ -165,9 +174,11 @@ void Player_Boy::Update() {
 	{
 		// ジャンプ
 		m_nAnim = JUMP;
-		if (g_nJumpCnt < 0 && g_nNoJumpTime < 0)
+		if (m_bJump == false)
 		{
+			m_move.y += GRAVITY_BOY * 3;
 			m_bJump = true;
+			m_bLand = false;
 			g_nJumpCnt = JUMP_WHILE;
 			g_nNoJumpTime = JUMP_TIME;
 		}
@@ -210,11 +221,11 @@ void Player_Boy::Update() {
 	m_move.y += (0.0f - m_move.y) * PLAYER_BOY_RATE_MOVE;
 	m_move.z += (0.0f - m_move.z) * PLAYER_BOY_RATE_MOVE;
 
-	if (m_pos.x < -310.0f) {
-		m_pos.x = -310.0f;
+	if (m_pos.x < -100.0f) {
+		m_pos.x = -100.0f;
 	}
-	if (m_pos.x > 310.0f) {
-		m_pos.x = 310.0f;
+	if (m_pos.x > MAP_END) {
+		m_pos.x = MAP_END;
 	}
 	if (m_pos.z < -310.0f) {
 		m_pos.z = -310.0f;
@@ -239,28 +250,19 @@ void Player_Boy::Update() {
 	{
 		if (it->m_nCategory > 0)
 		{
-			if (m_bLand == true && it->m_bOnBox == true)
+			if (it->m_bOnBox == true)
+			{
+				m_bLand = true;
+				m_bJump = false;
 				m_pos.y = g_oldBoyPos.y;
-			else if (m_bLand == true)
+			}
+			else
+			{
 				m_pos.x = g_oldBoyPos.x;
+			}
 		}
 
 		it++;
-	}
-	//----地形との当たり判定----
-	if (CheckField())
-	{	//乗った場合の処理
-		m_move.y = 0.0f;
-		m_bJump = false;
-		m_bLand = true;
-	}
-	else
-	{
-		if (!m_bLand)
-		{
-			m_bJump = true;
-			m_bLand = false;
-		}
 	}
 
 	//攻撃の当たり判定
@@ -305,21 +307,26 @@ void Player_Boy::Update() {
 		bool aFlg = GetDWBox()->Collision(XMFLOAT2(aPos.x, aPos.y), aSize);
 		if (aFlg) {
 			GetBox()->Destroy(g_nowHand);
-			GetHalfBox()->CreateOldNow(bPos,1, g_nowHand);
+			GetHalfBox()->CreateOldNow(bPos,1);
 		}
 
+
+		//GetBox()->SetBoxPos(m_nHand, XMFLOAT3(m_move.x, m_move.y - 10.0f, m_move.z), 0);
 		m_nHand = 9999;
 		GetBox()->SetOldBoxPos(g_nowHand);
 		g_nowHand = 9999;
 		m_bHave = false;
+		g_fUpMoveY = 0.0f;
 	}
 
 	// 持ち物を一緒に移動
 	if (m_nHand != 9999)
 	{
-		m_move.y += 10.0f;
+		if(g_fUpMoveY < 10.0f)
+			g_fUpMoveY += UP_TIME;
+		m_move.y += g_fUpMoveY;
 		GetBox()->SetBoxPos(m_nHand, m_move, 0);   // 過去の座標を反映
-		m_move.y -= 10.0f;
+		m_move.y -= g_fUpMoveY;
 		GetBox()->SetBoxPos(g_nowHand, m_move, 1); // 未来の座標を一時保存
 	}
 
@@ -384,53 +391,6 @@ XMFLOAT3 Player_Boy::GetBoyMove() {
 //==============================================================
 int Player_Boy::GetBoyHand() {
 	return m_nHand;
-}
-
-//==============================================================
-//男の子の当たり判定
-//==============================================================
-bool Player_Boy::CheckField(){
-	Box* pBox = GetBox();
-	DWBox* pDWBox = GetDWBox();
-	OBJECT_INFO* pOldMap = GetMap(1);
-
-	XMFLOAT3 boxPos;
-	for (int i = 0; i < MAP_HEIGHT * MAP_WIDTH; i++, pOldMap++) {
-		switch (pOldMap->m_nCategory) {
-		case 0:
-			break;
-		case NORMAL:
-			if (!pDWBox->GetState(pOldMap->m_nObject))
-			{
-				break;
-			}
-			boxPos = pDWBox->GetPos(pOldMap->m_nObject);
-			if (m_pos.x <= boxPos.x - 2.0f) continue;
-			if (boxPos.x + 2.0f <= m_pos.x) continue;
-
-			if (m_pos.y >= boxPos.y + 1.0f && g_oldBoyPos.y <= boxPos.y + 1.0f)
-			{
-				m_pos.y = boxPos.y + 1.0f;
-				return true;
-			}
-			break;
-		default:
-			if (!pBox->GetState(pOldMap->m_nObject))
-			{
-				break;
-			}
-			boxPos = pBox->GetPos(pOldMap->m_nObject);
-			if (m_pos.x <= boxPos.x - 2.0f) continue;
-			if (boxPos.x + 2.0f <= m_pos.x) continue;
-
-			if (m_pos.y >= boxPos.y + 1.0f && g_oldBoyPos.y <= boxPos.y + 1.0f)
-			{
-				m_pos.y = boxPos.y + 1.0f;
-				return true;
-			}
-			break;
-		}
-	}
 }
 
 //==============================================================

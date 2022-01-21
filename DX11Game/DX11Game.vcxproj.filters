@@ -180,6 +180,12 @@
     <ClCompile Include="mapData.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="crowd.cpp">
+      <Filter>ソース ファイル\2Dオブジェクト</Filter>
+    </ClCompile>
+    <ClCompile Include="title.cpp">
+      <Filter>ソース ファイル\2Dオブジェクト</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="input.h">
@@ -343,6 +349,12 @@
     </ClInclude>
     <ClInclude Include="mapData.h">
       <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="crowd.h">
+      <Filter>ヘッダー ファイル\2Dオブジェクト</Filter>
+    </ClInclude>
+    <ClInclude Include="title.h">
+      <Filter>ヘッダー ファイル\2Dオブジェクト</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

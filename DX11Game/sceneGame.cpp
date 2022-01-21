@@ -166,31 +166,37 @@ void UpdateSceneGame() {
 	UpdateMap();
 
 	// ‰æ–Ê‚ðƒXƒNƒ[ƒ‹
-	if (g_fGirlOldPosX != g_pNow->GetPlayerGirl()->GetGirlPos().x)
+	if (g_pNow->GetPlayerGirl()->GetGirlPos().x > -100.0f)
 	{
-		//¡‚Ì”wŒiXV
-		g_pBG->Update(0);
+		if (g_fGirlOldPosX != g_pNow->GetPlayerGirl()->GetGirlPos().x)
+		{
+			//¡‚Ì”wŒiXV
+			g_pBG->Update(0);
 
-		g_girlCameraTarget.x += g_pNow->GetPlayerGirl()->GetGirlMove().x * NOW_SCROLL_SPEED;
+			g_girlCameraTarget.x += g_pNow->GetPlayerGirl()->GetGirlMove().x * NOW_SCROLL_SPEED;
 
-		CCamera::Set(NOW_CAMERA);
-		XMFLOAT3 cameraPos = CCamera::Get()->GetPos();
-		CCamera::Get()->SetPos(cameraPos.x += g_pNow->GetPlayerGirl()->GetGirlMove().x * NOW_SCROLL_SPEED, cameraPos.y, cameraPos.z);
-		CCamera::Get()->SetTarget(g_girlCameraTarget);
-		g_fGirlOldPosX = g_pNow->GetPlayerGirl()->GetGirlPos().x;
+			CCamera::Set(NOW_CAMERA);
+			XMFLOAT3 cameraPos = CCamera::Get()->GetPos();
+			CCamera::Get()->SetPos(cameraPos.x += g_pNow->GetPlayerGirl()->GetGirlMove().x * NOW_SCROLL_SPEED, cameraPos.y, cameraPos.z);
+			CCamera::Get()->SetTarget(g_girlCameraTarget);
+			g_fGirlOldPosX = g_pNow->GetPlayerGirl()->GetGirlPos().x;
+		}
 	}
-	if (g_fBoyOldPosX != g_pOld->GetBoyPos().x)
+	if (g_pOld->GetBoyPos().x > -100.0f)
 	{
-		//‰ß‹Ž‚Ì”wŒiXV
-		g_pBG->Update(1);
+		if (g_fBoyOldPosX != g_pOld->GetBoyPos().x)
+		{
+			//‰ß‹Ž‚Ì”wŒiXV
+			g_pBG->Update(1);
 
-		g_boyCameraTarget.x += g_pOld->GetPlayerBoy()->GetBoyMove().x * OLD_SCROLL_SPEED;
+			g_boyCameraTarget.x += g_pOld->GetPlayerBoy()->GetBoyMove().x * OLD_SCROLL_SPEED;
 
-		CCamera::Set(OLD_CAMERA);
-		XMFLOAT3 cameraPos = CCamera::Get()->GetPos();
-		CCamera::Get()->SetPos(cameraPos.x += g_pOld->GetPlayerBoy()->GetBoyMove().x * OLD_SCROLL_SPEED, cameraPos.y, cameraPos.z);
-		CCamera::Get()->SetTarget(g_boyCameraTarget);
-		g_fBoyOldPosX = g_pOld->GetBoyPos().x;
+			CCamera::Set(OLD_CAMERA);
+			XMFLOAT3 cameraPos = CCamera::Get()->GetPos();
+			CCamera::Get()->SetPos(cameraPos.x += g_pOld->GetPlayerBoy()->GetBoyMove().x * OLD_SCROLL_SPEED, cameraPos.y, cameraPos.z);
+			CCamera::Get()->SetTarget(g_boyCameraTarget);
+			g_fBoyOldPosX = g_pOld->GetBoyPos().x;
+		}
 	}
 
 	if (GetKeyPress(VK_F1)) {
@@ -228,7 +234,7 @@ void DrawSceneGame() {
 
 	DrawPause();
 	//ƒS[ƒ‹•`‰æ
-	g_pGoal->Draw();
+	//g_pGoal->Draw();
 
 }
 

@@ -32,8 +32,10 @@ enum MAP_OBJECT
 };		
 
 //*****É}ÉNÉçíËã`*****
-#define MAP_WIDTH	19
+#define MAP_WIDTH	35
 #define MAP_HEIGHT	5
+
+#define MAP_END	(270.0f)
 
 HRESULT InitMap();
 void UninitMap();
