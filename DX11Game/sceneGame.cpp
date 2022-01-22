@@ -15,6 +15,7 @@
 #include "bg.h"
 #include "Goal.h"
 #include "gimmick.h"
+#include "shadow.h"
 
 
 //*****定数定義*****
@@ -49,6 +50,12 @@ XMFLOAT3 g_boyCameraTarget;
 //=============================
 HRESULT InitSceneGame() {
 	HRESULT hr = MB_OK;
+	//カメラ初期化
+	CCamera::Get()->Init();
+	CCamera::Set(OLD_CAMERA);
+	CCamera::Get()->Init();
+	// 丸影初期化
+	InitShadow();
 	//過去初期化
 	g_pOld = new Old;
 	//現在初期化
@@ -90,6 +97,7 @@ HRESULT InitSceneGame() {
 	//マップ初期化
 	InitMap();
 	InitPause();
+
 	//サウンド初期化
 	CSound::Init();
 	CSound::Play(BGM_001);
@@ -114,6 +122,9 @@ void UninitSceneGame() {
 	delete g_pGoal;
 	//ギミック終了処理
 	delete g_pGimmick;
+
+	// 丸影終了処理
+	UninitShadow();
 
 	//マップ終了
 	UninitMap();
@@ -155,6 +166,9 @@ void UpdateSceneGame() {
 
 	//現在更新
 	g_pNow->Update();
+
+	// 丸影更新
+	UpdateShadow();
 
 	//ギミック更新
 	g_pGimmick->Update(g_pOld->GetBoyPos());
@@ -222,12 +236,18 @@ void DrawSceneGame() {
 	g_pNow->Draw();
 	g_pGimmick->NowDraw();
 
+	// 丸影描画
+	DrawShadow();
+
 	//ビューポートを設定　下画面
 	CCamera::Set(OLD_CAMERA);
 	d3dDeviceContext->RSSetViewports(1, &viewPorts[1]);
 	//過去描画
 	g_pOld->Draw();
 	g_pGimmick->OldDraw();
+
+	// 丸影描画
+	DrawShadow();
 
 	//ビューポートの設定を元に戻す
 	d3dDeviceContext->RSSetViewports(1, &viewPortsReset);

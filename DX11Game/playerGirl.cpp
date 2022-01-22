@@ -9,6 +9,8 @@
 #include "input.h"
 #include "collision.h"
 #include "map.h"
+#include "shadow.h"
+#include "HalfBox.h"
 
 //*****列挙型*****
 enum GIRL_ANIM { STOP, WALK, JUMP, MAX_GIRL_ANIM, };
@@ -41,7 +43,6 @@ static std::string g_GirlAnimFile[] = {
 };
 
 //*****グローバル変数*****
-
 XMFLOAT3 g_BoyPos; // 男の子の座標
 XMFLOAT3 g_oldGirlPos; // 前の座標
 
@@ -72,7 +73,8 @@ Player_Girl::Player_Girl()
 	for (int i = 0; i < MAX_GIRL_ANIM; i++)
 		m_modelSub[i].Load(pDevice, pDeviceContext, g_GirlAnimFile[i]);
 
-	//m_nCube = GetCube()->Create(XMFLOAT3(0.0f,0.0f,0.0f),XMFLOAT3(5.0f,5.0f,5.0f),m_mtxWorld);
+	// 丸影の生成
+	m_nShadow = CreateShadow(XMFLOAT3(0.0f, 0.0f, 0.0f), 12.0f);
 }
 //==============================================================
 //ﾃﾞｽﾄﾗｸﾀ
@@ -83,8 +85,8 @@ Player_Girl::~Player_Girl() {
 	m_model.Release();
 	for (int i = 1; i < MAX_GIRL_ANIM; i++)
 		m_modelSub[i].Release();
-	//立方体解放
-	//GetCube()->Release(m_nCube);
+	//丸影開放
+	ReleaseShadow(m_nShadow);
 }
 //==============================================================
 //更新
@@ -169,10 +171,6 @@ void Player_Girl::Update() {
 	std::vector<OBJECT_INFO>::iterator it = collision.begin();
 	while (it != collision.end())
 	{
-		//if (it->m_nCategory == 3)
-		//{
-		//	m_pos.y += 15.0f;
-		//}
 		if (it->m_bOnBox == true)
 		{
 			m_nAnim = WALK;
@@ -186,6 +184,10 @@ void Player_Girl::Update() {
 		}
 		it++;
 	}
+
+	//HalfBoxと当たった時の処理
+	if (GetHalfBox()->CollisionHalfBox(XMFLOAT2(m_pos.x, m_pos.y), XMFLOAT2(PLAYER_GIRL_COLLISION_SIZE_X, PLAYER_GIRL_COLLISION_SIZE_Y)))
+		m_pos.y += 10.0f;
 
 	if (GetKeyPress(VK_RETURN)) {
 		// リセット
@@ -218,11 +220,8 @@ void Player_Girl::Update() {
 	// ワールドマトリックス設定
 	XMStoreFloat4x4(&m_mtxWorld, mtxWorld);
 
-	//立方体移動
-	//GetCube()->Move(m_nCube,m_mtxWorld);
-	/*テスト*/
-
-	//当たり判定
+	//丸影移動
+	MoveShadow(m_nShadow, m_pos);
 }
 //==============================================================
 //描画

@@ -16,7 +16,7 @@
 namespace {
 	const float CAM_POS_P_X = 0.0f;					// カメラの視点初期位置(X座標)
 	const float CAM_POS_P_Y = 0.0f;				// カメラの視点初期位置(Y座標)
-	const float CAM_POS_P_Z = -160.0f;				// カメラの視点初期位置(Z座標)
+	const float CAM_POS_P_Z = -140.0f;				// カメラの視点初期位置(Z座標)
 	const float CAM_POS_R_X = 0.0f;					// カメラの注視点初期位置(X座標)
 	const float CAM_POS_R_Y = 0.0f;					// カメラの注視点初期位置(Y座標)
 	const float CAM_POS_R_Z = 0.0f;					// カメラの注視点初期位置(Z座標)
@@ -78,19 +78,9 @@ void CCamera::Init()
 // 更新
 void CCamera::Update()
 {
-	//if (GetKeyPress(VK_C)) {
-	//	// 右旋回
+	//if (GetKeyPress(VK_C))
+	//{
 	//	m_vDestAngle.y -= VALUE_ROTATE_CAMERA;
-	//	if (m_vDestAngle.y < -180.0f) {
-	//		m_vDestAngle.y += 360.0f;
-	//	}
-	//}
-	//if (GetKeyPress(VK_Z)) {
-	//	// 左旋回
-	//	m_vDestAngle.y += VALUE_ROTATE_CAMERA;
-	//	if (m_vDestAngle.y >= 180.0f) {
-	//		m_vDestAngle.y -= 360.0f;
-	//	}
 	//}
 
 	// 目的の角度までの差分
@@ -148,11 +138,6 @@ void CCamera::Update()
 	//PrintDebugProc("[ﾁｭｳｼﾃﾝ : (%f, %f, %f)]\n", m_vTarget.x, m_vTarget.y, m_vTarget.z);
 	//PrintDebugProc("[ｶﾒﾗ ﾑｷ : (%f)]\n", m_vAngle.y);
 	//PrintDebugProc("\n");
-
-	/*PrintDebugProc("*** ｼﾃﾝ ｿｳｻ ***\n");
-	PrintDebugProc("ﾋﾀﾞﾘ ｾﾝｶｲ : Z\n");
-	PrintDebugProc("ﾐｷﾞ  ｾﾝｶｲ : C\n");
-	PrintDebugProc("\n");*/
 }
 
 // ビュー/プロジェクション マトリックス更新

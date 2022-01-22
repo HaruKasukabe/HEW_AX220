@@ -31,6 +31,7 @@ private:
 	XMFLOAT3		m_scl;		//オブジェクトのスケール
 	bool			m_bLand;	// 着地・接地フラグ
 
+	int				m_nShadow;	// 丸影番号
 
 	XMFLOAT4X4		m_mtxWorld;		// ワールドマトリックス
 

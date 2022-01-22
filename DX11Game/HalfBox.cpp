@@ -8,6 +8,7 @@
 #include "bsphere.h"
 #include "sceneGame.h"
 #include "map.h"
+#include "collision.h"
 
 //*********************************************************
 //マクロ定義
@@ -305,4 +306,19 @@ int HalfBox::CreateOldNow(XMFLOAT3 pos, int nTime/*, XMFLOAT3 scl*/) {
 		return i;
 	}
 	return -1;
+}
+
+bool HalfBox::CollisionHalfBox(XMFLOAT2 pos, XMFLOAT2 size)
+{
+	for (int i = 0; i < MAX_HALFBOX; ++i) {
+		if (!m_box[i].m_use) {
+			break;
+		}
+		if (CollisionRect(pos, size, XMFLOAT2(m_box[i].m_pos.x, m_box[i].m_pos.y), m_box[i].m_collision)) {/*バグはここな*/
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
 }

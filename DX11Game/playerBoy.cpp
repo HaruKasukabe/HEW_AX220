@@ -8,6 +8,7 @@
 #include "map.h"
 #include "bsphere.h"
 #include "DWBox.h"
+#include "shadow.h"
 
 
 //*****—ñ‹“Œ^*****
@@ -101,6 +102,9 @@ Player_Boy::Player_Boy()
 
 	//‹«ŠE‹…¶¬
 	m_nSphere = CreateBSphere(XMFLOAT3(0.0f, 0.0f, 0.0f), PLAYER_BOY_COLLISION_SIZE_RAD, m_mtxWorld);
+
+	// ŠÛ‰e‚Ì¶¬
+	m_nShadow = CreateShadow(XMFLOAT3(0.0f, 0.0f, 0.0f), 12.0f);
 }
 //==============================================================
 //ÃÞ½Ä×¸À
@@ -113,6 +117,8 @@ Player_Boy::~Player_Boy() {
 		m_modelSub[i].Release();
 	//‹«ŠE‹…‰ð•ú
 	ReleaseBSphere(m_nSphere);
+	//ŠÛ‰eŠJ•ú
+	ReleaseShadow(m_nShadow);
 }
 //==============================================================
 //XV
@@ -310,7 +316,6 @@ void Player_Boy::Update() {
 			GetHalfBox()->CreateOldNow(bPos,1);
 		}
 
-
 		//GetBox()->SetBoxPos(m_nHand, XMFLOAT3(m_move.x, m_move.y - 10.0f, m_move.z), 0);
 		m_nHand = 9999;
 		GetBox()->SetOldBoxPos(g_nowHand);
@@ -352,6 +357,9 @@ void Player_Boy::Update() {
 
 	//‹«ŠE‹…ˆÚ“®
 	MoveBSphere(m_nSphere, m_mtxWorld);
+
+	//ŠÛ‰eˆÚ“®
+	MoveShadow(m_nShadow, m_pos);
 
 	PrintDebugProc("²Áx:%2fy:%2fz:%2f", m_pos.x, m_pos.y, m_pos.z);
 }

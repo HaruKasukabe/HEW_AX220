@@ -38,6 +38,7 @@ private:
 	XMFLOAT4X4		m_mtxWorld;		// ワールドマトリックス
 
 	int				m_nSphere;		//境界球番号
+	int				m_nShadow;	// 丸影番号
 
 	int				m_nHand;	// 持ち物
 

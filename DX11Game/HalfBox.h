@@ -32,6 +32,8 @@ public:
 
 	void DrawOldNow(int nTime);
 	int CreateOldNow(XMFLOAT3 pos, int nTime/*,XMFLOAT3 scl*/);
+
+	bool CollisionHalfBox(XMFLOAT2 pos, XMFLOAT2 size);
 private:
 	CAssimpModel	m_model;	//モデル
 	XMFLOAT4X4		m_mtxWorld;		// ワールドマトリックス

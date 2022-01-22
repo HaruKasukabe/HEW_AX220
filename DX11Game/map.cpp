@@ -36,6 +36,7 @@ static DWBox* g_pDWBox;
 static HalfBox* g_pHalfBox;
 static Player_Boy* g_pPlayerBoy;
 static Monument* g_pMonument;
+bool g_bBoxGravity;
 
 //=============================
 //		初期化
@@ -95,6 +96,10 @@ HRESULT InitMap() {
 			}
 		}
 	}
+
+	// 箱の重力初期化
+	g_bBoxGravity = true;
+
 	return true;
 }
 
@@ -158,6 +163,7 @@ void UninitMap() {
 //		更新
 //=============================
 void UpdateMap() {
+	g_bBoxGravity = true;
 	XMFLOAT2 BoxPos;
 	XMFLOAT2 BoxSize = XMFLOAT2(g_pBox->GetSize());
 	// 箱に重力をかける
@@ -168,17 +174,20 @@ void UpdateMap() {
 			case 0:
 				break;
 			case 1:
-				BoxPos = XMFLOAT2(g_pBox->GetPos(g_oldMap[i][j].m_nObject).x, g_pBox->GetPos(g_oldMap[i][j].m_nObject).y - 10.0f);
-				std::vector<OBJECT_INFO> collision = WalkCollisionOldMap(BoxPos, BoxSize);
+				BoxPos = XMFLOAT2(g_pBox->GetPos(g_oldMap[i][j].m_nObject).x, g_pBox->GetPos(g_oldMap[i][j].m_nObject).y);
+				std::vector<OBJECT_INFO> collision = BoxCollisionOldMap(BoxPos, BoxSize, g_oldMap[i][j].m_nObject);
 				std::vector<OBJECT_INFO>::iterator it = collision.begin();
 				while (it != collision.end())
 				{
-					if (!(it->m_nCategory > 0))
+					if (it->m_nCategory > 0)
 					{
-						g_pBox->SetGravity(g_oldMap[i][j].m_nObject, 1);
+						if (it->m_bOnBox == true)
+							g_bBoxGravity = false;
 					}
 					it++;
 				}
+				if(g_bBoxGravity == true)
+					g_pBox->SetGravity(g_oldMap[i][j].m_nObject, 1);
 				break;
 			}
 			switch (g_nowMap[i][j].m_nGravity) 
@@ -186,17 +195,20 @@ void UpdateMap() {
 			case 0:
 				break;
 			case 1:
-				BoxPos = XMFLOAT2(g_pBox->GetPos(g_nowMap[i][j].m_nObject).x, g_pBox->GetPos(g_nowMap[i][j].m_nObject).y - 10.0f);
-				std::vector<OBJECT_INFO> collision = WalkCollisionNowMap(BoxPos, BoxSize);
+				BoxPos = XMFLOAT2(g_pBox->GetPos(g_nowMap[i][j].m_nObject).x, g_pBox->GetPos(g_nowMap[i][j].m_nObject).y);
+				std::vector<OBJECT_INFO> collision = BoxCollisionNowMap(BoxPos, BoxSize, g_oldMap[i][j].m_nObject);
 				std::vector<OBJECT_INFO>::iterator it = collision.begin();
 				while (it != collision.end())
 				{
-					if (!(it->m_nCategory > 0))
+					if (it->m_nCategory > 0)
 					{
-						g_pBox->SetGravity(g_nowMap[i][j].m_nObject, 1);
+						if (it->m_bOnBox == true)
+							g_bBoxGravity = false;
 					}
 					it++;
 				}
+				if (g_bBoxGravity == true)
+					g_pBox->SetGravity(g_nowMap[i][j].m_nObject, 1);
 				break;
 			}
 		}
@@ -278,7 +290,7 @@ void DrawNowMap() {
 		}
 	}
 
-	//g_pHalfBox->Draw();
+	g_pHalfBox->Draw();
 }
 
 //=============================
@@ -568,6 +580,156 @@ OBJECT_INFO	CollisionNowMap(XMFLOAT2 pos, XMFLOAT2 size) {
 		}
 	}
 	return OBJECT_INFO{ -1,-1 };
+}
+
+//=============================
+//		箱用の当たり判定過去
+//=============================
+std::vector<OBJECT_INFO> BoxCollisionOldMap(XMFLOAT2 pos, XMFLOAT2 size, int nObject) {
+	std::vector<OBJECT_INFO> collisionObj;
+	XMFLOAT2 BoxPos;
+	XMFLOAT2 BoxSize;
+	for (int i = 0; i < MAP_HEIGHT; ++i) {
+		for (int j = 0; j < MAP_WIDTH; ++j) {
+			if (g_oldMap[i][j].m_nObject == nObject)
+				continue;
+			switch (g_oldMap[i][j].m_nCategory) {
+			case 0:
+				break;
+			case NORMAL:
+				//DWboxとの当たり判定
+				if (!g_pDWBox->GetState(g_oldMap[i][j].m_nObject))
+				{
+					break;
+				}
+				BoxPos = XMFLOAT2(g_pDWBox->GetPos(g_oldMap[i][j].m_nObject).x, g_pDWBox->GetPos(g_oldMap[i][j].m_nObject).y);
+				BoxSize = g_pDWBox->GetSize(g_oldMap[i][j].m_nObject);
+				if (CollisionRect(pos, size, BoxPos, BoxSize))
+				{
+					if (pos.y >= BoxPos.y + BoxSize.y)
+						g_oldMap[i][j].m_bOnBox = true;
+					else
+						g_oldMap[i][j].m_bOnBox = false;
+
+					collisionObj.push_back(g_oldMap[i][j]);
+				}
+				break;
+			case BREAK:
+				//boxとの当たり判定
+				if (!g_pBox->GetState(g_oldMap[i][j].m_nObject))
+				{
+					break;
+				}
+				BoxPos = XMFLOAT2(g_pBox->GetPos(g_oldMap[i][j].m_nObject).x, g_pBox->GetPos(g_oldMap[i][j].m_nObject).y);
+				BoxSize = g_pBox->GetSize();
+				if (CollisionRect(pos, size, BoxPos, BoxSize))
+				{
+					if (pos.y >= BoxPos.y + BoxSize.y)
+						g_oldMap[i][j].m_bOnBox = true;
+					else
+						g_oldMap[i][j].m_bOnBox = false;
+
+					collisionObj.push_back(g_oldMap[i][j]);
+				}
+				break;
+			case CARRY:
+				//boxとの当たり判定
+				if (!g_pBox->GetState(g_oldMap[i][j].m_nObject))
+				{
+					break;
+				}
+				BoxPos = XMFLOAT2(g_pBox->GetPos(g_oldMap[i][j].m_nObject).x, g_pBox->GetPos(g_oldMap[i][j].m_nObject).y);
+				BoxSize = g_pBox->GetSize();
+				if (CollisionRect(pos, size, BoxPos, BoxSize))
+				{
+					if (pos.y >= BoxPos.y + BoxSize.y)
+						g_oldMap[i][j].m_bOnBox = true;
+					else
+						g_oldMap[i][j].m_bOnBox = false;
+
+					collisionObj.push_back(g_oldMap[i][j]);
+				}
+				break;
+			}
+		}
+	}
+
+	return collisionObj;
+}
+
+//=============================
+//		箱用の当たり判定現在
+//=============================
+std::vector<OBJECT_INFO> BoxCollisionNowMap(XMFLOAT2 pos, XMFLOAT2 size, int nObject) {
+	std::vector<OBJECT_INFO> collisionObj;
+	XMFLOAT2 BoxPos;
+	XMFLOAT2 BoxSize;
+	for (int i = 0; i < MAP_HEIGHT; ++i) {
+		for (int j = 0; j < MAP_WIDTH; ++j) {
+			if (g_nowMap[i][j].m_nObject == nObject)
+				continue;
+			switch (g_nowMap[i][j].m_nCategory) {
+			case 0:
+				break;
+			case NORMAL:
+				//DWboxとの当たり判定
+				if (!g_pBox->GetState(g_nowMap[i][j].m_nObject))
+				{
+					break;
+				}
+				BoxPos = XMFLOAT2(g_pDWBox->GetPos(g_nowMap[i][j].m_nObject).x, g_pDWBox->GetPos(g_nowMap[i][j].m_nObject).y);
+				BoxSize = g_pDWBox->GetSize(g_nowMap[i][j].m_nObject);
+				if (CollisionRect(pos, size, BoxPos, BoxSize))
+				{
+					if (pos.y >= BoxPos.y + BoxSize.y)
+						g_nowMap[i][j].m_bOnBox = true;
+					else
+						g_nowMap[i][j].m_bOnBox = false;
+
+					collisionObj.push_back(g_nowMap[i][j]);
+				}
+				break;
+			case BREAK:
+				//boxとの当たり判定
+				if (!g_pBox->GetState(g_nowMap[i][j].m_nObject))
+				{
+					break;
+				}
+				BoxPos = XMFLOAT2(g_pBox->GetPos(g_nowMap[i][j].m_nObject).x, g_pBox->GetPos(g_nowMap[i][j].m_nObject).y);
+				BoxSize = g_pBox->GetSize();
+				if (CollisionRect(pos, size, BoxPos, BoxSize))
+				{
+					if (pos.y >= BoxPos.y + BoxSize.y)
+						g_nowMap[i][j].m_bOnBox = true;
+					else
+						g_nowMap[i][j].m_bOnBox = false;
+
+					collisionObj.push_back(g_nowMap[i][j]);
+				}
+				break;
+			case CARRY:
+				//boxとの当たり判定
+				if (!g_pBox->GetState(g_nowMap[i][j].m_nObject))
+				{
+					break;
+				}
+				BoxPos = XMFLOAT2(g_pBox->GetPos(g_nowMap[i][j].m_nObject).x, g_pBox->GetPos(g_nowMap[i][j].m_nObject).y);
+				BoxSize = g_pBox->GetSize();
+				if (CollisionRect(pos, size, BoxPos, BoxSize))
+				{
+					if (pos.y >= BoxPos.y + BoxSize.y)
+						g_nowMap[i][j].m_bOnBox = true;
+					else
+						g_nowMap[i][j].m_bOnBox = false;
+
+					collisionObj.push_back(g_nowMap[i][j]);
+				}
+				break;
+			}
+		}
+	}
+
+	return collisionObj;
 }
 
 //==========================
