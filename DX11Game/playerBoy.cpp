@@ -158,7 +158,7 @@ void Player_Boy::Update() {
 	// カメラの向き取得
 	XMFLOAT3 rotCamera = CCamera::Get()->GetAngle();
 	XMFLOAT3 oldPos = m_pos;
-	if (GetKeyPress(VK_LEFT)|| (g_GamePadNum > 0 && (31000 >= m_pad->dwPOV && m_pad->dwPOV >= 18001)/*左*/)){
+	if (GetKeyPress(VK_LEFT)|| (GetJoyDpadLeft(0)/*左*/)){
 		m_dir = LEFT;
 			// 左移動
 			m_nAnim = WALK;
@@ -167,7 +167,7 @@ void Player_Boy::Update() {
 
 			m_rotDest.y = rotCamera.y + 90.0f;
 
-	}else if (GetKeyPress(VK_RIGHT) || (g_GamePadNum > 0 && (13500 >= m_pad->dwPOV && m_pad->dwPOV >= 4001)/*右*/)) {
+	}else if (GetKeyPress(VK_RIGHT) || GetJoyDpadRight(0)/*右*/) {
 		m_dir = RIGHT;
 			// 右移動
 			m_nAnim = WALK;
@@ -176,7 +176,7 @@ void Player_Boy::Update() {
 
 			m_rotDest.y = rotCamera.y - 90.0f;
 	}
-	if (GetKeyTrigger(VK_UP)|| (g_GamePadNum > 0 && (35999 >= m_pad->dwPOV >= 31001 || m_pad->dwPOV <= 4000)))
+	if (GetKeyTrigger(VK_UP)|| GetJoyDpadUp(0))
 	{
 		// ジャンプ
 		m_nAnim = JUMP;
@@ -272,7 +272,7 @@ void Player_Boy::Update() {
 	}
 
 	//攻撃の当たり判定
-	if (GetKeyPress(VK_SPACE)|| GetJoyTrigger(0,JOYSTICKID1))
+	if (GetKeyPress(VK_SPACE)|| GetJoyTrigger(0, JOYBUTTON1))
 	{
      		/*仮*/OBJECT_INFO object = CollisionOldMap(XMFLOAT2(m_pos.x + 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y));
 		if(object.m_nCategory == BREAK)
@@ -285,7 +285,7 @@ void Player_Boy::Update() {
 
 
 	// オブジェクトを持つ
-	if ((GetKeyPress(VK_A) || GetJoyTrigger(0, JOYSTICKID1)) && !m_bHave)
+	if ((GetKeyPress(VK_A) || GetJoyTrigger(0, JOYBUTTON1)) && !m_bHave)
 	{
 		if (CollisionOldMap(XMFLOAT2(m_pos.x + 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nCategory == CARRY) {
 			m_nAnim = UP;
@@ -303,7 +303,7 @@ void Player_Boy::Update() {
 		}
 	}
 	// オブジェクトを放す
-	if ((GetKeyPress(VK_S) || GetJoyTrigger(0, JOYSTICKID2)) &&m_bHave)
+	if ((GetKeyPress(VK_S) || GetJoyTrigger(0, JOYBUTTON1)) &&m_bHave)
 	{
 		m_nAnim = DOWN;
 

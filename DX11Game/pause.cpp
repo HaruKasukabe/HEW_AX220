@@ -38,6 +38,7 @@ static PAUSE g_pause[MAX_TEXTURE];
 static ID3D11ShaderResourceView* g_pPauseTexture[MAX_TEXTURE];
 static EScene g_Scene = SCENE_NONE;
 static JOYINFOEX *pad; // ゲームパッド十字ボタンのため
+static int g_padTimer;
 
 
 HRESULT InitPause()
@@ -54,6 +55,7 @@ HRESULT InitPause()
 	}
 
 	pad = GetJoyState(0);
+	g_padTimer = 0;
 
 	// テクスチャの読み込み
 	HRESULT hr;
@@ -87,7 +89,8 @@ bool UpdatePause()
 	pad = GetJoyState(0);
 	PrintDebugProc("state:%d\n", pad->dwPOV);
 
-	if (GetKeyTrigger(VK_M)||GetJoyButton(0,JOYSTICKID8))
+
+	if (GetKeyTrigger(VK_M)||GetJoyButton(0, JOYBUTTON8))
 	{
 			g_pause[0].m_pause = true;
 			g_pause[1].m_pause = true;
@@ -95,7 +98,7 @@ bool UpdatePause()
 
 	if (g_pause[0].m_pause)
 	{
-		if (GetKeyTrigger(VK_UP) || (g_GamePadNum > 0 && (35999 >= pad->dwPOV >= 27001 || pad->dwPOV <= 8999)/*上*/))
+		if (GetKeyTrigger(VK_UP) || GetJoyDpadUp(0)/*上*/)
 		{
 			if (g_pause[1].m_pos.y < -1.0f)
 			{
@@ -103,7 +106,7 @@ bool UpdatePause()
 					CSound::Play(SE_PAUSE_SELECT);
 			}
 		}
-		if (GetKeyTrigger(VK_DOWN)||((g_GamePadNum > 0 && (pad->dwPOV >= 9001 && pad->dwPOV <= 26999))/*下*/))
+		if (GetKeyTrigger(VK_DOWN)|| GetJoyDpadDown(0)/*下*/)
 		{
 			if (g_pause[1].m_pos.y > -130.0f)
 			{
@@ -111,19 +114,20 @@ bool UpdatePause()
 				CSound::Play(SE_PAUSE_SELECT);
 			}
 		}
-		if ((GetKeyPress(VK_X) || (GetJoyButton(0, JOYSTICKID1)) && g_pause[1].m_pos.y == 50.0f))
+		if ((GetKeyPress(VK_X) || (GetJoyTrigger(0, JOYBUTTON1)) && g_pause[1].m_pos.y == 50.0f))
 		{
 			g_pause[0].m_pause = false;
 			g_pause[1].m_pause = false;
 			CSound::Play(SE_DECIDE);
 		}
-		else if ((GetKeyPress(VK_X)||GetJoyButton(0,JOYSTICKID1)) && g_pause[1].m_pos.y == -50.0f)
+		else if ((GetKeyPress(VK_X)|| GetJoyTrigger(0, JOYBUTTON1)) && g_pause[1].m_pos.y == -50.0f)
 		{
-			SetScene(SCENE_STAGE);	
+			// ↓うまく動作しないので一時的に無効化
+			// SetScene(SCENE_STAGE);	
 			CSound::Play(SE_DECIDE);
 			return true;
 		}
-		else if ((GetKeyPress(VK_X) || GetJoyButton(0, JOYSTICKID1)) && g_pause[1].m_pos.y == 50.0f)
+		else if ((GetKeyPress(VK_X) || GetJoyTrigger(0, JOYBUTTON1)) && g_pause[1].m_pos.y == 50.0f)
 		{
 			/*内容は操作説明ができ次第記述する*/
 			/*CSound::Play(SE_DECIDE);

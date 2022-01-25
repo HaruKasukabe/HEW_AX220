@@ -58,11 +58,11 @@ void UpdateSceneTitle() {
 	/*if (GetKeyPress(VK_F1)) {
 		StartFadeOut(SCENE_SAMPLE);
 	}*/
-	if (GetKeyPress(VK_F2)) {
+	if (GetKeyPress(VK_RETURN) || GetJoyTrigger(0,JOYBUTTON1)) {
 		StartFadeOut(SCENE_GAME);
 	}
 
-	if (GetKeyPress(VK_RETURN))
+	if (GetKeyPress(VK_F3))// 後々これをチュートリアルとゲームの切り替えに使う（Returnで）
 	{
 		StartFadeOut(SCENE_MAP);
 

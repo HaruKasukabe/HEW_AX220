@@ -30,6 +30,19 @@ static HRESULT UpdateMouse();
 //*****************************************************************************
 // グローバル変数
 //*****************************************************************************
+// ハットスイッチ(角度)→十字キー入力変換
+static const DWORD g_dwPOVBit[16] = {
+	JOY_DPAD_UP,					//   0度
+	JOY_DPAD_UP | JOY_DPAD_RIGHT,	//  45度	
+	JOY_DPAD_RIGHT,					//  90度
+	JOY_DPAD_RIGHT | JOY_DPAD_DOWN,	// 135度
+	JOY_DPAD_DOWN,					// 180度
+	JOY_DPAD_DOWN | JOY_DPAD_LEFT,	// 225度
+	JOY_DPAD_LEFT,					// 270度
+	JOY_DPAD_LEFT | JOY_DPAD_UP,	// 315度
+	0 // 8～15は0に(実際は65535/4500≒14だけを使用)
+};
+
 static WORD				g_wKeyState[NUM_KEY_MAX];			// キーボードの押下状態を保持するワーク
 static WORD				g_wKeyStateTrigger[NUM_KEY_MAX];	// キーボードのトリガ状態を保持するワーク
 static WORD				g_wKeyStateRelease[NUM_KEY_MAX];	// キーボードのリリース状態を保持するワーク
@@ -137,7 +150,8 @@ HRESULT UpdateKeyboard(void)
 				g_wKeyStateRepeat[nCntKey] = wKeyState;
 				g_nKeyStateRepeatCnt[nCntKey] = 20;
 			}
-		} else {
+		}
+		else {
 			g_nKeyStateRepeatCnt[nCntKey] = 0;
 			g_wKeyStateRepeat[nCntKey] = 0;
 		}
@@ -172,8 +186,9 @@ void UninitJoystick()
 HRESULT UpdateJoystick()
 {
 	HRESULT hr = S_OK;
+	DWORD i;
 
-	for (DWORD i = 0; i < g_dwJoyCount; ++i) {
+	for (i = 0; i < g_dwJoyCount; ++i) {
 		JOYINFOEX& ji = g_joyState[i];
 		DWORD dwButtons = ji.dwButtons;
 		ZeroMemory(&ji, sizeof(ji));
@@ -185,6 +200,12 @@ HRESULT UpdateJoystick()
 		}
 		g_dwJoyButtonTrigger[i] = (g_joyState[i].dwButtons ^ dwButtons) & dwButtons;
 		g_dwJoyButtonRelease[i] = (g_joyState[i].dwButtons ^ dwButtons) & ~dwButtons;
+	}
+	for (; i < NUM_JOY_MAX; ++i) {
+		JOYINFOEX& ji = g_joyState[i];
+		ZeroMemory(&ji, sizeof(ji));
+		g_dwJoyButtonTrigger[i] = 0;
+		g_dwJoyButtonRelease[i] = 0;
 	}
 	return hr;
 }
@@ -275,30 +296,118 @@ JOYINFOEX *GetJoyState(DWORD dwJoy)
 }
 
 //=============================================================================
-// ゲームパッドX軸取得
+// ゲームパッドX軸取得 (-32767～32768)
 //=============================================================================
 LONG GetJoyX(DWORD dwJoy)
 {
 	if (dwJoy >= NUM_JOY_MAX) return 0L;
-	return (LONG)g_joyState[dwJoy].dwXpos - 0x08000;
+	return (LONG)g_joyState[dwJoy].dwXpos - 0x7FFF;
 }
 
 //=============================================================================
-// ゲームパッドY軸取得
+// ゲームパッドY軸取得 (-32767～32768)
 //=============================================================================
 LONG GetJoyY(DWORD dwJoy)
 {
 	if (dwJoy >= NUM_JOY_MAX) return 0L;
-	return (LONG)g_joyState[dwJoy].dwYpos - 0x08000;
+	return (LONG)g_joyState[dwJoy].dwYpos - 0x7FFF;
 }
 
 //=============================================================================
-// ゲームパッドZ軸取得
+// ゲームパッドZ軸取得 (-32767～32768)
 //=============================================================================
 LONG GetJoyZ(DWORD dwJoy)
 {
 	if (dwJoy >= NUM_JOY_MAX) return 0L;
-	return (LONG)g_joyState[dwJoy].dwZpos - 0x08000;
+	return (LONG)g_joyState[dwJoy].dwZpos - 0x7FFF;
+}
+
+//=============================================================================
+// ゲームパッドR軸取得 (-32767～32768)
+//=============================================================================
+LONG GetJoyR(DWORD dwJoy)
+{
+	if (dwJoy >= NUM_JOY_MAX) return 0L;
+	return (LONG)g_joyState[dwJoy].dwRpos - 0x7FFF;
+}
+
+//=============================================================================
+//=============================================================================
+// ゲームパッドU軸取得 (-32767～32768)
+//=============================================================================
+LONG GetJoyU(DWORD dwJoy)
+{
+	if (dwJoy >= NUM_JOY_MAX) return 0L;
+	return (LONG)g_joyState[dwJoy].dwUpos - 0x7FFF;
+}
+
+//=============================================================================
+// ゲームパッドV軸取得 (-32767～32768)
+//=============================================================================
+LONG GetJoyV(DWORD dwJoy)
+{
+	if (dwJoy >= NUM_JOY_MAX) return 0L;
+	return (LONG)g_joyState[dwJoy].dwVpos - 0x7FFF;
+}
+
+//=============================================================================
+// ゲームパッドX軸取得 (-1.0f～1.0f)
+//=============================================================================
+float GetJoyfX(DWORD dwJoy)
+{
+	if (dwJoy >= NUM_JOY_MAX) return 0.0f;
+	DWORD& dwPos = g_joyState[dwJoy].dwXpos;
+	return ((int)dwPos - 32767) / ((dwPos < 32767) ? 32767.0f : 32768.0f);
+}
+
+//=============================================================================
+// ゲームパッドY軸取得 (-1.0f～1.0f)
+//=============================================================================
+float GetJoyfY(DWORD dwJoy)
+{
+	if (dwJoy >= NUM_JOY_MAX) return 0.0f;
+	DWORD& dwPos = g_joyState[dwJoy].dwYpos;
+	return -((int)dwPos - 32767) / ((dwPos < 32767) ? 32767.0f : 32768.0f);
+}
+
+//=============================================================================
+// ゲームパッドZ軸取得 (-1.0f～1.0f)
+//=============================================================================
+float GetJoyfZ(DWORD dwJoy)
+{
+	if (dwJoy >= NUM_JOY_MAX) return 0.0f;
+	DWORD& dwPos = g_joyState[dwJoy].dwZpos;
+	return ((int)dwPos - 32767) / ((dwPos < 32767) ? 32767.0f : 32768.0f);
+}
+
+//=============================================================================
+// ゲームパッドR軸取得 (-1.0f～1.0f)
+//=============================================================================
+float GetJoyfR(DWORD dwJoy)
+{
+	if (dwJoy >= NUM_JOY_MAX) return 0.0f;
+	DWORD& dwPos = g_joyState[dwJoy].dwRpos;
+	return -((int)dwPos - 32767) / ((dwPos < 32767) ? 32767.0f : 32768.0f);
+}
+
+//=============================================================================
+// ゲームパッドU軸取得 (-1.0f～1.0f)
+//=============================================================================
+float GetJoyfU(DWORD dwJoy)
+{
+	if (dwJoy >= NUM_JOY_MAX) return 0.0f;
+	DWORD& dwPos = g_joyState[dwJoy].dwUpos;
+	return ((int)dwPos - 32767) / ((dwPos < 32767) ? 32767.0f : 32768.0f);
+}
+
+//=============================================================================
+// ゲームパッドV軸取得 (-1.0f～1.0f)
+//=============================================================================
+float GetJoyfV(DWORD dwJoy)
+{
+	if (dwJoy >= NUM_JOY_MAX) return 0.0f;
+	DWORD& dwPos = g_joyState[dwJoy].dwVpos;
+	return -((int)dwPos - 32767) / ((dwPos < 32767) ? 32767.0f : 32768.0f);
 }
 
 //=============================================================================
@@ -326,6 +435,51 @@ bool GetJoyRelease(DWORD dwJoy, DWORD dwBtn)
 {
 	if (dwJoy >= NUM_JOY_MAX) return false;
 	return (g_dwJoyButtonRelease[dwJoy] & (1 << dwBtn)) ? true : false;
+}
+
+//=============================================================================
+// ゲームパッド 十字キー取得
+//=============================================================================
+DWORD GetJoyDpad(DWORD dwJoy)
+{
+	if (dwJoy >= NUM_JOY_MAX) return JOY_DPAD_CENTER;
+	return g_dwPOVBit[g_joyState[dwJoy].dwPOV / 4500];
+}
+
+//=============================================================================
+// ゲームパッド 十字キー↑取得
+//=============================================================================
+bool GetJoyDpadUp(DWORD dwJoy)
+{
+	if (dwJoy >= NUM_JOY_MAX) return false;
+	return (g_dwPOVBit[g_joyState[dwJoy].dwPOV / 4500] & JOY_DPAD_UP) != 0;
+}
+
+//=============================================================================
+// ゲームパッド 十字キー→取得
+//=============================================================================
+bool GetJoyDpadRight(DWORD dwJoy)
+{
+	if (dwJoy >= NUM_JOY_MAX) return false;
+	return (g_dwPOVBit[g_joyState[dwJoy].dwPOV / 4500] & JOY_DPAD_RIGHT) != 0;
+}
+
+//=============================================================================
+// ゲームパッド 十字キー↓取得
+//=============================================================================
+bool GetJoyDpadDown(DWORD dwJoy)
+{
+	if (dwJoy >= NUM_JOY_MAX) return false;
+	return (g_dwPOVBit[g_joyState[dwJoy].dwPOV / 4500] & JOY_DPAD_DOWN) != 0;
+}
+
+//=============================================================================
+// ゲームパッド 十字キー←取得
+//=============================================================================
+bool GetJoyDpadLeft(DWORD dwJoy)
+{
+	if (dwJoy >= NUM_JOY_MAX) return false;
+	return (g_dwPOVBit[g_joyState[dwJoy].dwPOV / 4500] & JOY_DPAD_LEFT) != 0;
 }
 
 //=============================================================================
