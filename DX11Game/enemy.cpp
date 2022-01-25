@@ -81,7 +81,7 @@ HRESULT InitEnemy(void)
 		// ŠÛ‰e‚Ì¶¬
 		g_enemy[i].m_nShadow = CreateShadow(g_enemy[i].m_pos, 12.0f);
 		//‹«ŠE‹…‚Ì¶¬
-		g_enemy[i].m_nBSphere = CreateBSphere(XMFLOAT3(0.0f,0.0f,0.0f), 5.0f, g_enemy[i].m_mtxWorld);
+		//g_enemy[i].m_nBSphere = CreateBSphere(XMFLOAT3(0.0f,0.0f,0.0f), 5.0f, g_enemy[i].m_mtxWorld);
 
 		//—§•û‘Ì‚Ì¶¬
 		g_enemy[i].m_nCube = GetCube()->Create(XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(5.0f, 5.0f, 5.0f), g_enemy[i].m_mtxWorld);

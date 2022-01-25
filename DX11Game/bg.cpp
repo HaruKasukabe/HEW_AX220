@@ -7,7 +7,7 @@
 
 // É}ÉNÉçíËã`
 #define BG_TEXTURE_PATH_SAMPLE		L"data/texture/sky001.jpg"
-#define BG_TEXTURE_PATH_TITLE		L"data/texture/field000.jpg"
+#define BG_TEXTURE_PATH_TITLE		L"data/texture/title_back.png"
 #define BG_TEXTURE_PATH_GAME_NOW	L"data/texture/back_tower2.png"
 #define BG_TEXTURE_PATH_GAME_OLD	L"data/texture/back_tower1.png"
 #define BG_TEXTURE_PATH_GAME_NOW2	L"data/texture/back_dungeon.png"

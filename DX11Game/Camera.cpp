@@ -16,7 +16,7 @@
 namespace {
 	const float CAM_POS_P_X = 0.0f;					// カメラの視点初期位置(X座標)
 	const float CAM_POS_P_Y = 0.0f;				// カメラの視点初期位置(Y座標)
-	const float CAM_POS_P_Z = -140.0f;				// カメラの視点初期位置(Z座標)
+	const float CAM_POS_P_Z = -130.0f;				// カメラの視点初期位置(Z座標)
 	const float CAM_POS_R_X = 0.0f;					// カメラの注視点初期位置(X座標)
 	const float CAM_POS_R_Y = 0.0f;					// カメラの注視点初期位置(Y座標)
 	const float CAM_POS_R_Z = 0.0f;					// カメラの注視点初期位置(Z座標)
@@ -103,9 +103,9 @@ void CCamera::Update()
 	m_vSrcPos.x = -SinDeg(m_vAngle.y) * m_fLengthInterval;
 	m_vSrcPos.z = -CosDeg(m_vAngle.y) * m_fLengthInterval;
 
-	// 追跡カメラ
+	//// 追跡カメラ
 	//XMFLOAT3 vModelPos = GetOld()->GetBoyPos();	// モデル座標
-	// 視点座標移動先を算出
+	//// 視点座標移動先を算出
 	//m_vDestPos.x = m_vSrcPos.x + vModelPos.x;
 	//m_vDestPos.y = m_vSrcPos.y + vModelPos.y;
 	//m_vDestPos.z = m_vSrcPos.z + vModelPos.z;
@@ -134,10 +134,10 @@ void CCamera::Update()
 	// マトリックス更新
 	UpdateMatrix();
 
-	//PrintDebugProc("[ｶﾒﾗ ｲﾁ : (%f, %f, %f)]\n", m_vPos.x, m_vPos.y, m_vPos.z);
-	//PrintDebugProc("[ﾁｭｳｼﾃﾝ : (%f, %f, %f)]\n", m_vTarget.x, m_vTarget.y, m_vTarget.z);
-	//PrintDebugProc("[ｶﾒﾗ ﾑｷ : (%f)]\n", m_vAngle.y);
-	//PrintDebugProc("\n");
+	PrintDebugProc("[ｶﾒﾗ ｲﾁ : (%f, %f, %f)]\n", m_vPos.x, m_vPos.y, m_vPos.z);
+	PrintDebugProc("[ﾁｭｳｼﾃﾝ : (%f, %f, %f)]\n", m_vTarget.x, m_vTarget.y, m_vTarget.z);
+	PrintDebugProc("[ｶﾒﾗ ﾑｷ : (%f)]\n", m_vAngle.y);
+	PrintDebugProc("\n");
 }
 
 // ビュー/プロジェクション マトリックス更新

@@ -56,7 +56,7 @@ Player_Girl::Player_Girl()
 	ID3D11DeviceContext* pDeviceContext = GetDeviceContext();
 
 	// 位置・回転・スケールの初期設定
-	m_pos = XMFLOAT3(-100.0f, -45.0f, 0.0f);
+	m_pos = XMFLOAT3(-90.0f, -45.0f, 0.0f);
 	m_move = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	m_rot = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	m_rotDest = XMFLOAT3(0.0f, 0.0f, 0.0f);
@@ -74,7 +74,7 @@ Player_Girl::Player_Girl()
 		m_modelSub[i].Load(pDevice, pDeviceContext, g_GirlAnimFile[i]);
 
 	// 丸影の生成
-	m_nShadow = CreateShadow(XMFLOAT3(0.0f, 0.0f, 0.0f), 12.0f);
+	m_nShadow = CreateShadow(m_pos, 12.0f);
 }
 //==============================================================
 //ﾃﾞｽﾄﾗｸﾀ
@@ -134,11 +134,8 @@ void Player_Girl::Update() {
 
 	// 位置移動
 	m_pos.x += m_move.x;
-
 	m_pos.y += m_move.y;
 	m_pos.z += m_move.z;
-
-
 
 	// 移動量に慣性をかける
 	m_move.x += (0.0f - m_move.x) * PLAYER_GIRL_RATE_MOVE;
@@ -186,8 +183,10 @@ void Player_Girl::Update() {
 	}
 
 	//HalfBoxと当たった時の処理
-	if (GetHalfBox()->CollisionHalfBox(XMFLOAT2(m_pos.x, m_pos.y), XMFLOAT2(PLAYER_GIRL_COLLISION_SIZE_X, PLAYER_GIRL_COLLISION_SIZE_Y)))
-		m_pos.y += 10.0f;
+	if (GetHalfBox()->CheckHalfBox(m_pos))
+	{
+		m_move.y += GRAVITY_GIRL + 0.20f;
+	}
 
 	if (GetKeyPress(VK_RETURN)) {
 		// リセット
@@ -268,46 +267,19 @@ void Player_Girl::SetGirlPos(XMFLOAT3 pos)
 //==============================================================
 bool Player_Girl::CheckField()
 {
-	Box* pBox = GetBox();
-	DWBox* pDWBox = GetDWBox();
-	OBJECT_INFO* pNowMap = GetMap(0);
-
+	HalfBox* pHalfBox = GetHalfBox();
 	XMFLOAT3 boxPos;
-	for (int i = 0; i < MAP_HEIGHT * MAP_WIDTH; i++, pNowMap++) {
-		switch (pNowMap->m_nCategory) {
-		case 0:
-			break;
-		case NORMAL:
-			if (!pDWBox->GetState(pNowMap->m_nObject))
-			{
-				break;
-			}
-			boxPos = pDWBox->GetPos(pNowMap->m_nObject);
-			if (m_pos.x <= boxPos.x - 2.0f) continue;
-			if (boxPos.x + 2.0f <= m_pos.x) continue;
-
-			if (m_pos.y >= boxPos.y + 6.0f && g_oldGirlPos.y <= boxPos.y + 6.0f)
-			{
-				m_pos.y = boxPos.y + 18.0f;
-				return true;
-			}
-			break;
-		default:
-			if (!pBox->GetState(pNowMap->m_nObject))
-			{
-				break;
-			}
-			boxPos = pBox->GetPos(pNowMap->m_nObject);
-			if (m_pos.x <= boxPos.x - 2.0f) continue;
-			if (boxPos.x + 2.0f <= m_pos.x) continue;
-
-			if (m_pos.y >= boxPos.y + 6.0f && g_oldGirlPos.y <= boxPos.y + 6.0f)
-			{
-				m_pos.y = boxPos.y + 18.0f;
-				return true;
-			}
-			break;
+	for (int i = 0; i < MAX_HALFBOX; i++, pHalfBox++) {
+		if (!pHalfBox->GetUse(i))
+		{
+			continue;
 		}
+		boxPos = GetHalfBox()->GetPos(i);
+		//boxPos = pHalfBox->GetPos(i);
+		if (m_pos.x <= boxPos.x - 2.0f) continue;
+		if (boxPos.x + 2.0f <= m_pos.x) continue;
+
+		return true;
 	}
 }
 

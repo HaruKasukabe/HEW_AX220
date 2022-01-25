@@ -14,7 +14,7 @@ class Title {
 public:
 	Title();
 	 ~Title();
-	void Update(int);
+	void Update();
 	void Draw();
 private:
 	XMFLOAT2	m_pos;

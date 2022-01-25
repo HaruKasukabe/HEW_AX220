@@ -8,6 +8,7 @@
 #include "box.h"
 #include "DWBox.h"
 #include "HalfBox.h"
+#include "WoodBox.h"
 #include "Monument.h"
 #include <vector>
 
@@ -58,5 +59,6 @@ std::vector<OBJECT_INFO> BoxCollisionNowMap(XMFLOAT2 pos, XMFLOAT2 size, int nOb
 Box* GetBox();
 DWBox* GetDWBox();
 HalfBox* GetHalfBox();
+WoodBox* GetWoodBox();
 Monument* GetMonument();
 OBJECT_INFO* GetMap(int);

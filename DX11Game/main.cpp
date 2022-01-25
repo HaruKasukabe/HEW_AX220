@@ -402,7 +402,7 @@ HRESULT Init(HWND hWnd, BOOL bWindow)
 		return E_FAIL;
 
 	// メッシュ初期化
-	hr = InitMesh();
+	//hr = InitMesh();
 	if (FAILED(hr))
 		return hr;
 
@@ -536,7 +536,7 @@ void Uninit(void)
 	UninitScene();
 
 	// メッシュ終了処理
-	UninitMesh();
+	//UninitMesh();
 
 	// Assimp用シェーダ終了処理
 	CAssimpModel::UninitShader();

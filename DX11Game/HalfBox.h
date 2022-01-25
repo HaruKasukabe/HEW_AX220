@@ -29,11 +29,14 @@ public:
 	XMFLOAT2 GetSize(int num);
 
 	bool GetState(int num);
+	bool GetUse(int num);
 
 	void DrawOldNow(int nTime);
 	int CreateOldNow(XMFLOAT3 pos, int nTime/*,XMFLOAT3 scl*/);
 
 	bool CollisionHalfBox(XMFLOAT2 pos, XMFLOAT2 size);
+
+	bool CheckHalfBox(XMFLOAT3 pos);
 private:
 	CAssimpModel	m_model;	//モデル
 	XMFLOAT4X4		m_mtxWorld;		// ワールドマトリックス

@@ -4,11 +4,14 @@
 //=====================================================
 #include "now.h"
 #include "map.h"
+#include "shadow.h"
 
 //=============================
 //		ºÝ½Ä×¸À
 //=============================
 Now::Now() {
+	// ŠÛ‰e‰Šú‰»
+	InitShadow();
 	//Ì¨°ÙÄÞ‰Šú‰»
 	m_pMeshField = new MeshField(8, 1, 80.0f, 80.0f, 1.0f, 1.0f, XMFLOAT3(0.0f,-50.0f,0.0f));
 	//—‚ÌŽq‰Šú‰»
@@ -23,6 +26,8 @@ Now::~Now(){
 	delete m_pMeshField;
 	//—‚ÌŽqI—¹
 	delete m_pPlayerGirl;
+	// ŠÛ‰eI—¹ˆ—
+	UninitShadow();
 }
 
 //=============================
@@ -52,6 +57,8 @@ void Now::Draw(){
 	m_pPlayerGirl->Draw();
 	//ƒ}ƒbƒv•`‰æ
 	DrawNowMap();
+	// ŠÛ‰e•`‰æ
+	DrawShadow();
 }
 
 //=============================
