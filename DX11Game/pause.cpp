@@ -11,6 +11,7 @@
 #include "input.h"
 #include "scene.h"
 #include "Sound.h"
+#include "UserGuide.h"
 
 // ***************************************
 // マクロ定義
@@ -39,6 +40,7 @@ static ID3D11ShaderResourceView* g_pPauseTexture[MAX_TEXTURE];
 static EScene g_Scene = SCENE_NONE;
 static JOYINFOEX *pad; // ゲームパッド十字ボタンのため
 static int g_padTimer;
+static bool g_bGuideFlg; // 操作説明を表示するかどうか
 
 
 HRESULT InitPause()
@@ -56,6 +58,7 @@ HRESULT InitPause()
 
 	pad = GetJoyState(0);
 	g_padTimer = 0;
+	g_bGuideFlg = false;
 
 	// テクスチャの読み込み
 	HRESULT hr;
@@ -88,7 +91,7 @@ bool UpdatePause()
 {
 	pad = GetJoyState(0);
 	PrintDebugProc("state:%d\n", pad->dwPOV);
-
+	g_bGuideFlg = GetUserGuideFlg();
 
 	if (GetKeyTrigger(VK_M)||GetJoyButton(0, JOYBUTTON8))
 	{
@@ -114,32 +117,34 @@ bool UpdatePause()
 				CSound::Play(SE_PAUSE_SELECT);
 			}
 		}
-		if ((GetKeyPress(VK_X) || (GetJoyTrigger(0, JOYBUTTON1)) && g_pause[1].m_pos.y == 50.0f))
+		if ((GetKeyTrigger(VK_Z) || (GetJoyTrigger(0, JOYBUTTON1))) && g_pause[1].m_pos.y == 50.0f)
 		{
 			g_pause[0].m_pause = false;
 			g_pause[1].m_pause = false;
 			CSound::Play(SE_DECIDE);
 		}
-		else if ((GetKeyPress(VK_X)|| GetJoyTrigger(0, JOYBUTTON1)) && g_pause[1].m_pos.y == -50.0f)
+		else if ((GetKeyTrigger(VK_Z)|| GetJoyTrigger(0, JOYBUTTON1)) && g_pause[1].m_pos.y == -50.0f)
 		{
 			// ↓うまく動作しないので一時的に無効化
 			// SetScene(SCENE_STAGE);	
 			CSound::Play(SE_DECIDE);
 			return true;
 		}
-		else if ((GetKeyPress(VK_X) || GetJoyTrigger(0, JOYBUTTON1)) && g_pause[1].m_pos.y == 50.0f)
+		else if ((GetKeyTrigger(VK_Z) || GetJoyTrigger(0, JOYBUTTON1)) && g_pause[1].m_pos.y == -150.0f)
 		{
-			/*内容は操作説明ができ次第記述する*/
-			/*CSound::Play(SE_DECIDE);
-			return true;*/
+			SetUserGuideFlg(true);
+			g_bGuideFlg = true;
+			CSound::Play(SE_DECIDE);
+			return true;
 		}
 	}
+	PrintDebugProc("ﾎﾟｰｽﾞｲﾁ%2f\n", g_pause[1].m_pos.y);
 	return g_pause[0].m_pause;
 }
 
 void DrawPause()
 {
-	if (g_pause[0].m_pause)
+	if (g_pause[0].m_pause&& !g_bGuideFlg)
 	{
 		ID3D11DeviceContext* pDC = GetDeviceContext();
 		SetPolygonSize(500, 500);

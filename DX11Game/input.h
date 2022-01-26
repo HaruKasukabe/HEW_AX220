@@ -50,8 +50,8 @@
 
 #define JOYBUTTON1	0 // Aボタン
 #define JOYBUTTON2	1 // Bボタン
-#define JOYBUTTON3	2
-#define JOYBUTTON4	3
+#define JOYBUTTON3	2 // Xボタン
+#define JOYBUTTON4	3 // Yボタン
 #define JOYBUTTON5	4
 #define JOYBUTTON6	5
 #define JOYBUTTON7	6

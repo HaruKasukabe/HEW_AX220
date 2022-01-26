@@ -8,11 +8,13 @@
 #include "bg.h"
 #include "input.h"
 #include "crowd.h"
+#include "UserGuide.h"
 
 
 //*****グローバル変数*****
 static BG* g_pBG;		//背景
 Crowd* g_pCrowd;		//雲
+
 
 //=============================
 //		初期化
@@ -48,6 +50,7 @@ void UninitSceneTitle() {
 //=============================
 void UpdateSceneTitle() {
 	
+	bool GuideFlg = GetUserGuideFlg();
 
 	// 背景更新
 	g_pBG->Update(5);
@@ -58,14 +61,22 @@ void UpdateSceneTitle() {
 	/*if (GetKeyPress(VK_F1)) {
 		StartFadeOut(SCENE_SAMPLE);
 	}*/
-	if (GetKeyPress(VK_RETURN) || GetJoyTrigger(0,JOYBUTTON1)) {
-		StartFadeOut(SCENE_GAME);
-	}
-
-	if (GetKeyPress(VK_F3))// 後々これをチュートリアルとゲームの切り替えに使う（Returnで）
+	if (!GuideFlg)
 	{
-		StartFadeOut(SCENE_MAP);
+		if (GetKeyPress(VK_RETURN) || GetJoyTrigger(0, JOYBUTTON1)) {
+			StartFadeOut(SCENE_GAME);
+		}
 
+		if (GetKeyPress(VK_F3))// 後々これをチュートリアルとゲームの切り替えに使う（Returnで）
+		{
+			StartFadeOut(SCENE_MAP);
+
+		}
+	}
+	if (GetKeyPress(VK_M) || GetJoyButton(0, JOYBUTTON3))
+	{
+		SetUserGuideFlg(true);
+		GuideFlg = true;
 	}
 
 	

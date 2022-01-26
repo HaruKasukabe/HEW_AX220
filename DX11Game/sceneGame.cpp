@@ -152,71 +152,72 @@ void UpdateSceneGame() {
 
 
 	if (!PauseFlg)
-
-	//箱更新
-	//g_pBox->Update();
-	//マップ更新
-	//UpdateMap();
-
-	//ゴール更新
-	g_pGoal->Update(g_pNow->GetPlayerGirl()->GetGirlPos().x);
-
-	//過去更新
-	g_pOld->Update();
-
-	//現在更新
-	g_pNow->Update();
-
-	// 丸影更新
-	UpdateShadow();
-
-	//ギミック更新
-	g_pGimmick->Update(g_pOld->GetBoyPos());
-
-	//箱更新
-	//g_pBox->Update();
-
-	//マップ更新
-	UpdateMap();
-
-	// 画面をスクロール
-	if (g_pNow->GetPlayerGirl()->GetGirlPos().x > -100.0f)
 	{
-		if (g_fGirlOldPosX != g_pNow->GetPlayerGirl()->GetGirlPos().x)
+
+		//箱更新
+		//g_pBox->Update();
+		//マップ更新
+		//UpdateMap();
+
+		//ゴール更新
+		g_pGoal->Update(g_pNow->GetPlayerGirl()->GetGirlPos().x);
+
+		//過去更新
+		g_pOld->Update();
+
+		//現在更新
+		g_pNow->Update();
+
+		// 丸影更新
+		UpdateShadow();
+
+		//ギミック更新
+		g_pGimmick->Update(g_pOld->GetBoyPos());
+
+		//箱更新
+		//g_pBox->Update();
+
+		//マップ更新
+		UpdateMap();
+
+		// 画面をスクロール
+		if (g_pNow->GetPlayerGirl()->GetGirlPos().x > -100.0f)
 		{
-			//今の背景更新
-			g_pBG->Update(0);
+			if (g_fGirlOldPosX != g_pNow->GetPlayerGirl()->GetGirlPos().x)
+			{
+				//今の背景更新
+				g_pBG->Update(0);
 
-			g_girlCameraTarget.x += g_pNow->GetPlayerGirl()->GetGirlMove().x * NOW_SCROLL_SPEED;
+				g_girlCameraTarget.x += g_pNow->GetPlayerGirl()->GetGirlMove().x * NOW_SCROLL_SPEED;
 
-			CCamera::Set(NOW_CAMERA);
-			XMFLOAT3 cameraPos = CCamera::Get()->GetPos();
-			CCamera::Get()->SetPos(cameraPos.x += g_pNow->GetPlayerGirl()->GetGirlMove().x * NOW_SCROLL_SPEED, cameraPos.y, cameraPos.z);
-			CCamera::Get()->SetTarget(g_girlCameraTarget);
-			g_fGirlOldPosX = g_pNow->GetPlayerGirl()->GetGirlPos().x;
+				CCamera::Set(NOW_CAMERA);
+				XMFLOAT3 cameraPos = CCamera::Get()->GetPos();
+				CCamera::Get()->SetPos(cameraPos.x += g_pNow->GetPlayerGirl()->GetGirlMove().x * NOW_SCROLL_SPEED, cameraPos.y, cameraPos.z);
+				CCamera::Get()->SetTarget(g_girlCameraTarget);
+				g_fGirlOldPosX = g_pNow->GetPlayerGirl()->GetGirlPos().x;
+			}
+		}
+		if (g_pOld->GetBoyPos().x > -100.0f)
+		{
+			if (g_fBoyOldPosX != g_pOld->GetBoyPos().x)
+			{
+				//過去の背景更新
+				g_pBG->Update(1);
+
+				g_boyCameraTarget.x += g_pOld->GetPlayerBoy()->GetBoyMove().x * OLD_SCROLL_SPEED;
+
+				CCamera::Set(OLD_CAMERA);
+				XMFLOAT3 cameraPos = CCamera::Get()->GetPos();
+				CCamera::Get()->SetPos(cameraPos.x += g_pOld->GetPlayerBoy()->GetBoyMove().x * OLD_SCROLL_SPEED, cameraPos.y, cameraPos.z);
+				CCamera::Get()->SetTarget(g_boyCameraTarget);
+				g_fBoyOldPosX = g_pOld->GetBoyPos().x;
+			}
+		}
+
+		if (GetKeyPress(VK_F1)) {
+			StartFadeOut(SCENE_TITLE);
 		}
 	}
-	if (g_pOld->GetBoyPos().x > -100.0f)
-	{
-		if (g_fBoyOldPosX != g_pOld->GetBoyPos().x)
-		{
-			//過去の背景更新
-			g_pBG->Update(1);
-
-			g_boyCameraTarget.x += g_pOld->GetPlayerBoy()->GetBoyMove().x * OLD_SCROLL_SPEED;
-
-			CCamera::Set(OLD_CAMERA);
-			XMFLOAT3 cameraPos = CCamera::Get()->GetPos();
-			CCamera::Get()->SetPos(cameraPos.x += g_pOld->GetPlayerBoy()->GetBoyMove().x * OLD_SCROLL_SPEED, cameraPos.y, cameraPos.z);
-			CCamera::Get()->SetTarget(g_boyCameraTarget);
-			g_fBoyOldPosX = g_pOld->GetBoyPos().x;
-		}
-	}
-
-	if (GetKeyPress(VK_F1)) {
-		StartFadeOut(SCENE_TITLE);
-	}
-
 	CSound::Update();
 }
 

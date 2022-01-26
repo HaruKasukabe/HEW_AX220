@@ -272,7 +272,7 @@ void Player_Boy::Update() {
 	}
 
 	//çUåÇÇÃìñÇΩÇËîªíË
-	if (GetKeyPress(VK_SPACE)|| GetJoyTrigger(0, JOYBUTTON1))
+	if (GetKeyPress(VK_SPACE)|| GetJoyTrigger(0, JOYBUTTON2))
 	{
      		/*âº*/OBJECT_INFO object = CollisionOldMap(XMFLOAT2(m_pos.x + 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y));
 		if(object.m_nCategory == BREAK)
