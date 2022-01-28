@@ -140,7 +140,7 @@ void UninitSceneGame() {
 	//ƒTƒEƒ“ƒhI—¹
 	CSound::Stop(BGM_001);
 	CSound::Fin();
-	
+
 }
 
 //=============================
@@ -226,7 +226,7 @@ void UpdateSceneGame() {
 //=============================
 void DrawSceneGame() {
 	d3dDeviceContext = GetDeviceContext();
-		
+
 	//”wŒi•`‰æ
 	g_pBG->Draw();
 

@@ -26,7 +26,7 @@
 
 #define BOX_COLLISION_SIZE_X	4.0f
 #define BOX_COLLISION_SIZE_Y	10.0f
-#define BOX_GRAVITY				0.15f
+#define BOX_GRAVITY				0.30f
 
 #define BOY_HUND_LONG			10.0f
 
@@ -250,34 +250,36 @@ XMFLOAT3 Box::GetPos(int num) {
 //=============================
 //	箱　座標設定
 //=============================
-void Box::SetBoxPos(int num, XMFLOAT3 pos,int time) {
+void Box::SetBoxPos(int num, XMFLOAT3 pos, XMFLOAT3 move, int time) {
 	XMFLOAT3 boyPos = GetOld()->GetBoyPos();
 	if (!(m_box[num].m_nCat == CARRY))
 		return;
 
 	// 過去用
 	if (time == 0){
-		if (pos.x > 0.0f)
+		if (move.x > 0.0f)
 			m_box[num].m_pos.x = boyPos.x + BOY_HUND_LONG;
-		else if (pos.x < 0.0f)
+		else if (move.x < 0.0f)
 			m_box[num].m_pos.x = boyPos.x - BOY_HUND_LONG;
 
 		if (!(boyPos.y - m_box[num].m_pos.y >= BOY_HUND_LONG || boyPos.y - m_box[num].m_pos.y <= -BOY_HUND_LONG))
-			m_box[num].m_pos.y += pos.y;
+			m_box[num].m_pos.y += move.y;
+		if (m_box[num].m_pos.y > pos.y + 20.0f)
+			m_box[num].m_pos.y = pos.y + 20.0f;
 		if (!(boyPos.z - m_box[num].m_pos.z >= BOY_HUND_LONG || boyPos.y - m_box[num].m_pos.z <= -BOY_HUND_LONG))
-			m_box[num].m_pos.z += pos.z;
+			m_box[num].m_pos.z += move.z;
 	}
 	// 未来用
 	if (time == 1) {
-		if (pos.x > 0.0f)
+		if (move.x > 0.0f)
 			m_box[num].m_oldPos.x = boyPos.x + BOY_HUND_LONG;
-		else if (pos.x < 0.0f)
+		else if (move.x < 0.0f)
 			m_box[num].m_oldPos.x = boyPos.x - BOY_HUND_LONG;
 
 		if (!(boyPos.y - m_box[num].m_oldPos.y >= BOY_HUND_LONG || boyPos.y - m_box[num].m_oldPos.y <= -BOY_HUND_LONG))
-			m_box[num].m_oldPos.y += pos.y;
+			m_box[num].m_oldPos.y += move.y;
 		if (!(boyPos.z - m_box[num].m_oldPos.z >= BOY_HUND_LONG || boyPos.y - m_box[num].m_oldPos.z <= -BOY_HUND_LONG))
-			m_box[num].m_oldPos.z += pos.z;
+			m_box[num].m_oldPos.z += move.z;
 	}
 #ifndef TAKEI_HARUTO
 	PrintDebugProc("ﾎｿﾞﾝｻﾞﾋｮｳx:%2f,y:%2f,z:%2f\n", m_box[num].m_pos.x, m_box[num].m_pos.y, m_box[num].m_pos.z);

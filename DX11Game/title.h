@@ -8,13 +8,13 @@
 //void UpdateBG();	// çXêV
 //void DrawBG();		// ï`âÊ
 
-#define MAX_TITLE_TEXTURE	(2)
+#define MAX_TITLE_TEXTURE	(3)
 
 class Title {
 public:
 	Title();
 	 ~Title();
-	void Update(int);
+	void Update();
 	void Draw();
 private:
 	XMFLOAT2	m_pos;

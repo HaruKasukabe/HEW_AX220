@@ -5,14 +5,17 @@
 #include "old.h"
 #include "map.h"
 #include "bsphere.h"
+#include "shadow.h"
 
 
 //=============================
 //		ºİ½Ä×¸À
 //=============================
 Old::Old() {
+	// ŠÛ‰e‰Šú‰»
+	InitShadow();
 	//Ì¨°ÙÄŞ‰Šú‰»
-	m_pMeshField = new MeshField(8, 1, 80.0f, 80.0f, 1.0f, 1.0f, XMFLOAT3(0.0f,-50.0f,0.0f));
+	m_pMeshField = new MeshField(8, 1, 80.0f, 80.0f, 1.0f, 1.0f, XMFLOAT3(0.0f,0.0f,0.0f));
 	//’j‚Ìq‰Šú‰»
 	m_pPlayerBoy = new Player_Boy;
 	//‹«ŠE‹…‰Šú‰»
@@ -29,6 +32,8 @@ Old::~Old(){
 	delete m_pPlayerBoy;
 	//‹«ŠE‹…I—¹
 	UninitBSphere();
+	// ŠÛ‰eI—¹ˆ—
+	UninitShadow();
 }
 
 //=============================
@@ -62,6 +67,8 @@ void Old::Draw(){
 	DrawOldMap();
 	//‹«ŠE‹…•`‰æ
 	DrawBSphere();
+	// ŠÛ‰e•`‰æ
+	DrawShadow();
 }
 
 

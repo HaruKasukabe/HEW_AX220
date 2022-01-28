@@ -4,22 +4,25 @@
 #include "Texture.h"
 #include "polygon.h"
 #include "sceneGame.h"
+#include "UserGuide.h"
 
 // マクロ定義
-#define TITLE_TEXTURE_PATH		L"data/texture/back_tower2.png"
+#define TITLE_TEXTURE_PATH		L"data/texture/title.png"
 #define TITLE_TEXTURE_PATH_2	L"data/texture/back_tower1.png"
+#define TITLE_TEXTURE_PATH_3    L"data/texture/GameStart.png"
 
-#define TITLE_POS_X		(SCREEN_WIDTH / 2)
-#define TITLE_POS_Y		(SCREEN_HEIGHT / 3)
-#define TITLE_SIZE_X	(120.0f)
+#define TITLE_POS_X		(0.0f)
+#define TITLE_POS_Y		(200.0f)
+#define TITLE_SIZE_X	(440.0f)
 #define TITLE_SIZE_Y	(120.0f)
 
-#define TITLE_MOVE_SPEED	(1.5f)
+#define TITLE_MOVE_SPEED	(0.4f)
 
 // 構造体
 static LPCWSTR g_TitleTex[] = {
 	TITLE_TEXTURE_PATH,
 	TITLE_TEXTURE_PATH_2,
+	TITLE_TEXTURE_PATH_3,
 };
 
 //グローバル変数
@@ -39,7 +42,7 @@ Title::Title()
 	for(int i = 0; i < MAX_TITLE_TEXTURE; i++)
 		hr = CreateTextureFromFile(pDevice, g_TitleTex[i], &m_pTexture[i]);
 
-	g_bMoveDir = true;
+	g_bMoveDir = true; 
 }
 //==============================================================
 //ﾃﾞｽﾄﾗｸﾀ
@@ -52,10 +55,12 @@ Title::~Title() {
 //==============================================================
 //更新
 //==============================================================
-void Title::Update(int nTime) {
-	if (m_pos.y < TITLE_POS_Y - 180.0f)
+void Title::Update() {
+
+
+	if (m_pos.y < TITLE_POS_Y - 20.0f)
 		g_bMoveDir = true;
-	else if (m_pos.y > TITLE_POS_Y + 180.0f)
+	else if (m_pos.y > TITLE_POS_Y + 20.0f)
 		g_bMoveDir = false;
 
 	if (g_bMoveDir == false)
@@ -69,10 +74,24 @@ void Title::Update(int nTime) {
 void Title::Draw() {
 	ID3D11DeviceContext* pDC = GetDeviceContext();
 
-	// 今の描画
-	SetPolygonSize(m_size.x, m_size.y);
-	SetPolygonPos(m_pos.x, m_pos.y);
-	SetPolygonTexture(m_pTexture[0]);
-	SetPolygonUV(0.0f, 0.0f);
-	DrawPolygon(pDC);
+	if (!GetUserGuideFlg())
+	{
+
+		// 今の描画
+		SetBlendState(BS_ALPHABLEND);
+		SetPolygonSize(m_size.x, m_size.y);
+		SetPolygonPos(m_pos.x, m_pos.y);
+		SetPolygonTexture(m_pTexture[0]);
+		SetPolygonUV(0.0f, 0.0f);
+		DrawPolygon(pDC);
+		SetBlendState(BS_NONE);
+
+		SetBlendState(BS_ALPHABLEND);
+		SetPolygonSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+		SetPolygonPos(0.0f, 0.0f);
+		SetPolygonTexture(m_pTexture[2]);
+		SetPolygonUV(0.0f, 0.0f);
+		DrawPolygon(pDC);
+		SetBlendState(BS_NONE);
+	}
 }

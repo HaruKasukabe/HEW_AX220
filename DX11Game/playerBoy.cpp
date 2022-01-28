@@ -65,7 +65,7 @@ static int g_nowHand;
 static int timeJudge; // 0:過去,1:未来
 static int g_nJumpCnt;
 static int g_nNoJumpTime;
-float g_fUpMoveY;
+float g_fUpTime;
 
 //==============================================================
 //ｺﾝｽﾄﾗｸﾀ
@@ -78,7 +78,7 @@ Player_Boy::Player_Boy()
 	ID3D11DeviceContext* pDeviceContext = GetDeviceContext();
 
 	// 位置・回転・スケールの初期設定
-	m_pos = XMFLOAT3(-100.0f, -45.0f, 0.0f);
+	m_pos = XMFLOAT3(-90.0f, -45.0f, 0.0f);
 	m_move = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	m_rot = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	m_rotDest = XMFLOAT3(0.0f, 0.0f, 0.0f);
@@ -90,6 +90,7 @@ Player_Boy::Player_Boy()
 	g_nowHand = 9999;
 	timeJudge = 0;
 	g_nJumpCnt = -1;
+	g_fUpTime = 0.0f;
 
 	m_pad = GetJoyState(0);
 
@@ -104,7 +105,7 @@ Player_Boy::Player_Boy()
 	m_nSphere = CreateBSphere(XMFLOAT3(0.0f, 0.0f, 0.0f), PLAYER_BOY_COLLISION_SIZE_RAD, m_mtxWorld);
 
 	// 丸影の生成
-	m_nShadow = CreateShadow(XMFLOAT3(0.0f, 0.0f, 0.0f), 12.0f);
+	m_nShadow = CreateShadow(m_pos, 16.0f);
 }
 //==============================================================
 //ﾃﾞｽﾄﾗｸﾀ
@@ -276,10 +277,10 @@ void Player_Boy::Update() {
 	{
      		/*仮*/OBJECT_INFO object = CollisionOldMap(XMFLOAT2(m_pos.x + 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y));
 		if(object.m_nCategory == BREAK)
-			GetBox()->Destroy(object.m_nObject);
+			GetWoodBox()->Destroy(object.m_nObject);
 		object = CollisionNowMap(XMFLOAT2(m_pos.x + 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y));
 		if (object.m_nCategory == BREAK)
-			GetBox()->Destroy(object.m_nObject);
+			GetWoodBox()->Destroy(object.m_nObject);
 	}
 
 
@@ -287,18 +288,18 @@ void Player_Boy::Update() {
 	// オブジェクトを持つ
 	if ((GetKeyPress(VK_A) || GetJoyTrigger(0, JOYBUTTON1)) && !m_bHave)
 	{
-		if (CollisionOldMap(XMFLOAT2(m_pos.x + 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nCategory == CARRY) {
+		if (CollisionOldMap(XMFLOAT2(m_pos.x + 0.1f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nCategory == CARRY) {
 			m_nAnim = UP;
 			m_nAnimTime = PLAYER_BOY_UP_ANIM_TIME;
-			m_nHand = CollisionOldMap(XMFLOAT2(m_pos.x + 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nObject;
-			g_nowHand = CollisionNowMap(XMFLOAT2(m_pos.x + 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nObject;
+			m_nHand = CollisionOldMap(XMFLOAT2(m_pos.x + 0.1f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nObject;
+			g_nowHand = CollisionNowMap(XMFLOAT2(m_pos.x + 0.1f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nObject;
 			m_bHave = true;
 		}
-		if (CollisionOldMap(XMFLOAT2(m_pos.x - 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nCategory == CARRY) {
+		if (CollisionOldMap(XMFLOAT2(m_pos.x - 0.1f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nCategory == CARRY) {
 			m_nAnim = UP;
 			m_nAnimTime = PLAYER_BOY_UP_ANIM_TIME;
-			m_nHand = CollisionOldMap(XMFLOAT2(m_pos.x - 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nObject;
-			g_nowHand = CollisionNowMap(XMFLOAT2(m_pos.x - 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nObject;
+			m_nHand = CollisionOldMap(XMFLOAT2(m_pos.x - 0.1f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nObject;
+			g_nowHand = CollisionNowMap(XMFLOAT2(m_pos.x - 0.1f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nObject;
 			m_bHave = true;
 		}
 	}
@@ -309,30 +310,31 @@ void Player_Boy::Update() {
 
 		XMFLOAT3 aPos = GetBox()->GetPos(m_nHand);
 		XMFLOAT2 aSize = GetBox()->GetSize();
-	    XMFLOAT3 bPos = GetBox()->GetPos(g_nowHand);
-		bool aFlg = GetDWBox()->Collision(XMFLOAT2(aPos.x, aPos.y), aSize);
+		bool aFlg = GetDWBox()->Collision(XMFLOAT2(aPos.x + 5.0f, aPos.y), aSize);
 		if (aFlg) {
+			GetBox()->SetBoxPos(m_nHand, m_pos, m_move, 0);
+			GetBox()->SetBoxPos(g_nowHand, m_pos, m_move, 1);
+			XMFLOAT3 bPos = GetBox()->GetPos(g_nowHand);
 			GetBox()->Destroy(g_nowHand);
-			GetHalfBox()->CreateOldNow(bPos,1);
+			GetHalfBox()->CreateOldNow(XMFLOAT3(aPos.x - 5.0f, bPos.y, aPos.z),1);
 		}
 
-		//GetBox()->SetBoxPos(m_nHand, XMFLOAT3(m_move.x, m_move.y - 10.0f, m_move.z), 0);
 		m_nHand = 9999;
 		GetBox()->SetOldBoxPos(g_nowHand);
 		g_nowHand = 9999;
 		m_bHave = false;
-		g_fUpMoveY = 0.0f;
+		g_fUpTime = 0.0f;
 	}
 
 	// 持ち物を一緒に移動
 	if (m_nHand != 9999)
 	{
-		if(g_fUpMoveY < 10.0f)
-			g_fUpMoveY += UP_TIME;
-		m_move.y += g_fUpMoveY;
-		GetBox()->SetBoxPos(m_nHand, m_move, 0);   // 過去の座標を反映
-		m_move.y -= g_fUpMoveY;
-		GetBox()->SetBoxPos(g_nowHand, m_move, 1); // 未来の座標を一時保存
+		if (g_fUpTime < 20.0f)
+			g_fUpTime += UP_TIME;
+		m_move.y += g_fUpTime;
+		GetBox()->SetBoxPos(m_nHand, m_pos, m_move, 0);   // 過去の座標を反映
+		m_move.y -= g_fUpTime;
+		GetBox()->SetBoxPos(g_nowHand, m_pos, m_move, 1); // 未来の座標を一時保存
 	}
 
 	// アニメーション更新

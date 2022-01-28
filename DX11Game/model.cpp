@@ -66,7 +66,7 @@ HRESULT InitModel(void)
 	// ŠÛ‰e‚Ì¶¬
 	g_nShadow = CreateShadow(g_posModel, 12.0f);
 	//‹«ŠE‹…‚Ì¶¬
-	g_nBSphere = CreateBSphere(XMFLOAT3(0.0f,0.0f,0.0f), 5.0f, g_mtxWorld);
+	//g_nBSphere = CreateBSphere(XMFLOAT3(0.0f,0.0f,0.0f), 5.0f, g_mtxWorld);
 
 	g_MoveFlag = false;
 

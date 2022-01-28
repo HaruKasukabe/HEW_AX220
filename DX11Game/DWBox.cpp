@@ -342,8 +342,6 @@ bool DWBox::Collision(XMFLOAT2 pos, XMFLOAT2 size) {
 		if (CollisionRect(pos, size, XMFLOAT2(m_box[i].m_pos.x, m_box[i].m_pos.y), m_box[i].m_collision)) {/*ƒoƒO‚Í‚±‚±‚È*/
 			return true;
 		}
-		else {
-			return false;
-		}
 	}
+	return false;
 }

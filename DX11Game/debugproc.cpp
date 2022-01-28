@@ -60,6 +60,7 @@ void UpdateDebugProc(void)
 //=============================================================================
 void DrawDebugProc(void)
 {
+#ifdef _DEBUG
 	ID3D11DeviceContext* pDeviceContext = GetDeviceContext();
 	XMFLOAT2 vPos(SCREEN_WIDTH * -0.5f + FONT_WIDTH * 0.5f,
 		SCREEN_HEIGHT * 0.5f - FONT_HEIGHT * 0.5f);
@@ -87,6 +88,7 @@ void DrawDebugProc(void)
 	// テクスチャ設定を元に戻す
 	SetPolygonUV(0.0f, 0.0f);
 	SetPolygonFrameSize(1.0f, 1.0f);
+#endif
 }
 
 //=============================================================================

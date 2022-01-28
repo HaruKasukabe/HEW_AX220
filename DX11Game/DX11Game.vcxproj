@@ -166,7 +166,7 @@
     <ClCompile Include="bullet.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="collision.cpp" />
-    <ClCompile Include="crowd.cpp" />
+    <ClCompile Include="cloud.cpp" />
     <ClCompile Include="cube.cpp" />
     <ClCompile Include="debugproc.cpp" />
     <ClCompile Include="DWBox.cpp" />
@@ -209,6 +209,8 @@
     <ClCompile Include="title.cpp" />
     <ClCompile Include="tree.cpp" />
     <ClCompile Include="ui.cpp" />
+    <ClCompile Include="UserGuide.cpp" />
+    <ClCompile Include="WoodBox.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AssimpModel.h" />
@@ -219,7 +221,7 @@
     <ClInclude Include="bullet.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="collision.h" />
-    <ClInclude Include="crowd.h" />
+    <ClInclude Include="cloud.h" />
     <ClInclude Include="cube.h" />
     <ClInclude Include="debugproc.h" />
     <ClInclude Include="Define.h" />
@@ -267,6 +269,8 @@
     <ClInclude Include="tree.h" />
     <ClInclude Include="ui.h" />
     <ClInclude Include="userDefine.h" />
+    <ClInclude Include="UserGuide.h" />
+    <ClInclude Include="WoodBox.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="AssimpPixel.hlsl">

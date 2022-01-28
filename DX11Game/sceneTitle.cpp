@@ -7,14 +7,14 @@
 #include "fade.h"
 #include "bg.h"
 #include "input.h"
-#include "crowd.h"
 #include "UserGuide.h"
-
+#include "title.h"
 
 //*****グローバル変数*****
 static BG* g_pBG;		//背景
-Crowd* g_pCrowd;		//雲
-
+//Cloud* g_pCloud;		//雲
+Title* g_pTitle;		//タイトル
+bool GetUserFlg;
 
 //=============================
 //		初期化
@@ -27,8 +27,10 @@ HRESULT InitSceneTitle() {
 	g_pBG = new BG;
 
 	// 雲初期化
-	//g_pCrowd = new Crowd;
-
+	//g_pCloud = new Cloud;
+	GetUserFlg = false;
+	// タイトル初期化
+	g_pTitle = new Title;
 
 	return hr;
 }
@@ -42,7 +44,10 @@ void UninitSceneTitle() {
 	delete g_pBG;
 
 	// 雲終了処理
-	//delete g_pCrowd;
+	//delete g_pCloud;
+
+	// タイトル終了処理
+	delete g_pTitle;
 }
 
 //=============================
@@ -56,7 +61,10 @@ void UpdateSceneTitle() {
 	g_pBG->Update(5);
 
 	// 雲更新
-	//g_pCrowd->Update(5);
+	//g_pCloud->Update();
+
+	// タイトル更新
+	g_pTitle->Update();
 
 	/*if (GetKeyPress(VK_F1)) {
 		StartFadeOut(SCENE_SAMPLE);
@@ -93,5 +101,8 @@ void DrawSceneTitle() {
 	g_pBG->Draw();
 
 	// 雲描画
-	//g_pCrowd->Draw();
+	//g_pCloud->Draw();
+
+	// タイトル描画
+	g_pTitle->Draw();
 }

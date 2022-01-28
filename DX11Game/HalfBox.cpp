@@ -13,7 +13,7 @@
 //*********************************************************
 //マクロ定義
 //*********************************************************
-#define HALFBOX_MODEL_PATH	"data/model/box001.x"
+#define HALFBOX_MODEL_PATH	"data/model/Rock.fbx"
 #define HALFBOX_TEXTURE_PATH "data/texture/階段.jpg"
 
 #define M_DIFFUSE			XMFLOAT4(1.0f,1.0f,1.0f,1.0f)
@@ -44,7 +44,7 @@ HalfBox::HalfBox() {
 		m_box[i].m_oldPos = XMFLOAT3(0.0f, 0.0f, 0.0f);
 		m_box[i].m_state = true;
 		m_box[i].m_use = false;
-		m_box[i].m_scl = XMFLOAT3(1.0f, 1.0f, 1.0f);//デフォルト設定
+		m_box[i].m_scl = XMFLOAT3(0.5f, 0.5f, 0.5f);//デフォルト設定
 		m_box[i].m_collision = XMFLOAT2(HALFBOX_COLLISION_SIZE_X, HALFBOX_COLLISION_SIZE_Y);
 	}
 
@@ -260,6 +260,12 @@ XMFLOAT2 HalfBox::GetSize(int num) {
 bool HalfBox::GetState(int num) {
 	return m_box[num].m_state;
 }
+//=============================
+//	箱　状態取得
+//=============================
+bool HalfBox::GetUse(int num) {
+	return m_box[num].m_use;
+}
 
 //===============================================
 //		今と過去を分けれる描画(0が今、1が過去)
@@ -321,4 +327,17 @@ bool HalfBox::CollisionHalfBox(XMFLOAT2 pos, XMFLOAT2 size)
 			return false;
 		}
 	}
+}
+bool HalfBox::CheckHalfBox(XMFLOAT3 pos)
+{
+	for (int i = 0; i < MAX_HALFBOX; i++) {
+		if (!m_box[i].m_use)
+		{
+			continue;
+		}
+		if (pos.x <= m_box[i].m_pos.x - 8.0f) continue;
+		if (m_box[i].m_pos.x + 4.0f <= pos.x) continue;
+		return true;
+	}
+	return false;
 }

@@ -42,7 +42,7 @@ public:
 
 	TBox* GetBox();
 	XMFLOAT3 GetPos(int num);
-	void SetBoxPos(int num, XMFLOAT3 pos,int time);
+	void SetBoxPos(int num, XMFLOAT3 pos, XMFLOAT3 move, int time);
 	void SetOldBoxPos(int num);
 	XMFLOAT2 GetSize();
 
