@@ -11,8 +11,8 @@
 //*********************************************************
 //É}ÉNÉçíËã`
 //*********************************************************
-#define BOX_MODEL_PATH	"data/model/sekihi.fbx"
-#define BOX_TEXTURE_PATH "data/texture/sekihi_color.jpg"
+#define BOX_MODEL_PATH		"data/model/sekihi.fbx"
+#define BOX_TEXTURE_PATH	"data/texture/sekihi_color.jpg"
 
 #define M_DIFFUSE			XMFLOAT4(1.0f,1.0f,1.0f,1.0f)
 #define M_SPECULAR			XMFLOAT4(0.0f,0.0f,0.0f,1.0f)

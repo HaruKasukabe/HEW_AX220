@@ -54,8 +54,6 @@ HRESULT InitSceneGame() {
 	CCamera::Get()->Init();
 	CCamera::Set(OLD_CAMERA);
 	CCamera::Get()->Init();
-	// ŠÛ‰e‰Šú‰»
-	InitShadow();
 	//‰ß‹Ž‰Šú‰»
 	g_pOld = new Old;
 	//Œ»Ý‰Šú‰»
@@ -237,18 +235,12 @@ void DrawSceneGame() {
 	g_pNow->Draw();
 	g_pGimmick->NowDraw();
 
-	// ŠÛ‰e•`‰æ
-	DrawShadow();
-
 	//ƒrƒ…[ƒ|[ƒg‚ðÝ’è@‰º‰æ–Ê
 	CCamera::Set(OLD_CAMERA);
 	d3dDeviceContext->RSSetViewports(1, &viewPorts[1]);
 	//‰ß‹Ž•`‰æ
 	g_pOld->Draw();
 	g_pGimmick->OldDraw();
-
-	// ŠÛ‰e•`‰æ
-	DrawShadow();
 
 	//ƒrƒ…[ƒ|[ƒg‚ÌÝ’è‚ðŒ³‚É–ß‚·
 	d3dDeviceContext->RSSetViewports(1, &viewPortsReset);

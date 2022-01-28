@@ -9,10 +9,11 @@
 #include "input.h"
 #include "UserGuide.h"
 #include "title.h"
+#include "cloud.h"
 
 //*****グローバル変数*****
 static BG* g_pBG;		//背景
-//Cloud* g_pCloud;		//雲
+Cloud* g_pCloud;		//雲
 Title* g_pTitle;		//タイトル
 bool GetUserFlg;
 
@@ -27,7 +28,7 @@ HRESULT InitSceneTitle() {
 	g_pBG = new BG;
 
 	// 雲初期化
-	//g_pCloud = new Cloud;
+	g_pCloud = new Cloud;
 	GetUserFlg = false;
 	// タイトル初期化
 	g_pTitle = new Title;
@@ -44,7 +45,7 @@ void UninitSceneTitle() {
 	delete g_pBG;
 
 	// 雲終了処理
-	//delete g_pCloud;
+	delete g_pCloud;
 
 	// タイトル終了処理
 	delete g_pTitle;
@@ -61,7 +62,7 @@ void UpdateSceneTitle() {
 	g_pBG->Update(5);
 
 	// 雲更新
-	//g_pCloud->Update();
+	g_pCloud->Update();
 
 	// タイトル更新
 	g_pTitle->Update();
@@ -101,7 +102,7 @@ void DrawSceneTitle() {
 	g_pBG->Draw();
 
 	// 雲描画
-	//g_pCloud->Draw();
+	g_pCloud->Draw();
 
 	// タイトル描画
 	g_pTitle->Draw();

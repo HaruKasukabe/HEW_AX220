@@ -176,7 +176,7 @@ void Player_Boy::Update() {
 
 			m_rotDest.y = rotCamera.y - 90.0f;
 	}
-	if (GetKeyTrigger(VK_UP)|| GetJoyDpadUp(0))
+	if (GetKeyTrigger(VK_UP) || GetJoyDpadUp(0))	//常にパッドの上入力が入っているかも
 	{
 		// ジャンプ
 		m_nAnim = JUMP;
