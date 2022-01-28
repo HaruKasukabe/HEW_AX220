@@ -7,13 +7,14 @@
 #include "fade.h"
 #include "bg.h"
 #include "input.h"
-#include "cloud.h"
+#include "UserGuide.h"
 #include "title.h"
 
 //*****グローバル変数*****
 static BG* g_pBG;		//背景
-Cloud* g_pCloud;		//雲
+//Cloud* g_pCloud;		//雲
 Title* g_pTitle;		//タイトル
+bool GetUserFlg;
 
 //=============================
 //		初期化
@@ -26,8 +27,8 @@ HRESULT InitSceneTitle() {
 	g_pBG = new BG;
 
 	// 雲初期化
-	g_pCloud = new Cloud;
-
+	//g_pCloud = new Cloud;
+	GetUserFlg = false;
 	// タイトル初期化
 	g_pTitle = new Title;
 
@@ -43,7 +44,7 @@ void UninitSceneTitle() {
 	delete g_pBG;
 
 	// 雲終了処理
-	delete g_pCloud;
+	//delete g_pCloud;
 
 	// タイトル終了処理
 	delete g_pTitle;
@@ -54,12 +55,13 @@ void UninitSceneTitle() {
 //=============================
 void UpdateSceneTitle() {
 	
+	bool GuideFlg = GetUserGuideFlg();
 
 	// 背景更新
 	g_pBG->Update(5);
 
 	// 雲更新
-	g_pCloud->Update();
+	//g_pCloud->Update();
 
 	// タイトル更新
 	g_pTitle->Update();
@@ -67,14 +69,22 @@ void UpdateSceneTitle() {
 	/*if (GetKeyPress(VK_F1)) {
 		StartFadeOut(SCENE_SAMPLE);
 	}*/
-	if (GetKeyPress(VK_F2)) {
-		StartFadeOut(SCENE_GAME);
-	}
-
-	if (GetKeyPress(VK_RETURN))
+	if (!GuideFlg)
 	{
-		StartFadeOut(SCENE_MAP);
+		if (GetKeyPress(VK_RETURN) || GetJoyTrigger(0, JOYBUTTON1)) {
+			StartFadeOut(SCENE_GAME);
+		}
 
+		if (GetKeyPress(VK_F3))// 後々これをチュートリアルとゲームの切り替えに使う（Returnで）
+		{
+			StartFadeOut(SCENE_MAP);
+
+		}
+	}
+	if (GetKeyPress(VK_M) || GetJoyButton(0, JOYBUTTON3))
+	{
+		SetUserGuideFlg(true);
+		GuideFlg = true;
 	}
 
 	
@@ -91,7 +101,7 @@ void DrawSceneTitle() {
 	g_pBG->Draw();
 
 	// 雲描画
-	g_pCloud->Draw();
+	//g_pCloud->Draw();
 
 	// タイトル描画
 	g_pTitle->Draw();

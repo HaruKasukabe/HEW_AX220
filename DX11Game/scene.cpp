@@ -6,6 +6,7 @@
 #include "sceneGame.h"
 #include "mapselect.h"
 #include "stageselect.h"
+#include "UserGuide.h"
 
 //グローバル変数
 static EScene g_eScene = SCENE_NONE;
@@ -15,6 +16,7 @@ HRESULT InitScene() {
 	HRESULT hr = S_OK;
 	SetScene(SCENE_TITLE);		//最初はタイトル画面
 	InitFade();
+	InitUserGuide();
 	return hr;
 }
 
@@ -22,6 +24,7 @@ HRESULT InitScene() {
 void UninitScene() {
 	SetScene(SCENE_NONE);		//現在の画面を終了
 	UninitFade();
+	UninitUserGuide();
 }
 
 //更新処理
@@ -46,6 +49,7 @@ void UpdateScene() {
 		UpdateSceneSample();
 		break;
 	}
+	UpdateUserGuide();
 	UpdateFade();
 }
 
@@ -65,7 +69,7 @@ void DrawScene() {
 		DrawSceneSample();
 		break;
 	}
-
+	DrawUserGuide();
 	DrawFade();
 }
 

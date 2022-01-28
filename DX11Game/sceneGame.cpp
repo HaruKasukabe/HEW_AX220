@@ -16,12 +16,11 @@
 #include "Goal.h"
 #include "gimmick.h"
 #include "shadow.h"
-#include "mesh.h"
 
 
 //*****定数定義*****
-#define OLD_SCROLL_SPEED	(1.2f)
-#define NOW_SCROLL_SPEED	(1.2f)
+#define OLD_SCROLL_SPEED	(1.0f)
+#define NOW_SCROLL_SPEED	(1.0f)
 
 
 //*****グローバル変数*****
@@ -55,8 +54,8 @@ HRESULT InitSceneGame() {
 	CCamera::Get()->Init();
 	CCamera::Set(OLD_CAMERA);
 	CCamera::Get()->Init();
-	// メッシュ初期化
-	hr = InitMesh();
+	// 丸影初期化
+	InitShadow();
 	//過去初期化
 	g_pOld = new Old;
 	//現在初期化
@@ -67,6 +66,14 @@ HRESULT InitSceneGame() {
 	g_pGoal = new Goal;
 	//ギミック初期化
 	g_pGimmick = new Gimmick;
+
+	//箱初期化
+	//g_pBox = new Box;
+	//g_pBox->Create(XMFLOAT3(0.0f, -50.0f, 0.0f));
+	//g_pBox->Create(XMFLOAT3(0.0f, -30.0f, 0.0f));
+	//g_pBox->Create(XMFLOAT3(0.0f, -10.0f, 0.0f));
+	//g_pBox->Create(XMFLOAT3(0.0f, 10.0f, 0.0f));
+	//g_pBox->Create(XMFLOAT3(0.0f, 30.0f, 0.0f));
 
 	//これが上画面
 	viewPorts[0].Width = FRAME_BUFFER_W;   //画面の横サイズ
@@ -116,8 +123,8 @@ void UninitSceneGame() {
 	//ギミック終了処理
 	delete g_pGimmick;
 
-	// メッシュ終了処理
-	UninitMesh();
+	// 丸影終了処理
+	UninitShadow();
 
 	//マップ終了
 	UninitMap();
@@ -133,7 +140,7 @@ void UninitSceneGame() {
 	//サウンド終了
 	CSound::Stop(BGM_001);
 	CSound::Fin();
-	
+
 }
 
 //=============================
@@ -145,34 +152,36 @@ void UpdateSceneGame() {
 
 
 	if (!PauseFlg)
-
-	//箱更新
-	//g_pBox->Update();
-	//マップ更新
-	//UpdateMap();
-
-	//ゴール更新
-	g_pGoal->Update(g_pNow->GetPlayerGirl()->GetGirlPos().x);
-
-	//過去更新
-	g_pOld->Update();
-
-	//現在更新
-	g_pNow->Update();
-
-	//ギミック更新
-	g_pGimmick->Update(g_pOld->GetBoyPos());
-
-	//箱更新
-	//g_pBox->Update();
-
-	//マップ更新
-	UpdateMap();
-
-	// 画面をスクロール
-	if (g_pNow->GetPlayerGirl()->GetGirlPos().x > -100.0f)
 	{
-		if (g_pNow->GetPlayerGirl()->GetGirlPos().x > -20.0f)
+
+		//箱更新
+		//g_pBox->Update();
+		//マップ更新
+		//UpdateMap();
+
+		//ゴール更新
+		g_pGoal->Update(g_pNow->GetPlayerGirl()->GetGirlPos().x);
+
+		//過去更新
+		g_pOld->Update();
+
+		//現在更新
+		g_pNow->Update();
+
+		// 丸影更新
+		UpdateShadow();
+
+		//ギミック更新
+		g_pGimmick->Update(g_pOld->GetBoyPos());
+
+		//箱更新
+		//g_pBox->Update();
+
+		//マップ更新
+		UpdateMap();
+
+		// 画面をスクロール
+		if (g_pNow->GetPlayerGirl()->GetGirlPos().x > -100.0f)
 		{
 			if (g_fGirlOldPosX != g_pNow->GetPlayerGirl()->GetGirlPos().x)
 			{
@@ -188,10 +197,7 @@ void UpdateSceneGame() {
 				g_fGirlOldPosX = g_pNow->GetPlayerGirl()->GetGirlPos().x;
 			}
 		}
-	}
-	if (g_pOld->GetBoyPos().x > -100.0f)
-	{
-		if (g_pOld->GetBoyPos().x > -20.0f)
+		if (g_pOld->GetBoyPos().x > -100.0f)
 		{
 			if (g_fBoyOldPosX != g_pOld->GetBoyPos().x)
 			{
@@ -207,12 +213,11 @@ void UpdateSceneGame() {
 				g_fBoyOldPosX = g_pOld->GetBoyPos().x;
 			}
 		}
-	}
 
-	if (GetKeyPress(VK_F1)) {
-		StartFadeOut(SCENE_TITLE);
+		if (GetKeyPress(VK_F1)) {
+			StartFadeOut(SCENE_TITLE);
+		}
 	}
-
 	CSound::Update();
 }
 
@@ -221,7 +226,7 @@ void UpdateSceneGame() {
 //=============================
 void DrawSceneGame() {
 	d3dDeviceContext = GetDeviceContext();
-		
+
 	//背景描画
 	g_pBG->Draw();
 
@@ -232,12 +237,18 @@ void DrawSceneGame() {
 	g_pNow->Draw();
 	g_pGimmick->NowDraw();
 
+	// 丸影描画
+	DrawShadow();
+
 	//ビューポートを設定　下画面
 	CCamera::Set(OLD_CAMERA);
 	d3dDeviceContext->RSSetViewports(1, &viewPorts[1]);
 	//過去描画
 	g_pOld->Draw();
 	g_pGimmick->OldDraw();
+
+	// 丸影描画
+	DrawShadow();
 
 	//ビューポートの設定を元に戻す
 	d3dDeviceContext->RSSetViewports(1, &viewPortsReset);

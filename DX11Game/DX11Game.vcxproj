@@ -209,6 +209,7 @@
     <ClCompile Include="title.cpp" />
     <ClCompile Include="tree.cpp" />
     <ClCompile Include="ui.cpp" />
+    <ClCompile Include="UserGuide.cpp" />
     <ClCompile Include="WoodBox.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -268,6 +269,7 @@
     <ClInclude Include="tree.h" />
     <ClInclude Include="ui.h" />
     <ClInclude Include="userDefine.h" />
+    <ClInclude Include="UserGuide.h" />
     <ClInclude Include="WoodBox.h" />
   </ItemGroup>
   <ItemGroup>

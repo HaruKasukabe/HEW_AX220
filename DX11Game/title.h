@@ -8,7 +8,7 @@
 //void UpdateBG();	// çXêV
 //void DrawBG();		// ï`âÊ
 
-#define MAX_TITLE_TEXTURE	(2)
+#define MAX_TITLE_TEXTURE	(3)
 
 class Title {
 public:
