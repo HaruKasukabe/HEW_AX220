@@ -37,6 +37,9 @@ public:
 	bool CollisionHalfBox(XMFLOAT2 pos, XMFLOAT2 size);
 
 	bool CheckHalfBox(XMFLOAT3 pos);
+
+	void SetHalfBoxPos(int num, XMFLOAT3 pos, XMFLOAT3 move, int time);
+	void SetOldHalfBoxPos(int num);
 private:
 	CAssimpModel	m_model;	//モデル
 	XMFLOAT4X4		m_mtxWorld;		// ワールドマトリックス

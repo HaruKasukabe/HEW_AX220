@@ -22,7 +22,7 @@ enum GIRL_ANIM { STOP, WALK, JUMP, MAX_GIRL_ANIM, };
 
 #define PLAYER_GIRL_JUMP_ANIM_TIME	(60)
 
-#define	PLAYER_GIRL_VALUE_MOVE	(0.05f)		// 移動速度
+#define	PLAYER_GIRL_VALUE_MOVE	(0.015f)		// 移動速度
 #define	PLAYER_GIRL_RATE_MOVE	(0.20f)		// 移動慣性係数
 #define	PLAYER_GIRL_VALUE_ROTATE	(9.0f)		// 回転速度
 #define	PLAYER_GIRL_RATE_ROTATE	(0.20f)		// 回転慣性係数
@@ -33,7 +33,7 @@ enum GIRL_ANIM { STOP, WALK, JUMP, MAX_GIRL_ANIM, };
 
 #define PLAYER_GIRL_COLLISION_SIZE_RAD	4.0f
 
-#define GRAVITY_GIRL	(2.0f)	// 重力
+#define GRAVITY_GIRL	(1.0f)	// 重力
 
 //*****構造体*****
 static std::string g_GirlAnimFile[] = {
@@ -64,6 +64,7 @@ Player_Girl::Player_Girl()
 	m_scl = XMFLOAT3(1.0f, 1.0f, 1.0f);
 	g_oldGirlPos = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	m_bLand = false;
+	m_bJump = false;
 
 
 	// モデルデータの読み込み
@@ -171,13 +172,24 @@ void Player_Girl::Update() {
 		if (it->m_bOnBox == true)
 		{
 			m_nAnim = WALK;
+			if (!m_bLand)
+				m_pos.x = g_oldGirlPos.x;
 			m_bLand = true;
+			m_bJump = false;
 			m_pos.y = g_oldGirlPos.y;
+			m_move.y = 0.0f;
 		}
 		else
 		{
 			m_nAnim = STOP;
-			m_pos.x = g_oldGirlPos.x;
+			CollisionSide(it);
+		}
+		if (m_bJump == true)
+		{
+			m_pos.y += 16.0f;
+			m_pos.x += 2.0f;
+			if(m_bLand == true)
+				m_bJump = false;
 		}
 		it++;
 	}
@@ -185,7 +197,8 @@ void Player_Girl::Update() {
 	//HalfBoxと当たった時の処理
 	if (GetHalfBox()->CheckHalfBox(m_pos))
 	{
-		m_move.y += GRAVITY_GIRL + 0.20f;
+		m_move.y += GRAVITY_GIRL + 0.02f;
+		m_bJump = true;
 	}
 
 	if (GetKeyPress(VK_RETURN)) {
@@ -275,7 +288,6 @@ bool Player_Girl::CheckField()
 			continue;
 		}
 		boxPos = GetHalfBox()->GetPos(i);
-		//boxPos = pHalfBox->GetPos(i);
 		if (m_pos.x <= boxPos.x - 2.0f) continue;
 		if (boxPos.x + 2.0f <= m_pos.x) continue;
 
@@ -309,5 +321,30 @@ void Player_Girl::SetAnim(int nAnim)
 		m_nAnimTime = PLAYER_GIRL_JUMP_ANIM_TIME;
 		m_nAnimNow = JUMP;
 		break;
+	}
+}
+
+//==============================================================
+//女の子の横の当たり判定
+//==============================================================
+void Player_Girl::CollisionSide(std::vector<OBJECT_INFO>::iterator it)
+{
+	switch (it->m_nCategory)
+	{
+	case NORMAL:
+		if (GetDWBox()->GetPos(it->m_nObject).x > m_pos.x)
+			m_pos.x = g_oldGirlPos.x - COLLISION_SIDE_LONG;
+		else if (GetDWBox()->GetPos(it->m_nObject).x < m_pos.x)
+			m_pos.x = g_oldGirlPos.x + COLLISION_SIDE_LONG;
+	case BREAK:
+		if (GetWoodBox()->GetPos(it->m_nObject).x > m_pos.x)
+			m_pos.x = g_oldGirlPos.x - COLLISION_SIDE_LONG;
+		else if (GetWoodBox()->GetPos(it->m_nObject).x < m_pos.x)
+			m_pos.x = g_oldGirlPos.x + COLLISION_SIDE_LONG;
+	case CARRY:
+		if (GetBox()->GetPos(it->m_nObject).x > m_pos.x)
+			m_pos.x = g_oldGirlPos.x - COLLISION_SIDE_LONG;
+		else if (GetBox()->GetPos(it->m_nObject).x < m_pos.x)
+			m_pos.x = g_oldGirlPos.x + COLLISION_SIDE_LONG;
 	}
 }

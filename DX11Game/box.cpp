@@ -28,8 +28,6 @@
 #define BOX_COLLISION_SIZE_Y	10.0f
 #define BOX_GRAVITY				0.30f
 
-#define BOY_HUND_LONG			10.0f
-
 //*********************************************************
 //構造体定義
 //*********************************************************
@@ -282,9 +280,9 @@ void Box::SetBoxPos(int num, XMFLOAT3 pos, XMFLOAT3 move, int time) {
 			m_box[num].m_oldPos.z += move.z;
 	}
 #ifndef TAKEI_HARUTO
-	PrintDebugProc("ﾎｿﾞﾝｻﾞﾋｮｳx:%2f,y:%2f,z:%2f\n", m_box[num].m_pos.x, m_box[num].m_pos.y, m_box[num].m_pos.z);
-	PrintDebugProc("ﾊﾝｴｲｻﾞﾋｮｳx:%2f,y:%2f,z:%2f\n", 
-		m_box[num].m_oldPos.x, m_box[num].m_oldPos.y, m_box[num].m_oldPos.z);
+	//PrintDebugProc("ﾎｿﾞﾝｻﾞﾋｮｳx:%2f,y:%2f,z:%2f\n", m_box[num].m_pos.x, m_box[num].m_pos.y, m_box[num].m_pos.z);
+	//PrintDebugProc("ﾊﾝｴｲｻﾞﾋｮｳx:%2f,y:%2f,z:%2f\n", 
+		//m_box[num].m_oldPos.x, m_box[num].m_oldPos.y, m_box[num].m_oldPos.z);
 #endif
 }
 
@@ -367,4 +365,12 @@ void Box::SetGravity(int nObject, int nPat)
 	if(GetOld()->GetPlayerBoy()->GetBoyHand() != nObject)
 		if(!(m_box[nObject].m_pos.y <= -49.0f))
 			m_box[nObject].m_pos.y -= BOX_GRAVITY;
+}
+
+//=======================================
+//	オブジェクト番号設定
+//=======================================
+void Box::SetObjectNum(int nObject, int nSetObject)
+{
+	m_box[nObject].m_nCat = nSetObject;
 }

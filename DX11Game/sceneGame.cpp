@@ -255,7 +255,7 @@ void DrawSceneGame() {
 
 	DrawPause();
 	//ƒS[ƒ‹•`‰æ
-	//g_pGoal->Draw();
+	g_pGoal->Draw();
 
 }
 

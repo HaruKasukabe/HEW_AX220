@@ -282,9 +282,9 @@ void WoodBox::SetWoodBoxPos(int num, XMFLOAT3 pos, XMFLOAT3 move, int time) {
 			m_woodBox[num].m_oldPos.z += move.z;
 	}
 #ifndef TAKEI_HARUTO
-	PrintDebugProc("Î¿ÞÝ»ÞË®³x:%2f,y:%2f,z:%2f\n", m_woodBox[num].m_pos.x, m_woodBox[num].m_pos.y, m_woodBox[num].m_pos.z);
-	PrintDebugProc("ÊÝ´²»ÞË®³x:%2f,y:%2f,z:%2f\n", 
-		m_woodBox[num].m_oldPos.x, m_woodBox[num].m_oldPos.y, m_woodBox[num].m_oldPos.z);
+	//PrintDebugProc("Î¿ÞÝ»ÞË®³x:%2f,y:%2f,z:%2f\n", m_woodBox[num].m_pos.x, m_woodBox[num].m_pos.y, m_woodBox[num].m_pos.z);
+	//PrintDebugProc("ÊÝ´²»ÞË®³x:%2f,y:%2f,z:%2f\n", 
+		//m_woodBox[num].m_oldPos.x, m_woodBox[num].m_oldPos.y, m_woodBox[num].m_oldPos.z);
 #endif
 }
 

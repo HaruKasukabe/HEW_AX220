@@ -591,7 +591,7 @@ void Update(void)
 
 	// デバッグ文字列設定
 	StartDebugProc();
-	PrintDebugProc("FPS:%d\n\n", g_nCountFPS);
+	//PrintDebugProc("FPS:%d\n\n", g_nCountFPS);
 
 	//// ポリゴン表示更新
 	//UpdatePolygon();

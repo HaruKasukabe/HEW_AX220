@@ -90,7 +90,8 @@ void UninitPause()
 bool UpdatePause()
 {
 	pad = GetJoyState(0);
-	PrintDebugProc("state:%d\n", pad->dwPOV);
+
+	//PrintDebugProc("state:%d\n", pad->dwPOV);
 	g_bGuideFlg = GetUserGuideFlg();
 
 	if (GetKeyTrigger(VK_M)||GetJoyButton(0, JOYBUTTON8))
