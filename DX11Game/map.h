@@ -30,6 +30,7 @@ enum MAP_OBJECT
 	CARRY,		// 運べる箱
 	PUSH,		// 押せる箱
 	GOAL,		// ゴールの石碑
+	HALF,		// ハーフボックス
 };		
 
 //*****マクロ定義*****
@@ -62,3 +63,6 @@ HalfBox* GetHalfBox();
 WoodBox* GetWoodBox();
 Monument* GetMonument();
 OBJECT_INFO* GetMap(int);
+
+void SetObject(int, int);
+OBJECT_INFO GetObjectInfo(int, int);

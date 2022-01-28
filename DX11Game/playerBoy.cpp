@@ -5,7 +5,6 @@
 //=============================================================================
 #include "playerBoy.h"
 #include "input.h"
-#include "map.h"
 #include "bsphere.h"
 #include "DWBox.h"
 #include "shadow.h"
@@ -259,13 +258,16 @@ void Player_Boy::Update() {
 		{
 			if (it->m_bOnBox == true)
 			{
+				if (!m_bLand)
+					m_pos.x = g_oldBoyPos.x;
 				m_bLand = true;
 				m_bJump = false;
 				m_pos.y = g_oldBoyPos.y;
+				m_move.y = 0.0f;
 			}
 			else
 			{
-				m_pos.x = g_oldBoyPos.x;
+				CollisionSide(it);
 			}
 		}
 
@@ -308,19 +310,29 @@ void Player_Boy::Update() {
 	{
 		m_nAnim = DOWN;
 
-		XMFLOAT3 aPos = GetBox()->GetPos(m_nHand);
-		XMFLOAT2 aSize = GetBox()->GetSize();
-		bool aFlg = GetDWBox()->Collision(XMFLOAT2(aPos.x + 5.0f, aPos.y), aSize);
-		if (aFlg) {
-			GetBox()->SetBoxPos(m_nHand, m_pos, m_move, 0);
-			GetBox()->SetBoxPos(g_nowHand, m_pos, m_move, 1);
-			XMFLOAT3 bPos = GetBox()->GetPos(g_nowHand);
-			GetBox()->Destroy(g_nowHand);
-			GetHalfBox()->CreateOldNow(XMFLOAT3(aPos.x - 5.0f, bPos.y, aPos.z),1);
+		if (GetObjectInfo(g_nowHand, CARRY).m_nCategory == CARRY)
+		{
+			XMFLOAT3 aPos = GetBox()->GetPos(m_nHand);
+			XMFLOAT2 aSize = GetBox()->GetSize();
+			float fWidth;
+			if (m_dir == RIGHT)
+				fWidth = 5.0f;
+			else if (m_dir == LEFT)
+				fWidth = -5.0f;
+
+			bool aFlg = GetDWBox()->Collision(XMFLOAT2(aPos.x + fWidth, aPos.y), aSize);
+			if (aFlg) {
+				XMFLOAT3 bPos = GetBox()->GetPos(g_nowHand);
+				SetObject(g_nowHand, GetHalfBox()->CreateOldNow(XMFLOAT3(aPos.x - fWidth, bPos.y, aPos.z), 1));
+				GetBox()->Destroy(g_nowHand);
+			}
 		}
 
 		m_nHand = 9999;
-		GetBox()->SetOldBoxPos(g_nowHand);
+		if (GetObjectInfo(g_nowHand, CARRY).m_nCategory == CARRY)
+			GetBox()->SetOldBoxPos(g_nowHand);
+		else
+			GetHalfBox()->SetOldHalfBoxPos(g_nowHand);
 		g_nowHand = 9999;
 		m_bHave = false;
 		g_fUpTime = 0.0f;
@@ -331,10 +343,18 @@ void Player_Boy::Update() {
 	{
 		if (g_fUpTime < 20.0f)
 			g_fUpTime += UP_TIME;
+		
 		m_move.y += g_fUpTime;
 		GetBox()->SetBoxPos(m_nHand, m_pos, m_move, 0);   // 過去の座標を反映
 		m_move.y -= g_fUpTime;
-		GetBox()->SetBoxPos(g_nowHand, m_pos, m_move, 1); // 未来の座標を一時保存
+
+		if (g_nowHand != 9999)
+		{
+			if (GetObjectInfo(g_nowHand, CARRY).m_nCategory == CARRY)
+				GetBox()->SetBoxPos(g_nowHand, m_pos, m_move, 1); // 未来の座標を一時保存
+			else
+				GetHalfBox()->SetHalfBoxPos(g_nowHand, m_pos, m_move, 1);
+		}
 	}
 
 	// アニメーション更新
@@ -363,7 +383,7 @@ void Player_Boy::Update() {
 	//丸影移動
 	MoveShadow(m_nShadow, m_pos);
 
-	PrintDebugProc("ｲﾁx:%2fy:%2fz:%2f", m_pos.x, m_pos.y, m_pos.z);
+	//PrintDebugProc("ｲﾁx:%2fy:%2fz:%2f", m_pos.x, m_pos.y, m_pos.z);
 }
 //==============================================================
 //描画
@@ -461,4 +481,29 @@ void Player_Boy::SetAnim(int nAnim)
 // =========================================================
 bool Player_Boy::GetHaveFlg() {
 	return m_bHave;
+}
+
+//==============================================================
+//男の子の横の当たり判定
+//==============================================================
+void Player_Boy::CollisionSide(std::vector<OBJECT_INFO>::iterator it)
+{
+	switch (it->m_nCategory)
+	{
+	case NORMAL:
+		if (GetDWBox()->GetPos(it->m_nObject).x > m_pos.x)
+			m_pos.x = g_oldBoyPos.x - COLLISION_SIDE_LONG;
+		else if (GetDWBox()->GetPos(it->m_nObject).x < m_pos.x)
+			m_pos.x = g_oldBoyPos.x + COLLISION_SIDE_LONG;
+	case BREAK:
+		if (GetWoodBox()->GetPos(it->m_nObject).x > m_pos.x)
+			m_pos.x = g_oldBoyPos.x - COLLISION_SIDE_LONG;
+		else if (GetWoodBox()->GetPos(it->m_nObject).x < m_pos.x)
+			m_pos.x = g_oldBoyPos.x + COLLISION_SIDE_LONG;
+	case CARRY:
+		if (GetBox()->GetPos(it->m_nObject).x > m_pos.x)
+			m_pos.x = g_oldBoyPos.x - COLLISION_SIDE_LONG;
+		else if (GetBox()->GetPos(it->m_nObject).x < m_pos.x)
+			m_pos.x = g_oldBoyPos.x + COLLISION_SIDE_LONG;
+	}
 }

@@ -8,12 +8,13 @@
 #include "Texture.h"
 #include "polygon.h"
 #include "now.h"
+#include "map.h"
 
 // マクロ定義
-#define GOAL_TEXTURE_PATH	L"data/texture/ステージクリア.png"
+#define GOAL_TEXTURE_PATH	L"data/texture/clear2.png"
 #define GOAL_POS_X		0.0f
 #define GOAL_POS_Y		0.0f
-#define GOAL_SIZE_X		SCREEN_WIDTH / 2
+#define GOAL_SIZE_X		(SCREEN_WIDTH / 2 + 120.0f)
 #define GOAL_SIZE_Y		SCREEN_HEIGHT / 2
 
 
@@ -47,7 +48,7 @@ Goal::~Goal() {
 //更新
 //==============================================================
 void Goal::Update(float fX) {
-	if (fX >= 108.0f)
+	if (fX >= MAP_END - 20.0f)
 		g_bUse = true;
 }
 //==============================================================
@@ -57,10 +58,12 @@ void Goal::Draw() {
 	if (g_bUse)
 	{
 		ID3D11DeviceContext* pDC = GetDeviceContext();
+		SetBlendState(BS_ALPHABLEND);
 		SetPolygonSize(m_size.x, m_size.y);
 		SetPolygonPos(m_pos.x, m_pos.y);
 		SetPolygonTexture(m_pTexture);
 		SetPolygonUV(0.0f, 0.0f);
 		DrawPolygon(pDC);
+		SetBlendState(BS_NONE);
 	}
 }

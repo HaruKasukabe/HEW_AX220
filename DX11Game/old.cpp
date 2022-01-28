@@ -15,7 +15,7 @@ Old::Old() {
 	// 丸影初期化
 	InitShadow();
 	//ﾌｨｰﾙﾄﾞ初期化
-	m_pMeshField = new MeshField(8, 1, 80.0f, 80.0f, 1.0f, 1.0f, XMFLOAT3(0.0f,0.0f,0.0f));
+	m_pMeshField = new MeshField(8, 1, 80.0f, 80.0f, 1.0f, 1.0f, XMFLOAT3(0.0f,-50.0f,0.0f));
 	//男の子初期化
 	m_pPlayerBoy = new Player_Boy;
 	//境界球初期化
@@ -54,7 +54,8 @@ void Old::Update(){
 void Old::Draw(){
 	// Zバッファ無効(Zチェック無&Z更新無)
 	SetZBuffer(false);
-
+	// 丸影描画
+	DrawShadow();
 
 
 	// Zバッファ有効(Zチェック有&Z更新有)

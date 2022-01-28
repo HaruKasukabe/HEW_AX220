@@ -6,6 +6,7 @@
 #pragma once
 #include "main.h"
 #include "AssimpModel.h"
+#include "map.h"
 
 class Player_Girl {
 public:
@@ -21,6 +22,7 @@ public:
 	bool CheckField();
 
 	void SetAnim(int);
+	void CollisionSide(std::vector<OBJECT_INFO>::iterator);
 private:
 	CAssimpModel	m_model;	//モデル
 	CAssimpModel	m_modelSub[3];	//モデル(アニメーション用)
@@ -30,6 +32,7 @@ private:
 	XMFLOAT3		m_move;		// 移動量
 	XMFLOAT3		m_scl;		//オブジェクトのスケール
 	bool			m_bLand;	// 着地・接地フラグ
+	bool			m_bJump;	// ジャンプ可能
 
 	int				m_nShadow;	// 丸影番号
 

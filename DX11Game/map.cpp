@@ -19,7 +19,7 @@ OBJECT_INFO g_nowMap[MAP_HEIGHT][MAP_WIDTH] =
 	{{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},},
 	{{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{3,0,1},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},},
 	{{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},},
-	{{0,0},{0,0},{0,0},{3,0,1},{0,0},{0,0},{0,0},{1,0},{1,0},{1,0},{1,0},{1,0},{1,0},{1,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{1,0},{1,0},{1,0},{1,0},{1,0},{0,0},{2,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{5,0},},
+	{{0,0},{0,0},{0,0},{3,0,1},{0,0},{0,0},{0,0},{1,0},{1,0},{1,0},{1,0},{1,0},{1,0},{1,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{1,0},{1,0},{1,0},{1,0},{1,0},{0,0},{2,0},{0,0},{2,0},{0,0},{0,0},{0,0},{0,0},{2,0},{5,0},},
 };
 
 OBJECT_INFO g_oldMap[MAP_HEIGHT][MAP_WIDTH] =
@@ -292,11 +292,12 @@ void DrawNowMap() {
 			case GOAL:
 				g_pMonument->Draw(g_nowMap[i][j].m_nObject);
 				break;
+			case HALF:
+				g_pHalfBox->Draw(g_nowMap[i][j].m_nObject);
+				break;
 			}
 		}
 	}
-
-	g_pHalfBox->Draw();
 }
 
 //=============================
@@ -582,6 +583,24 @@ OBJECT_INFO	CollisionNowMap(XMFLOAT2 pos, XMFLOAT2 size) {
 					return g_nowMap[i][j];
 				}
 				break;
+			case HALF:
+				//HalfBoxとの当たり判定
+				if (!g_pHalfBox->GetState(g_nowMap[i][j].m_nObject))
+				{
+					break;
+				}
+				BoxPos = XMFLOAT2(g_pHalfBox->GetPos(g_nowMap[i][j].m_nObject).x, g_pHalfBox->GetPos(g_nowMap[i][j].m_nObject).y);
+				BoxSize = g_pHalfBox->GetSize(g_nowMap[i][j].m_nObject);
+				if (CollisionRect(pos, size, BoxPos, BoxSize))
+				{
+					if (pos.y >= BoxPos.y + BoxSize.y)
+						g_nowMap[i][j].m_bOnBox = true;
+					else
+						g_nowMap[i][j].m_bOnBox = false;
+
+					return g_nowMap[i][j];
+				}
+				break;
 			}
 		}
 	}
@@ -780,4 +799,35 @@ OBJECT_INFO* GetMap(int nTime)
 		return *g_oldMap;
 		break;
 	}
+}
+
+//==========================
+//		オブジェクト　設定
+//==========================
+void SetObject(int nObject, int nSetObject)
+{
+	for (int i = 0; i < MAP_HEIGHT; ++i) {
+		for (int j = 0; j < MAP_WIDTH; ++j) {
+			if(g_nowMap[i][j].m_nObject == nObject && g_nowMap[i][j].m_nCategory == CARRY)
+			{
+				g_nowMap[i][j].m_nObject = nSetObject;
+				g_nowMap[i][j].m_nCategory = HALF;
+			}
+		}
+	}
+}
+
+//==========================
+//		オブジェクト　取得
+//==========================
+OBJECT_INFO GetObjectInfo(int nObject, int nCat)
+{
+	for (int i = 0; i < MAP_HEIGHT; ++i) {
+		for (int j = 0; j < MAP_WIDTH; ++j) {
+			if (g_nowMap[i][j].m_nObject == nObject && g_nowMap[i][j].m_nCategory == nCat)
+				return g_nowMap[i][j];
+		}
+	}
+
+	return { -1, -1 };
 }

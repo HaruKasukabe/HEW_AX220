@@ -27,6 +27,7 @@ OBJECT_INFO g_oldMap1[MAP_HEIGHT][MAP_WIDTH] =
 MAP_DATA mapData[2] = 
 {
 	{*g_nowMap1, *g_oldMap1},
+	{*g_nowMap1, *g_oldMap1},
 };
 
 MAP_DATA GetMapData(int nStage)

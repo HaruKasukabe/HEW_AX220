@@ -7,6 +7,9 @@
 #include "main.h"
 #include "AssimpModel.h"
 #include "input.h"
+#include "map.h"
+
+#define COLLISION_SIDE_LONG	(0.0f)
 
 class Player_Boy {
 public:
@@ -21,7 +24,7 @@ public:
 	void SetAnim(int);
 
 	bool GetHaveFlg();
-
+	void CollisionSide(std::vector<OBJECT_INFO>::iterator);
 private:
 	CAssimpModel	m_model;	//モデル
 	CAssimpModel	m_modelSub[7];	//モデル(アニメーション用)

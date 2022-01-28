@@ -85,7 +85,7 @@ void UninitPause()
 bool UpdatePause()
 {
 	pad = GetJoyState(0);
-	PrintDebugProc("state:%d\n", pad->dwPOV);
+	//PrintDebugProc("state:%d\n", pad->dwPOV);
 
 	if (GetKeyTrigger(VK_M)||GetJoyButton(0,JOYSTICKID8))
 	{

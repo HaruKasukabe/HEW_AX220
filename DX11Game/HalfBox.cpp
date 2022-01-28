@@ -171,14 +171,14 @@ void HalfBox::Draw(int num) {
 //	箱生成 引数 : モデル座標、サイズ、ワールドマトリックス
 //=============================
 int HalfBox::Create(XMFLOAT3 pos, int nCat) {
-	TBox* pHALFBox = m_box;
-	for (int i = 0; i < MAX_BOX; ++i, ++pHALFBox) {
-		if (pHALFBox->m_use) continue;
-		pHALFBox->m_pos = pos;
-		pHALFBox->m_oldPos = pos;
-		pHALFBox->m_state = true;
-		pHALFBox->m_use = true;
-		pHALFBox->m_nCat = nCat;
+	TBox* pHalfBox = m_box;
+	for (int i = 0; i < MAX_BOX; ++i, ++pHalfBox) {
+		if (pHalfBox->m_use) continue;
+		pHalfBox->m_pos = pos;
+		pHalfBox->m_oldPos = pos;
+		pHalfBox->m_state = true;
+		pHalfBox->m_use = true;
+		pHalfBox->m_nCat = nCat;
 
 		return i;
 	}
@@ -212,7 +212,7 @@ XMFLOAT3 HalfBox::GetPos(int num) {
 ////=============================
 ////	箱　座標設定
 ////=============================
-//void HALFBox::SetHALFBoxPos(int num, XMFLOAT3 pos, int time) {
+//void HALFHalfBox::SetHALFHalfBoxPos(int num, XMFLOAT3 pos, int time) {
 //	XMFLOAT3 boyPos = GetOld()->GetBoyPos();
 //	if (!m_box[num].m_nCat == CARRY)
 //		return;
@@ -298,16 +298,17 @@ void HalfBox::DrawOldNow(int nTime) {
 //	キューブ生成(0が今、1が過去)
 //=======================================
 int HalfBox::CreateOldNow(XMFLOAT3 pos, int nTime/*, XMFLOAT3 scl*/) {
-	TBox* pHALFBox = m_box;
-	for (int i = 0; i < MAX_BOX; ++i, ++pHALFBox) {
-		if (pHALFBox->m_use) continue;
-		pHALFBox->m_pos = pos;
-		pHALFBox->m_oldPos = pos;
-		pHALFBox->m_state = true;
-		pHALFBox->m_use = true;
-		pHALFBox->m_nTime = nTime;
-		// pHALFBox->m_scl = scl; スケールの設定
-		pHALFBox->m_collision = XMFLOAT2(HALFBOX_COLLISION_SIZE_X*pHALFBox->m_scl.x, HALFBOX_COLLISION_SIZE_Y*pHALFBox->m_scl.y);
+	TBox* pHalfBox = m_box;
+	for (int i = 0; i < MAX_BOX; ++i, ++pHalfBox) {
+		if (pHalfBox->m_use) continue;
+		pHalfBox->m_pos = pos;
+		pHalfBox->m_oldPos = pos;
+		pHalfBox->m_state = true;
+		pHalfBox->m_use = true;
+		pHalfBox->m_nTime = nTime;
+		pHalfBox->m_nCat = HALF;
+		// pHalfBox->m_scl = scl; スケールの設定
+		pHalfBox->m_collision = XMFLOAT2(HALFBOX_COLLISION_SIZE_X*pHalfBox->m_scl.x, HALFBOX_COLLISION_SIZE_Y*pHalfBox->m_scl.y);
 
 		return i;
 	}
@@ -340,4 +341,54 @@ bool HalfBox::CheckHalfBox(XMFLOAT3 pos)
 		return true;
 	}
 	return false;
+}
+
+//=============================
+//	箱　座標設定
+//=============================
+void HalfBox::SetHalfBoxPos(int num, XMFLOAT3 pos, XMFLOAT3 move, int time) {
+	XMFLOAT3 boyPos = GetOld()->GetBoyPos();
+	if (!(m_box[num].m_nCat == HALF))
+		return;
+
+	// 過去用
+	if (time == 0) {
+		if (move.x > 0.0f)
+			m_box[num].m_pos.x = boyPos.x + BOY_HUND_LONG;
+		else if (move.x < 0.0f)
+			m_box[num].m_pos.x = boyPos.x - BOY_HUND_LONG;
+
+		if (!(boyPos.y - m_box[num].m_pos.y >= BOY_HUND_LONG || boyPos.y - m_box[num].m_pos.y <= -BOY_HUND_LONG))
+			m_box[num].m_pos.y += move.y;
+		if (m_box[num].m_pos.y > pos.y + 20.0f)
+			m_box[num].m_pos.y = pos.y + 20.0f;
+		if (!(boyPos.z - m_box[num].m_pos.z >= BOY_HUND_LONG || boyPos.y - m_box[num].m_pos.z <= -BOY_HUND_LONG))
+			m_box[num].m_pos.z += move.z;
+	}
+	// 未来用
+	if (time == 1) {
+		if (move.x > 0.0f)
+			m_box[num].m_oldPos.x = boyPos.x + BOY_HUND_LONG;
+		else if (move.x < 0.0f)
+			m_box[num].m_oldPos.x = boyPos.x - BOY_HUND_LONG;
+
+		if (!(boyPos.y - m_box[num].m_oldPos.y >= BOY_HUND_LONG || boyPos.y - m_box[num].m_oldPos.y <= -BOY_HUND_LONG))
+			m_box[num].m_oldPos.y += move.y;
+		if (!(boyPos.z - m_box[num].m_oldPos.z >= BOY_HUND_LONG || boyPos.y - m_box[num].m_oldPos.z <= -BOY_HUND_LONG))
+			m_box[num].m_oldPos.z += move.z;
+	}
+}
+
+//=============================
+//	箱　座標反映
+//=============================
+void HalfBox::SetOldHalfBoxPos(int num)
+{
+	if (!m_box[num].m_nCat == HALF)
+		return;
+
+	m_box[num].m_pos.x = m_box[num].m_oldPos.x;
+	m_box[num].m_pos.y = m_box[num].m_oldPos.y;
+	m_box[num].m_pos.z = m_box[num].m_oldPos.z;
+
 }

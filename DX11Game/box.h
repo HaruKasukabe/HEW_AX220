@@ -25,6 +25,7 @@ struct TBox {
 
 //*****マクロ定義*****
 #define MAX_BOX		(100)
+#define BOY_HUND_LONG			10.0f
 
 class Box {
 public:
@@ -52,7 +53,7 @@ public:
 	int CreateOldNow(XMFLOAT3 pos, int nTime);
 
 	void SetGravity(int, int);
-
+	void SetObjectNum(int, int);
 private:
 	CAssimpModel	m_model;	//モデル
 	XMFLOAT4X4		m_mtxWorld;		// ワールドマトリックス
