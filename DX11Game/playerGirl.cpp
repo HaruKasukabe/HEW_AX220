@@ -11,6 +11,7 @@
 #include "map.h"
 #include "shadow.h"
 #include "HalfBox.h"
+#include "Sound.h"
 
 //*****—ñ‹“Œ^*****
 enum GIRL_ANIM { STOP, WALK, JUMP, MAX_GIRL_ANIM, };

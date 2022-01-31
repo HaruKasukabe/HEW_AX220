@@ -10,6 +10,7 @@
 #include "UserGuide.h"
 #include "title.h"
 #include "cloud.h"
+#include "Sound.h"
 
 //*****グローバル変数*****
 static BG* g_pBG;		//背景
@@ -33,6 +34,10 @@ HRESULT InitSceneTitle() {
 	// タイトル初期化
 	g_pTitle = new Title;
 
+	//サウンド初期化
+	CSound::Init();
+	CSound::Play(BGM_TITLE);
+
 	return hr;
 }
 
@@ -49,6 +54,10 @@ void UninitSceneTitle() {
 
 	// タイトル終了処理
 	delete g_pTitle;
+
+	//サウンド終了
+	CSound::Stop(BGM_TITLE);
+	CSound::Fin();
 }
 
 //=============================
@@ -72,8 +81,9 @@ void UpdateSceneTitle() {
 	}*/
 	if (!GuideFlg)
 	{
-		if (GetKeyPress(VK_RETURN) || GetJoyTrigger(0, JOYBUTTON1)) {
-			StartFadeOut(SCENE_GAME);
+		if (GetKeyTrigger(VK_RETURN) || GetJoyTrigger(0, JOYBUTTON1)) {
+			CSound::Play(SE_DECIDE);
+			StartFadeOut(SCENE_STAGE);
 		}
 
 		if (GetKeyPress(VK_F3))// 後々これをチュートリアルとゲームの切り替えに使う（Returnで）
@@ -82,13 +92,13 @@ void UpdateSceneTitle() {
 
 		}
 	}
-	if (GetKeyPress(VK_M) || GetJoyButton(0, JOYBUTTON3))
+	if (GetKeyTrigger(VK_M) || GetJoyButton(0, JOYBUTTON3))
 	{
 		SetUserGuideFlg(true);
 		GuideFlg = true;
 	}
 
-	
+	CSound::Update();
 }
 
 //=============================

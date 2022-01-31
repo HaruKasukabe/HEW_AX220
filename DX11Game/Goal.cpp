@@ -9,6 +9,9 @@
 #include "polygon.h"
 #include "now.h"
 #include "map.h"
+#include "input.h"
+#include "Sound.h"
+#include "fade.h"
 
 // マクロ定義
 #define GOAL_TEXTURE_PATH	L"data/texture/clear2.png"
@@ -48,8 +51,17 @@ Goal::~Goal() {
 //更新
 //==============================================================
 void Goal::Update(float fX) {
-	if (fX >= MAP_END - 20.0f)
+	if (fX >= MAP_END - 20.0f && g_bUse == false)
+	{
+		CSound::Play(SE_CLEAR);
 		g_bUse = true;
+	}
+
+	if (g_bUse == true && GetKeyTrigger(VK_RETURN))
+	{
+		CSound::Play(SE_DECIDE);
+		StartFadeOut(SCENE_TITLE);
+	}
 }
 //==============================================================
 //描画

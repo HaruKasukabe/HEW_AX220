@@ -17,7 +17,7 @@ Gimmick::~Gimmick()
 }
 void Gimmick::Update(XMFLOAT3 pos)
 {
-	if (GetKeyTrigger(VK_P))
+	if (GetKeyTrigger(VK_D))
 	{
 		m_pPlant->Plants(pos);
 		m_pPlant->Grow(pos);

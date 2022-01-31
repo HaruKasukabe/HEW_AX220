@@ -45,8 +45,12 @@ bool g_bBoxGravity;
 //=============================
 HRESULT InitMap() {
 	// セレクトしたステージごとにマップを設定
-	//*g_nowMap = GetMapData(0).pNowMap;
-	//*g_oldMap = GetMapData(0).pOldMap;
+	for (int i = 0; i < MAP_HEIGHT; ++i) {
+		for (int j = 0; j < MAP_WIDTH; ++j) {
+			g_nowMap[i][j] = GetNowMapData(i, j);
+			g_oldMap[i][j] = GetOldMapData(i, j);
+		}
+	}
 
 	g_pBox = new Box;
 	g_pDWBox = new DWBox;

@@ -59,6 +59,9 @@ void DrawScene() {
 	case SCENE_TITLE:		//タイトル画面
 		DrawSceneTitle();
 		break;
+	case SCENE_STAGE:
+		DrawStageSelect();
+		break;
 	case SCENE_GAME:		//ゲーム画面
 		DrawSceneGame();
 		break;

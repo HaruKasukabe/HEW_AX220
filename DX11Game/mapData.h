@@ -7,10 +7,13 @@
 #pragma once
 #include "map.h"
 
-typedef struct
+enum STAGE
 {
-	OBJECT_INFO* pNowMap;
-	OBJECT_INFO* pOldMap;
-}MAP_DATA;
+	STAGE_TUTORIAL,
+	STAGE_1,
 
-MAP_DATA GetMapData(int nStage);
+	MAX_STAGE
+};
+
+OBJECT_INFO GetNowMapData(int, int);
+OBJECT_INFO GetOldMapData(int, int);

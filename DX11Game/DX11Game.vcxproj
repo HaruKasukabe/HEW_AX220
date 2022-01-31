@@ -162,6 +162,7 @@
     <ClCompile Include="bg.cpp" />
     <ClCompile Include="billboard.cpp" />
     <ClCompile Include="box.cpp" />
+    <ClCompile Include="break.cpp" />
     <ClCompile Include="bsphere.cpp" />
     <ClCompile Include="bullet.cpp" />
     <ClCompile Include="Camera.cpp" />
@@ -170,6 +171,7 @@
     <ClCompile Include="cube.cpp" />
     <ClCompile Include="debugproc.cpp" />
     <ClCompile Include="DWBox.cpp" />
+    <ClCompile Include="effect.cpp" />
     <ClCompile Include="enemy.cpp" />
     <ClCompile Include="explosion.cpp" />
     <ClCompile Include="fade.cpp" />
@@ -207,6 +209,7 @@
     <ClCompile Include="stageselect.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="title.cpp" />
+    <ClCompile Include="torch.cpp" />
     <ClCompile Include="tree.cpp" />
     <ClCompile Include="ui.cpp" />
     <ClCompile Include="UserGuide.cpp" />
@@ -217,6 +220,7 @@
     <ClInclude Include="bg.h" />
     <ClInclude Include="billboard.h" />
     <ClInclude Include="box.h" />
+    <ClInclude Include="break.h" />
     <ClInclude Include="bsphere.h" />
     <ClInclude Include="bullet.h" />
     <ClInclude Include="Camera.h" />
@@ -226,6 +230,7 @@
     <ClInclude Include="debugproc.h" />
     <ClInclude Include="Define.h" />
     <ClInclude Include="DWBox.h" />
+    <ClInclude Include="effect.h" />
     <ClInclude Include="enemy.h" />
     <ClInclude Include="explosion.h" />
     <ClInclude Include="fade.h" />
@@ -266,6 +271,7 @@
     <ClInclude Include="stageselect.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="title.h" />
+    <ClInclude Include="torch.h" />
     <ClInclude Include="tree.h" />
     <ClInclude Include="ui.h" />
     <ClInclude Include="userDefine.h" />

@@ -1094,7 +1094,7 @@ void CAssimpModel::LoadTexture(ID3D11Device* pDevice, aiString& szPath, ID3D11Sh
 			}
 		}
 		if (FAILED(hr)) {
-			MessageBoxA(NULL, "Texture couldn't be loaded", "Error!", MB_ICONERROR | MB_OK);
+			//MessageBoxA(NULL, "Texture couldn't be loaded", "Error!", MB_ICONERROR | MB_OK);
 		}
 	}
 }

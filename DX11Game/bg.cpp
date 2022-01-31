@@ -6,12 +6,13 @@
 #include "sceneGame.h"
 
 // É}ÉNÉçíËã`
-#define BG_TEXTURE_PATH_SAMPLE		L"data/texture/sky001.jpg"
-#define BG_TEXTURE_PATH_TITLE		L"data/texture/title_back.png"
-#define BG_TEXTURE_PATH_GAME_NOW	L"data/texture/back_tower2.png"
-#define BG_TEXTURE_PATH_GAME_OLD	L"data/texture/back_tower1.png"
-#define BG_TEXTURE_PATH_GAME_NOW2	L"data/texture/back_dungeon.png"
-#define BG_TEXTURE_PATH_GAME_OLD2	L"data/texture/back_sky.png"
+#define BG_TEXTURE_PATH_SAMPLE			L"data/texture/sky001.jpg"
+#define BG_TEXTURE_PATH_TITLE			L"data/texture/title_back.png"
+#define BG_TEXTURE_PATH_STAGE_SELECT	L"data/texture/stage_select.png"
+#define BG_TEXTURE_PATH_GAME_NOW		L"data/texture/back_tower2.png"
+#define BG_TEXTURE_PATH_GAME_OLD		L"data/texture/back_tower1.png"
+#define BG_TEXTURE_PATH_GAME_NOW2		L"data/texture/back_dungeon.png"
+#define BG_TEXTURE_PATH_GAME_OLD2		L"data/texture/back_sky.png"
 
 #define BG_POS_X		0.0f
 #define BG_POS_Y		0.0f
@@ -58,8 +59,8 @@ BG::BG()
 		for(int i = 0; i < MAX_BG_TEXTURE; i++)
 			hr = CreateTextureFromFile(pDevice, g_BgTex[i], &m_pTexture[i]);
 		break;
-	case SCENE_RESULT:
-		//hr = CreateTextureFromFile(pDevice, BG_TEXTURE_PATH_RESULT, &m_pTexture);
+	case SCENE_STAGE:
+		hr = CreateTextureFromFile(pDevice, BG_TEXTURE_PATH_STAGE_SELECT, &m_pTexture[0]);
 		break;
 	case SCENE_SAMPLE:
 		hr = CreateTextureFromFile(pDevice, BG_TEXTURE_PATH_SAMPLE, &m_pTexture[0]);

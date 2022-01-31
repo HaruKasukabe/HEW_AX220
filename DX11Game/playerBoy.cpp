@@ -8,7 +8,10 @@
 #include "bsphere.h"
 #include "DWBox.h"
 #include "shadow.h"
-
+#include "Sound.h"
+#include "effect.h"
+#include "break.h"
+#include "torch.h"
 
 //*****列挙型*****
 enum DIR { RIGHT, LEFT };
@@ -65,6 +68,9 @@ static int timeJudge; // 0:過去,1:未来
 static int g_nJumpCnt;
 static int g_nNoJumpTime;
 float g_fUpTime;
+static Effect* g_effect;
+static Break* g_break;
+static Torch* g_torch;
 
 //==============================================================
 //ｺﾝｽﾄﾗｸﾀ
@@ -162,15 +168,20 @@ void Player_Boy::Update() {
 		m_dir = LEFT;
 			// 左移動
 			m_nAnim = WALK;
+			if (m_bLand == true)
+				CSound::Play(BGM_WALK);
 			m_move.x -= SinDeg(rotCamera.y + 90.0f) * PLAYER_BOY_VALUE_MOVE;
 			m_move.z -= CosDeg(rotCamera.y + 90.0f) * PLAYER_BOY_VALUE_MOVE;
 
 			m_rotDest.y = rotCamera.y + 90.0f;
+			g_torch->StartTorch(XMFLOAT3(m_pos.x, m_pos.y + 30, m_pos.z), XMFLOAT2(50.0f, 50.0f));
 
 	}else if (GetKeyPress(VK_RIGHT) || GetJoyDpadRight(0)/*右*/) {
 		m_dir = RIGHT;
 			// 右移動
 			m_nAnim = WALK;
+			if(m_bLand == true)
+				CSound::Play(BGM_WALK);
 			m_move.x -= SinDeg(rotCamera.y - 90.0f) * PLAYER_BOY_VALUE_MOVE;
 			m_move.z -= CosDeg(rotCamera.y - 90.0f) * PLAYER_BOY_VALUE_MOVE;
 
@@ -179,9 +190,11 @@ void Player_Boy::Update() {
 	if (GetKeyTrigger(VK_UP) || GetJoyDpadUp(0))	//常にパッドの上入力が入っているかも
 	{
 		// ジャンプ
-		m_nAnim = JUMP;
 		if (m_bJump == false)
 		{
+			m_nAnim = JUMP;
+			CSound::Stop(BGM_WALK);
+			CSound::Play(SE_JUMP);
 			m_move.y += GRAVITY_BOY * 3;
 			m_bJump = true;
 			m_bLand = false;
@@ -189,6 +202,9 @@ void Player_Boy::Update() {
 			g_nNoJumpTime = JUMP_TIME;
 		}
 	}
+
+	if (m_nAnim == STOP)
+		CSound::Stop(BGM_WALK);
 
 	// 重力
 	m_move.y -= GRAVITY_BOY;
@@ -279,10 +295,14 @@ void Player_Boy::Update() {
 	{
      		/*仮*/OBJECT_INFO object = CollisionOldMap(XMFLOAT2(m_pos.x + 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y));
 		if(object.m_nCategory == BREAK)
+		{
+			CSound::Play(SE_BREAK);
 			GetWoodBox()->Destroy(object.m_nObject);
+		}
 		object = CollisionNowMap(XMFLOAT2(m_pos.x + 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y));
 		if (object.m_nCategory == BREAK)
 			GetWoodBox()->Destroy(object.m_nObject);
+		g_break->StartBreak(XMFLOAT3(m_pos.x + 8, m_pos.y + 4, m_pos.z), XMFLOAT2(20.0f, 20.0f));
 	}
 
 
@@ -292,16 +312,21 @@ void Player_Boy::Update() {
 	{
 		if (CollisionOldMap(XMFLOAT2(m_pos.x + 0.1f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nCategory == CARRY) {
 			m_nAnim = UP;
+			CSound::Play(SE_UP);
 			m_nAnimTime = PLAYER_BOY_UP_ANIM_TIME;
 			m_nHand = CollisionOldMap(XMFLOAT2(m_pos.x + 0.1f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nObject;
 			g_nowHand = CollisionNowMap(XMFLOAT2(m_pos.x + 0.1f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nObject;
+			g_effect->StartEffect(XMFLOAT3(m_pos.x + 8, m_pos.y + 4, m_pos.z), XMFLOAT2(50.0f, 50.0f));
 			m_bHave = true;
+			g_torch->StartTorch(XMFLOAT3(m_pos.x, m_pos.y + 30, m_pos.z), XMFLOAT2(50.0f, 50.0f));
 		}
 		if (CollisionOldMap(XMFLOAT2(m_pos.x - 0.1f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nCategory == CARRY) {
 			m_nAnim = UP;
+			CSound::Play(SE_UP);
 			m_nAnimTime = PLAYER_BOY_UP_ANIM_TIME;
 			m_nHand = CollisionOldMap(XMFLOAT2(m_pos.x - 0.1f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nObject;
 			g_nowHand = CollisionNowMap(XMFLOAT2(m_pos.x - 0.1f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nObject;
+			g_effect->StartEffect(XMFLOAT3(m_pos.x + 8, m_pos.y + 4, m_pos.z), XMFLOAT2(50.0f, 50.0f));
 			m_bHave = true;
 		}
 	}
@@ -309,6 +334,7 @@ void Player_Boy::Update() {
 	if ((GetKeyPress(VK_S) || GetJoyTrigger(0, JOYBUTTON1)) &&m_bHave)
 	{
 		m_nAnim = DOWN;
+		CSound::Play(SE_DOWN);
 
 		if (GetObjectInfo(g_nowHand, CARRY).m_nCategory == CARRY)
 		{

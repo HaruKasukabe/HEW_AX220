@@ -16,6 +16,9 @@
 #include "Goal.h"
 #include "gimmick.h"
 #include "shadow.h"
+#include "effect.h"
+#include "break.h"
+#include "torch.h"
 
 
 //*****定数定義*****
@@ -30,6 +33,9 @@ static Now* g_pNow;			//現在
 static BG* g_pBG;			//背景
 static Goal* g_pGoal;		//ゴール
 static Gimmick* g_pGimmick;	//ギミック
+static Effect* g_pEffect;   //エフェクト
+static Break* g_pBreak;
+static Torch* g_pTorct;
 
 const float FRAME_BUFFER_W = SCREEN_WIDTH;   //フレームバッファの幅。
 const float FRAME_BUFFER_H = SCREEN_HEIGHT;   //フレームバッファの高さ。
@@ -64,14 +70,13 @@ HRESULT InitSceneGame() {
 	g_pGoal = new Goal;
 	//ギミック初期化
 	g_pGimmick = new Gimmick;
+	//エフェクト初期化
+	g_pEffect = new Effect;
+	//破壊初期化
+	g_pBreak = new Break;
+	//松明初期化
+	g_pTorct = new Torch;
 
-	//箱初期化
-	//g_pBox = new Box;
-	//g_pBox->Create(XMFLOAT3(0.0f, -50.0f, 0.0f));
-	//g_pBox->Create(XMFLOAT3(0.0f, -30.0f, 0.0f));
-	//g_pBox->Create(XMFLOAT3(0.0f, -10.0f, 0.0f));
-	//g_pBox->Create(XMFLOAT3(0.0f, 10.0f, 0.0f));
-	//g_pBox->Create(XMFLOAT3(0.0f, 30.0f, 0.0f));
 
 	//これが上画面
 	viewPorts[0].Width = FRAME_BUFFER_W;   //画面の横サイズ
@@ -120,6 +125,12 @@ void UninitSceneGame() {
 	delete g_pGoal;
 	//ギミック終了処理
 	delete g_pGimmick;
+	//エフェクト終了処理
+	delete g_pEffect;
+	//破壊終了処理
+	delete g_pBreak;
+	//松明終了処理
+	delete g_pTorct;
 
 	// 丸影終了処理
 	UninitShadow();
@@ -129,8 +140,6 @@ void UninitSceneGame() {
 
 
 	UninitPause();
-
-	CSound::Stop(BGM_000);
 
 	//ゴール終了
 	//UninitGoal();
@@ -172,8 +181,14 @@ void UpdateSceneGame() {
 		//ギミック更新
 		g_pGimmick->Update(g_pOld->GetBoyPos());
 
-		//箱更新
-		//g_pBox->Update();
+		//エフェクト更新
+		g_pEffect->UpdateEffect();
+
+		//破壊更新
+		g_pBreak->UpdateBreak();
+
+		//松明更新
+		g_pTorct->UpdateTorch();
 
 		//マップ更新
 		UpdateMap();
@@ -212,8 +227,8 @@ void UpdateSceneGame() {
 			}
 		}
 
-		if (GetKeyPress(VK_F1)) {
-			StartFadeOut(SCENE_TITLE);
+		if (GetKeyTrigger(VK_R)) {
+			StartFadeOut(SCENE_GAME);
 		}
 	}
 	CSound::Update();
@@ -233,14 +248,20 @@ void DrawSceneGame() {
 	d3dDeviceContext->RSSetViewports(1, &viewPorts[0]);
 	//今描画
 	g_pNow->Draw();
+	g_pEffect->DrawEffect();
 	g_pGimmick->NowDraw();
+	g_pBreak->DrawBreak();
+	g_pTorct->DrawTorch();
 
 	//ビューポートを設定　下画面
 	CCamera::Set(OLD_CAMERA);
 	d3dDeviceContext->RSSetViewports(1, &viewPorts[1]);
 	//過去描画
 	g_pOld->Draw();
+	g_pEffect->DrawEffect();
 	g_pGimmick->OldDraw();
+	g_pBreak->DrawBreak();
+	g_pTorct->DrawTorch();
 
 	//ビューポートの設定を元に戻す
 	d3dDeviceContext->RSSetViewports(1, &viewPortsReset);

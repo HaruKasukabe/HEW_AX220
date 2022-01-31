@@ -10,3 +10,5 @@ HRESULT InitStageSelect();
 void UninitStageSelect();
 void UpdateStageSelect();
 void DrawStageSelect();
+
+int GetStage();

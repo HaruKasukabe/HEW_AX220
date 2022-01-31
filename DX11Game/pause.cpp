@@ -139,7 +139,7 @@ bool UpdatePause()
 			return true;
 		}
 	}
-	PrintDebugProc("Îß°½Þ²Á%2f\n", g_pause[1].m_pos.y);
+	//PrintDebugProc("Îß°½Þ²Á%2f\n", g_pause[1].m_pos.y);
 	return g_pause[0].m_pause;
 }
 
