@@ -16,12 +16,12 @@
 // マクロ定義
 #define TEXTURE_PATH_STAGE_SELECT		L"data/texture/select.png"
 
-#define STAGE_SELECT_BG_POS_X		-30.0f
-#define STAGE_SELECT_BG_POS_Y		90.0f
-#define STAGE_SELECT_BG_SIZE_X		SCREEN_WIDTH / 2
-#define STAGE_SELECT_BG_SIZE_Y		SCREEN_HEIGHT / 2
+#define STAGE_SELECT_BG_POS_X		-240.0f
+#define STAGE_SELECT_BG_POS_Y		-300.0f
+#define STAGE_SELECT_BG_SIZE_X		400.0f
+#define STAGE_SELECT_BG_SIZE_Y		100.0f
 
-#define STAGE_SELECT_BG_POS_Y_2		160.0f
+#define STAGE_SELECT_BG_POS_Y_2		-180.0f
 
 //グローバル変数
 static int g_stage;
@@ -93,8 +93,6 @@ void UpdateStageSelect()
 	}
 
 	CSound::Update();
-
-	PrintDebugProc("ｽﾃｰｼﾞｾﾚｸﾄ:%d\n", g_stage);
 }
 void DrawStageSelect()
 {

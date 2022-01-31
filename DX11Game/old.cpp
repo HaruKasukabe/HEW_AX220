@@ -6,7 +6,12 @@
 #include "map.h"
 #include "bsphere.h"
 #include "shadow.h"
+#include "tutorial.h"
+#include "stageselect.h"
+#include "mapData.h"
 
+// グローバル変数
+Tutorial* g_pTutorial;
 
 //=============================
 //		ｺﾝｽﾄﾗｸﾀ
@@ -20,6 +25,9 @@ Old::Old() {
 	m_pPlayerBoy = new Player_Boy;
 	//境界球初期化
 	InitBSphere();
+	// チュートリアル初期化
+	if(GetStage() == STAGE_TUTORIAL)
+		g_pTutorial = new Tutorial;
 }
 
 //=============================
@@ -34,6 +42,9 @@ Old::~Old(){
 	UninitBSphere();
 	// 丸影終了処理
 	UninitShadow();
+	// チュートリアル終了
+	if (GetStage() == STAGE_TUTORIAL)
+		delete g_pTutorial;
 }
 
 //=============================
@@ -46,6 +57,9 @@ void Old::Update(){
 	m_pPlayerBoy->Update();
 	//境界球更新
 	UpdateBSphere();
+	// チュートリアル更新
+	if (GetStage() == STAGE_TUTORIAL)
+		g_pTutorial->Update(GetBoyPos());
 }
 
 //=============================
@@ -56,6 +70,9 @@ void Old::Draw(){
 	SetZBuffer(false);
 	// 丸影描画
 	DrawShadow();
+	// チュートリアル描画
+	if (GetStage() == STAGE_TUTORIAL)
+		g_pTutorial->Draw();
 
 
 	// Zバッファ有効(Zチェック有&Z更新有)

@@ -211,6 +211,7 @@
     <ClCompile Include="title.cpp" />
     <ClCompile Include="torch.cpp" />
     <ClCompile Include="tree.cpp" />
+    <ClCompile Include="tutorial.cpp" />
     <ClCompile Include="ui.cpp" />
     <ClCompile Include="UserGuide.cpp" />
     <ClCompile Include="WoodBox.cpp" />
@@ -273,6 +274,7 @@
     <ClInclude Include="title.h" />
     <ClInclude Include="torch.h" />
     <ClInclude Include="tree.h" />
+    <ClInclude Include="tutorial.h" />
     <ClInclude Include="ui.h" />
     <ClInclude Include="userDefine.h" />
     <ClInclude Include="UserGuide.h" />

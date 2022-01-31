@@ -19,4 +19,5 @@ LPCWSTR g_pszFileSE[MAX_SE] = {
 	L"‚©‚í‚¢‚¢“®‚«08.mp3",					// ‚¨‚ë‚·
 	L"‘ÅŒ‚4.mp3",							// Šâ‚ð‰ó‚·
 	L"omedetou.mp3",						// ƒNƒŠƒA‰¹
+	L"Œˆ’è4.mp3",
 };

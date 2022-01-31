@@ -21,6 +21,7 @@ enum eSE {
 	SE_DOWN,		 // おろす
 	SE_BREAK,		 // 岩を壊す
 	SE_CLEAR,		 // クリア音
+	SE_TUTORIAL,	 // チュートリアル音
 
 	MAX_SE
 };
