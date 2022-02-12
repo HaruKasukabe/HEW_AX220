@@ -50,13 +50,7 @@ Goal::~Goal() {
 //==============================================================
 //XV
 //==============================================================
-void Goal::Update(float fX) {
-	if (fX >= MAP_END - 20.0f && g_bUse == false)
-	{
-		CSound::Play(SE_CLEAR);
-		g_bUse = true;
-	}
-
+void Goal::Update() {
 	if (g_bUse == true && GetKeyTrigger(VK_RETURN))
 	{
 		CSound::Play(SE_DECIDE);
@@ -77,5 +71,14 @@ void Goal::Draw() {
 		SetPolygonUV(0.0f, 0.0f);
 		DrawPolygon(pDC);
 		SetBlendState(BS_NONE);
+	}
+}
+
+void SetGoal()
+{
+	if (g_bUse == false)
+	{
+		CSound::Play(SE_CLEAR);
+		g_bUse = true;
 	}
 }

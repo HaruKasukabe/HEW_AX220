@@ -12,6 +12,7 @@
 #include "shadow.h"
 #include "HalfBox.h"
 #include "Sound.h"
+#include "Goal.h"
 
 //*****列挙型*****
 enum GIRL_ANIM { STOP, WALK, JUMP, MAX_GIRL_ANIM, };
@@ -66,7 +67,6 @@ Player_Girl::Player_Girl()
 	g_oldGirlPos = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	m_bLand = false;
 	m_bJump = false;
-
 
 	// モデルデータの読み込み
 	if (!m_model.Load(pDevice, pDeviceContext, PLAYER_GIRL_STOP_MODEL_PATH)) {
@@ -189,7 +189,7 @@ void Player_Girl::Update() {
 		{
 			m_pos.y += 16.0f;
 			m_pos.x += 2.0f;
-			if(m_bLand == true)
+			if (m_bLand == true)
 				m_bJump = false;
 		}
 		it++;
@@ -202,9 +202,15 @@ void Player_Girl::Update() {
 		m_bJump = true;
 	}
 
+	//Goalと当たった時の処理
+	if (CollisionNowMap(XMFLOAT2(m_pos.x, m_pos.y), XMFLOAT2(PLAYER_GIRL_COLLISION_SIZE_X, PLAYER_GIRL_COLLISION_SIZE_Y)).m_nCategory == GOAL)
+	{
+		SetGoal();
+	}
+
 	if (GetKeyPress(VK_RETURN)) {
 		// リセット
-		m_pos = XMFLOAT3(-100.0f, -45.0f, 0.0f);
+		m_pos = XMFLOAT3(m_pos.x - 20.0f, m_pos.y, 0.0f);
 		m_move = XMFLOAT3(0.0f, 0.0f, 0.0f);
 		m_rot = XMFLOAT3(0.0f, 0.0f, 0.0f);
 		m_rotDest = XMFLOAT3(0.0f, 0.0f, 0.0f);

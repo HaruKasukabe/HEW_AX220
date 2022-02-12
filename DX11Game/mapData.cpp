@@ -47,6 +47,7 @@ OBJECT_INFO GetNowMapData(int i, int j)
 	{
 	case STAGE_TUTORIAL:
 		return g_tutorialNowMap[i][j];
+		break;
 	case STAGE_1:
 		return g_nowMap1[i][j];
 		break;
@@ -58,6 +59,7 @@ OBJECT_INFO GetOldMapData(int i, int j)
 	{
 	case STAGE_TUTORIAL:
 		return g_tutorialOldMap[i][j];
+		break;
 	case STAGE_1:
 		return g_oldMap1[i][j];
 		break;

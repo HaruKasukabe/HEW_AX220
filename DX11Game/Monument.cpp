@@ -20,6 +20,9 @@
 #define M_AMBIENT			XMFLOAT4(1.0f,1.0f,1.0f,1.0f)
 #define M_EMISSIVE			XMFLOAT4(0.0f,0.0f,0.0f,1.0f)
 
+#define MONUMENT_COLLISION_SIZE_X	(6.0f)
+#define MONUMENT_COLLISION_SIZE_Y	(6.0f)
+
 //*********************************************************
 //ÉOÉçÅ[ÉoÉãïœêî
 //*********************************************************
@@ -158,4 +161,13 @@ void Monument::Release(int num){
 		return;
 	}
 	m_monument[num].m_use = false;
+}
+
+XMFLOAT3 Monument::GetPos(int num)
+{
+	return m_monument[num].m_pos;
+}
+XMFLOAT2 Monument::GetSize()
+{
+	return XMFLOAT2(MONUMENT_COLLISION_SIZE_X, MONUMENT_COLLISION_SIZE_Y);
 }

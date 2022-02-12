@@ -90,7 +90,7 @@ HRESULT InitMap() {
 				g_nowMap[i][j].m_bOnBox = false;
 				break;
 			case BREAK:
-				g_nowMap[i][j].m_nObject = g_pWoodBox->Create(XMFLOAT3(-90.0f + j * 10.0f, -10 - i * 10.0f, 0.0f), g_nowMap[i][j].m_nCategory, 0);
+				g_nowMap[i][j].m_nObject = g_pWoodBox->Create(XMFLOAT3(-90.0f + j * 10.0f, -10 - i * 10.0f, 0.0f), g_nowMap[i][j].m_nCategory, 1);
 				g_nowMap[i][j].m_bOnBox = false;
 			case CARRY:
 				g_nowMap[i][j].m_nObject = g_pBox->Create(XMFLOAT3(-90.0f + j * 10.0f, -10 - i * 10.0f, 0.0f), g_nowMap[i][j].m_nCategory, 0);
@@ -584,6 +584,15 @@ OBJECT_INFO	CollisionNowMap(XMFLOAT2 pos, XMFLOAT2 size) {
 					else
 						g_nowMap[i][j].m_bOnBox = false;
 
+					return g_nowMap[i][j];
+				}
+				break;
+			case GOAL:
+				//Goal‚Æ‚Ì“–‚½‚è”»’è
+				BoxPos = XMFLOAT2(g_pMonument->GetPos(g_nowMap[i][j].m_nObject).x, g_pMonument->GetPos(g_nowMap[i][j].m_nObject).y);
+				BoxSize = g_pMonument->GetSize();
+				if (CollisionRect(pos, size, BoxPos, BoxSize))
+				{
 					return g_nowMap[i][j];
 				}
 				break;

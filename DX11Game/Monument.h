@@ -32,6 +32,8 @@ public:
 	int Create(XMFLOAT3 pos, int nTime);
 	void Release(int num);
 
+	XMFLOAT3 GetPos(int num);
+	XMFLOAT2 GetSize();
 private:
 	CAssimpModel m_model;
 	XMFLOAT4X4 m_mtxWorld;
