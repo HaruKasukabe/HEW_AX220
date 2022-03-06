@@ -66,7 +66,7 @@ void UninitUserGuide() {
 //		更新
 //=============================
 void UpdateUserGuide() {
-	if (GetKeyPress(VK_X) || GetJoyButton(0, JOYBUTTON3))
+	if (GetKeyPress(VK_X) || GetJoyTrigger(0, JOYBUTTON2))
 	{
 		// Xキーを押したら操作説明の画面を閉じる
 		bUserFlg = false;

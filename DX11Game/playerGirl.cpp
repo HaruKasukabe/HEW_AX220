@@ -208,13 +208,13 @@ void Player_Girl::Update() {
 		SetGoal();
 	}
 
-	if (GetKeyPress(VK_RETURN)) {
-		// リセット
-		m_pos = XMFLOAT3(m_pos.x - 20.0f, m_pos.y, 0.0f);
-		m_move = XMFLOAT3(0.0f, 0.0f, 0.0f);
-		m_rot = XMFLOAT3(0.0f, 0.0f, 0.0f);
-		m_rotDest = XMFLOAT3(0.0f, 0.0f, 0.0f);
-	}
+	//if (GetKeyPress(VK_RETURN)) {
+	//	// リセット
+	//	m_pos = XMFLOAT3(m_pos.x - 20.0f, m_pos.y, 0.0f);
+	//	m_move = XMFLOAT3(0.0f, 0.0f, 0.0f);
+	//	m_rot = XMFLOAT3(0.0f, 0.0f, 0.0f);
+	//	m_rotDest = XMFLOAT3(0.0f, 0.0f, 0.0f);
+	//}
 
 	// アニメーション更新
 	SetAnim(m_nAnim);

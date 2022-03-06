@@ -308,7 +308,7 @@ void Player_Boy::Update() {
 
 
 	// オブジェクトを持つ
-	if ((GetKeyPress(VK_A) || GetJoyTrigger(0, JOYBUTTON1)) && !m_bHave)
+	if ((GetKeyPress(VK_A) || GetJoyButton(0, JOYBUTTON1)) && !m_bHave)
 	{
 		if (CollisionOldMap(XMFLOAT2(m_pos.x + 0.1f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nCategory == CARRY) {
 			m_nAnim = UP;
@@ -331,7 +331,7 @@ void Player_Boy::Update() {
 		}
 	}
 	// オブジェクトを放す
-	if ((GetKeyPress(VK_S) || GetJoyTrigger(0, JOYBUTTON1)) &&m_bHave)
+	if ((GetKeyPress(VK_S) || GetJoyRelease(0, JOYBUTTON1)) &&m_bHave)
 	{
 		m_nAnim = DOWN;
 		CSound::Play(SE_DOWN);

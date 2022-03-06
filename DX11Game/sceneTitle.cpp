@@ -81,7 +81,8 @@ void UpdateSceneTitle() {
 	}*/
 	if (!GuideFlg)
 	{
-		if (GetKeyTrigger(VK_RETURN) || GetJoyTrigger(0, JOYBUTTON1)) {
+		if (GetKeyTrigger(VK_RETURN) || GetJoyTrigger(0, JOYBUTTON1)) 
+		{
 			CSound::Play(SE_DECIDE);
 			StartFadeOut(SCENE_STAGE);
 		}
@@ -92,7 +93,7 @@ void UpdateSceneTitle() {
 
 		}
 	}
-	if (GetKeyTrigger(VK_M) || GetJoyButton(0, JOYBUTTON3))
+	if (GetKeyTrigger(VK_M) || GetJoyTrigger(0, JOYBUTTON3))
 	{
 		SetUserGuideFlg(true);
 		GuideFlg = true;

@@ -70,7 +70,7 @@ void UpdateStageSelect()
 
 	if (g_stage < 1)
 	{
-		if (GetKeyTrigger(VK_UP))
+		if (GetKeyTrigger(VK_UP) || GetJoyDpadUp(0))
 		{
 			CSound::Play(SE_SELECT);
 			g_stage += 1;
@@ -78,17 +78,16 @@ void UpdateStageSelect()
 	}
 	if(g_stage > 0)
 	{
-		if (GetKeyTrigger(VK_DOWN))
+		if (GetKeyTrigger(VK_DOWN)|| GetJoyDpadDown(0))
 		{
 			CSound::Play(SE_SELECT);
 			g_stage -= 1;
 		}
 
 	}
-	if (GetKeyTrigger(VK_RETURN))
+	if (GetKeyTrigger(VK_RETURN)|| GetJoyTrigger(0,JOYBUTTON1))
 	{
 		CSound::Play(SE_DECIDE);
-
 		StartFadeOut(SCENE_GAME);
 	}
 
