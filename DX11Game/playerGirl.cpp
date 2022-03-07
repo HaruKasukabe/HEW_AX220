@@ -208,10 +208,10 @@ void Player_Girl::Update() {
 		SetGoal();
 	}
 
-	if (GetKeyPress(VK_RETURN)) {
+	if (GetKeyTrigger(VK_RETURN)) {
 		// ƒŠƒZƒbƒg
-		m_pos = XMFLOAT3(m_pos.x - 20.0f, m_pos.y, 0.0f);
-		m_move = XMFLOAT3(0.0f, 0.0f, 0.0f);
+		m_pos = XMFLOAT3(m_pos.x, m_pos.y, 0.0f);
+		m_move = XMFLOAT3(-5.0f, 0.0f, 0.0f);
 		m_rot = XMFLOAT3(0.0f, 0.0f, 0.0f);
 		m_rotDest = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	}

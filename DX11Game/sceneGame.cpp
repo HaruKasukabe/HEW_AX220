@@ -167,7 +167,7 @@ void UpdateSceneGame() {
 		//UpdateMap();
 
 		//ゴール更新
-		g_pGoal->Update(g_pNow->GetPlayerGirl()->GetGirlPos().x);
+		g_pGoal->Update();
 
 		//過去更新
 		g_pOld->Update();
