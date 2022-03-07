@@ -90,7 +90,8 @@ void UninitPause()
 bool UpdatePause()
 {
 	pad = GetJoyState(0);
-
+	static int n_timer = 0;
+	n_timer++;
 	//PrintDebugProc("state:%d\n", pad->dwPOV);
 	g_bGuideFlg = GetUserGuideFlg();
 
@@ -102,16 +103,18 @@ bool UpdatePause()
 
 	if (g_pause[0].m_pause)
 	{
-		if (GetKeyTrigger(VK_UP) || GetJoyDpadUp(0)/*ã*/)
+		if (GetKeyTrigger(VK_UP) || (GetJoyDpadUp(0)&& n_timer>= 10)/*ã*/)
 		{
+			n_timer = 0;
 			if (g_pause[1].m_pos.y < -1.0f)
 			{
 				g_pause[1].m_pos.y += 100.0f;
 					CSound::Play(SE_PAUSE_SELECT);
 			}
 		}
-		if (GetKeyTrigger(VK_DOWN)|| GetJoyDpadDown(0)/*‰º*/)
+		if (GetKeyTrigger(VK_DOWN)|| (GetJoyDpadDown(0) && n_timer >= 10)/*‰º*/)
 		{
+			n_timer = 0;
 			if (g_pause[1].m_pos.y > -130.0f)
 			{
 				g_pause[1].m_pos.y -= 100.0f;
@@ -127,7 +130,7 @@ bool UpdatePause()
 		else if ((GetKeyTrigger(VK_Z)|| GetJoyTrigger(0, JOYBUTTON1)) && g_pause[1].m_pos.y == -50.0f)
 		{
 			// «‚¤‚Ü‚­“®ì‚µ‚È‚¢‚Ì‚Åˆê“I‚É–³Œø‰»
-			// SetScene(SCENE_STAGE);	
+			SetScene(SCENE_STAGE);	
 			CSound::Play(SE_DECIDE);
 			return true;
 		}
